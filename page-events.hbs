@@ -1,0 +1,222 @@
+{{!< default}}
+
+<main class="gh-main">
+  <section class="gh-container events-wrapper">
+
+      <div class="tag-filter" style="margin-bottom: 1.5rem;">
+        <label for="tagInput"><strong>Filter by tag:</strong></label>
+        <input type="text" id="tagInput" placeholder="e.g., workshop" />
+        <button id="tagFilterBtn">Apply Filter</button>
+        <button id="sixMonthBtn" class="range-toggle-btn" style="margin-left: 1rem;">Show 6-Month View</button>
+        <button id="allDatesBtn" class="range-toggle-btn" style="margin-left: 1rem;">All Dates</button>
+      </div>
+
+    <h1 class="gh-page-title">Upcoming Events</h1>
+
+  
+
+    <div id="events-container" class="gh-feed"></div>
+
+
+  </section>
+</main>
+
+<style>
+  .events-wrapper {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  #events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+
+  .event-card {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    align-items: center;
+  }
+
+  .event-left {
+    border-left: 4px solid var(--accent-color);
+  }
+
+  .event-right {
+    border-right: 4px solid var(--accent-color);
+  }
+
+  .event-thumbnail {
+    flex: 0 0 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .event-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .event-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-content-left {
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .event-content-right {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .event-content h2 {
+    margin: 0 0 0.3rem;
+    font-size: 1.8rem;
+    color: var(--accent-color);
+  }
+
+  .event-content time {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.85;
+    margin-bottom: 1rem;
+  }
+
+  .event-content p {
+    margin-bottom: 0.5rem;
+  }
+
+  .event-content strong {
+    font-weight: 600;
+  }
+  .range-toggle-btn {
+  background-color: transparent;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.range-toggle-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+</style>
+
+<script>
+  const DEFAULT_TAG = "sonar";
+
+  function getDateRange(daysOut) {
+    if (!daysOut) return null;
+    const now = new Date();
+    const future = new Date();
+    future.setDate(now.getDate() + daysOut);
+    return {
+      start: now.toISOString().split('T')[0],
+      end: future.toISOString().split('T')[0]
+    };
+  }
+
+  async function loadEvents(tag = "", daysOut = 14) {
+    try {
+      const token = "c037d7ad1aeb0b3f7f2f72ea5e7ba335";
+      const url = new URL("http://localhost:3000/api/events");
+      url.searchParams.append("token", token);
+
+      const range = getDateRange(daysOut);
+      if (range) {
+        url.searchParams.append("startDate", range.start);
+        url.searchParams.append("endDate", range.end);
+      }
+
+      if (tag) url.searchParams.append("tag", tag.toLowerCase());
+
+      const res = await fetch(url);
+      const events = await res.json();
+
+      const container = document.getElementById("events-container");
+      container.innerHTML = ""; // Clear previous
+
+      console.log(`[DEBUG] Loaded ${events.length} events for tag "${tag}" and range ${range ? `${range.start} to ${range.end}` : "ALL"}`);
+
+      events.forEach((event, index) => {
+        const card = document.createElement("article");
+        const isEven = index % 2 === 0;
+        card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
+        const alignmentClass = isEven ? "event-content-left" : "event-content-right";
+
+        const thumbnailFilename = event.thumbnail
+          ? event.thumbnail.split("/").pop()
+          : "default-thumb.jpg";
+        const thumbnailUrl = `http://localhost:3000/api/images/${thumbnailFilename}`;
+
+        const thumbDiv = document.createElement("div");
+        thumbDiv.className = "event-thumbnail";
+        thumbDiv.innerHTML = `<img src="${thumbnailUrl}" alt="Event Thumbnail">`;
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = `event-content ${alignmentClass}`;
+        contentDiv.innerHTML = `
+          <h2>${event.title}</h2>
+          <time datetime="${event.date}">${new Date(event.date).toLocaleDateString()}</time>
+          <p>${event.description}</p>
+          ${event.tags?.length ? `<p><strong>Tags:</strong> ${event.tags.join(", ")}</p>` : ""}
+        `;
+
+        if (isEven) {
+          card.appendChild(contentDiv);
+          card.appendChild(thumbDiv);
+        } else {
+          card.appendChild(thumbDiv);
+          card.appendChild(contentDiv);
+        }
+
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error loading events:", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("tagInput").value = DEFAULT_TAG;
+    loadEvents(DEFAULT_TAG, 14); // default: 2-week view
+
+    document.getElementById("tagFilterBtn").addEventListener("click", () => {
+      const tag = document.getElementById("tagInput").value.trim();
+      loadEvents(tag, 14);
+    });
+
+    document.getElementById("sixMonthBtn").addEventListener("click", () => {
+      const tag = document.getElementById("tagInput").value.trim();
+      loadEvents(tag, 180); // Load 6 months
+    });
+
+    document.getElementById("allDatesBtn").addEventListener("click", () => {
+      const tag = document.getElementById("tagInput").value.trim();
+      loadEvents(tag, null); // Load all dates (no filter)
+    });
+  });
+</script>
+
+
+
+
