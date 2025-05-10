@@ -71,11 +71,12 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            z-index: 2;
+            z-index: 10;
             background: transparent;
             border: none;
             cursor: pointer;
             font-size: 1.5rem;
+            pointer-events: auto; /* ⬅️ force it to receive clicks */
         }
 
         #audio-toggle .muted {
@@ -266,168 +267,179 @@
 
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('sonar-bg');
+  const ctx = canvas?.getContext('2d');
+  const container = document.querySelector('.site-cover');
 
-document.addEventListener('DOMContentLoaded',() => {
-const canvas = document.getElementById('sonar-bg');
-const ctx = canvas.getContext('2d');
-const container = document.querySelector('.site-cover');
+  if (!canvas || !ctx || !container) return; // Exit if canvas not found
 
-function resizeCanvas() {
-  canvas.width = container.offsetWidth;
-  canvas.height = container.offsetHeight;
-}
+  function resizeCanvas() {
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+  }
 
-let particles = [];
+  let particles = [];
 
-function randomColor(hueOffset = 0) {
-  const hue = (performance.now() / 20 + hueOffset) % 360;
-  return `hsl(${hue}, 100%, 50%)`;
-}
+  function randomColor(hueOffset = 0) {
+    const hue = (performance.now() / 20 + hueOffset) % 360;
+    return `hsl(${hue}, 100%, 50%)`;
+  }
 
-function drawTrail() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function drawTrail() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  particles.forEach((p, i) => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.fill();
-    p.x += p.vx;
-    p.y += p.vy;
-    p.size *= 0.96;
-    if (p.size < 0.2) particles.splice(i, 1);
-  });
+    particles.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.size *= 0.96;
+      if (p.size < 0.2) particles.splice(i, 1);
+    });
 
-  requestAnimationFrame(drawTrail);
-}
+    requestAnimationFrame(drawTrail);
+  }
 
-function addParticles(x, y) {
-  for (let i = 0; i < 5; i++) {
-    particles.push({
-      x: x,
-      y: y,
-      vx: (Math.random() - 0.5) * 1.5,
-      vy: (Math.random() - 0.5) * 1.5,
-      size: Math.random() * 5 + 2,
-      color: randomColor(i * 10)
+  function addParticles(x, y) {
+    for (let i = 0; i < 5; i++) {
+      particles.push({
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        size: Math.random() * 5 + 2,
+        color: randomColor(i * 10),
+      });
+    }
+  }
+
+  // 🎶 Audio setup
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
+  let audioStarted = false;
+  let oscillator = null;
+  let gainNode = null;
+  let isMuted = false;
+
+  function ensureAudioContext() {
+    if (!audioStarted) {
+      audioCtx.resume();
+      audioStarted = true;
+    }
+  }
+
+  function startTheremin() {
+    if (oscillator) return;
+    oscillator = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+    oscillator.type = 'sine';
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+  }
+
+  function updateTheremin(x, y, width, height) {
+    if (!oscillator || !gainNode) return;
+    const freq = 200 + (x / width) * 1000;
+    const volume = 1 - (y / height);
+    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.2, audioCtx.currentTime);
+  }
+
+  function stopTheremin() {
+    if (oscillator) {
+      oscillator.stop();
+      oscillator.disconnect();
+      gainNode.disconnect();
+      oscillator = null;
+      gainNode = null;
+    }
+  }
+
+  // ✅ Mute toggle setup
+  const audioToggleBtn = document.getElementById('audio-toggle');
+  const audioIcon = document.getElementById('audio-icon');
+
+  if (audioToggleBtn && audioIcon) {
+    audioToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent bubbling to canvas
+        ensureAudioContext();
+        isMuted = !isMuted;
+
+        if (!isMuted) {
+            startTheremin();
+            if (gainNode) {
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            }
+        } else {
+            stopTheremin();
+        }
+
+        audioIcon.classList.toggle('muted', isMuted);
+        audioIcon.classList.toggle('active', !isMuted);
+        audioIcon.textContent = isMuted ? '🔇' : '🔊';
     });
   }
-}
 
-// 🎶 Web Audio setup
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
-let audioStarted = false; // ✅ PLACE THIS RIGHT HERE
-
-function ensureAudioContext() {
-  if (!audioStarted) {
-    audioCtx.resume();
-    audioStarted = true;
-  }
-}
-
-//audio variables and constants
-let oscillator = null;
-let gainNode = null;
-let isMuted = false;
-
-const audioToggleBtn = document.getElementById('audio-toggle');
-const audioIcon = document.getElementById('audio-icon');
-
-//audio start
-function startTheremin() {
-  if (oscillator) return;
-
-  oscillator = audioCtx.createOscillator();
-  gainNode = audioCtx.createGain();
-
-  oscillator.type = 'sine';
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-  oscillator.start();
-}
-
-function updateTheremin(x, y, width, height) {
-  if (!oscillator || !gainNode) return;
-
-  const freq = 200 + (x / width) * 1000;       // Frequency: 200Hz–1200Hz
-  const volume = 1 - (y / height);             // Volume: top = loud, bottom = soft
-
-  oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.2, audioCtx.currentTime);
- // cap volume
-}
-
-function stopTheremin() {
-  if (oscillator) {
-    oscillator.stop();
-    oscillator.disconnect();
-    gainNode.disconnect();
-    oscillator = null;
-    gainNode = null;
-  }
-}
-
-//audio toggle function
-audioToggleBtn.addEventListener('click', () => {
-    ensureAudioContext();
-
-    isMuted = !isMuted;
-
-    if (gainNode) {
-        gainNode.gain.setValueAtTime(isMuted ? 0 : 0.2, audioCtx.currentTime);
-    }
-
-    if (isMuted) {
-        audioIcon.classList.add('muted');
-        audioIcon.classList.remove('active');
-        audioIcon.textContent = '🔇';
-    } else {
-        audioIcon.classList.remove('muted');
-        audioIcon.classList.add('active');
-        audioIcon.textContent = '🔊';
-    }
-});
-
-// 📍 Mouse Events
-container.addEventListener('mousemove', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
-    ensureAudioContext(); // ✅ CALL THIS before playing sound
+  // 🎯 Interactions
+  container.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     addParticles(x, y);
-    startTheremin();
-    updateTheremin(x, y, rect.width, rect.height);
-  } else {
-    stopTheremin();
-  }
-});
 
-container.addEventListener('mouseleave', stopTheremin);
+    if (!isMuted) {
+        updateTheremin(x, y, rect.width, rect.height);
+     }
+  });
 
-// 📱 Touch Events
+  container.addEventListener('mouseleave', stopTheremin);
+
+  container.addEventListener('mouseenter', () => {
+        if (!isMuted) {
+            startTheremin();
+            if (gainNode) {
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            }
+        }
+    });
+
+let touchInside = false;
+
 container.addEventListener('touchmove', (e) => {
   const rect = canvas.getBoundingClientRect();
+  touchInside = false;
+
   for (let touch of e.touches) {
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
-    ensureAudioContext(); // ✅ Required for mobile audio
-    addParticles(x, y);
-    startTheremin();
-    updateTheremin(x, y, rect.width, rect.height);
+
+    if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+      touchInside = true;
+      addParticles(x, y);
+
+      if (!isMuted) {
+        startTheremin();
+        updateTheremin(x, y, rect.width, rect.height);
+      }
+    }
+  }
+
+  // If touch moved outside the canvas, stop sound
+  if (!touchInside && !isMuted) {
+    stopTheremin();
   }
 }, { passive: true });
 
-container.addEventListener('touchend', stopTheremin);
+  container.addEventListener('touchend', stopTheremin);
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-drawTrail();
-
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  drawTrail();
 });
 </script>
 
