@@ -1,12 +1,18 @@
-# Wave
+# Wave Petcom
 
-Wave is a [Ghost](https://github.com/TryGhost/Ghost) theme dedicated to podcasters. Share your voice and words with your audience.
+This is a Petcom-maintained clone of the [Wave](https://github.com/TryGhost/Wave) theme, which is a [Ghost](https://github.com/TryGhost/Ghost) theme dedicated to podcasters. Share your voice and words with your audience.
 
-**Demo: https://wave.ghost.io**
+**Original Demo: https://wave.ghost.io**
+
+**Original Repository: [TryGhost/Wave](https://github.com/TryGhost/Wave)**
+
+**Petcom Repository: [Petcom/Wave_Petcom](https://github.com/petcom/wave_petcom)**
+
+**Changes from Original**: See [CHANGES-FROM-ORIGINAL.md](docs/CHANGES-FROM-ORIGINAL.md) for details on modifications made in this repository.
 
 # Instructions
 
-1. [Download this theme](https://github.com/TryGhost/Wave/archive/main.zip)
+1. [Download this theme](https://github.com/petcom/wave_petcom/archive/main.zip)
 2. Log into Ghost, and go to the `Design` settings area to upload the zip file
 
 # Development
