@@ -1,0 +1,3 @@
+- Always adhere to the rules outlined in AGENT-RULES.md.
+- If any rule in AGENT-RULES.md hinders task completion, propose an update to the rule.
+- Update AGENT-RULES.md to remember and follow any new rules given.
