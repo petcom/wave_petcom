@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{@site.locale}}">
-
-<head>
-    <style>
+  <style>
         :root {
             --background-color: {{@custom.background_color}};
             --text-color: {{@custom.text_color}};
@@ -23,92 +21,39 @@
             color: var(--link-color);
         }
 
-    /* added */ 
-        .site-cover {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 500px;
-            width: 100%;
-            overflow: hidden;
+        .gh-head {
+        padding: 0.5rem 0;
         }
 
-        .cover-content {
-            z-index: 1;
-            width: 100%;
-            max-width: 960px;
-            text-align: center;
-            padding: 0 1rem;
+        .gh-head-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         }
 
-        #sonar-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-      .btn-sonar {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: background 0.3s ease, transform 0.2s ease;
+        .gh-head-logo {
+        font-size: 1.2rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
         }
 
-        .btn-sonar:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.03);
+        .gh-head-logo img {
+        max-height: 40px;
+        width: auto;
+        display: block;
         }
 
-        #audio-toggle {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            pointer-events: auto; /* ⬅️ force it to receive clicks */
-        }
-
-        #audio-toggle .muted {
-            color: gray;
-        }
-
-        #audio-toggle .active {
-            color: #4CAF50;
-        }
-
-        @media (max-width: 600px) {
-            .sonar-hero-buttons {
-            flex-direction: column;
-            align-items: center;
-            }
-
-            .btn-sonar {
-            width: 80%;
-            text-align: center;
-            }
-
-            .site-cover {
-                height: 300px;
-            }
-
-
-
+        .gh-head-menu,
+        .gh-head-actions {
+        display: flex;
+        align-items: center;
         }
 
     </style>
 
 
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{^is "blog"}}
@@ -122,8 +67,9 @@
     {{ghost_head}}
 </head>
 
-<body class="{{body_class}}{{{block "body_class"}}} is-head-{{#match @custom.navigation_layout "Logo on the left"}}left-logo{{else match @custom.navigation_layout "Logo in the middle"}}middle-logo{{else}}stacked{{/match}}{{#match @custom.title_font "=" "Elegant serif"}} has-serif-title{{/match}}{{#match @custom.body_font "=" "Elegant serif"}} has-serif-body{{/match}}">
 
+
+<body class="{{body_class}}{{{block "body_class"}}} is-head-{{#match @custom.navigation_layout "Logo on the left"}}left-logo{{else match @custom.navigation_layout "Logo in the middle"}}middle-logo{{else}}stacked{{/match}}{{#match @custom.title_font "=" "Elegant serif"}} has-serif-title{{/match}}{{#match @custom.body_font "=" "Elegant serif"}} has-serif-body{{/match}}">
 <div class="site">
 
     <header id="gh-head" class="gh-head gh-outer">
@@ -176,20 +122,9 @@
     </header>
 
     {{#is "home"}}
-    
-        <div class="site-cover u-overlay" style="position: relative; height: 500px;">
-            <canvas id="sonar-bg"></canvas>
-
-            <!-- AUDIO TOGGLE BUTTON -->
-            <button id="audio-toggle" aria-label="Toggle sound">
-                <span id="audio-icon" class="muted">🔇</span>
-            </button>
-
-            {{#if @site.cover_image}}
+    {{#if @site.cover_image}}
+        <div class="site-cover u-overlay">
             <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
-            {{/if}} 
-
- 
             <div class="cover-content">
                 {{#if @site.logo}}
                     <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
@@ -197,16 +132,9 @@
                 {{#if @site.description}}
                     <div class="cover-description">{{@site.description}}</div>
                 {{/if}}
-                <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                    <a href="/explore" class="btn-sonar">Explore Experiences</a>
-                    <a href="/events" class="btn-sonar">Upcoming Events</a>
-                    <a href="/subscribe" class="btn-sonar">Join the SONAR Circle</a>
-                </div>
             </div>
-            
-
         </div>
-    
+    {{/if}}
     {{/is}}
 
     <div class="site-content">
@@ -254,195 +182,11 @@
 
 </div>
 
-
-
 <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-
-
-
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('sonar-bg');
-  const ctx = canvas?.getContext('2d');
-  const container = document.querySelector('.site-cover');
-
-  if (!canvas || !ctx || !container) return; // Exit if canvas not found
-
-  function resizeCanvas() {
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-  }
-
-  let particles = [];
-
-  function randomColor(hueOffset = 0) {
-    const hue = (performance.now() / 20 + hueOffset) % 360;
-    return `hsl(${hue}, 100%, 50%)`;
-  }
-
-  function drawTrail() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach((p, i) => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-      p.x += p.vx;
-      p.y += p.vy;
-      p.size *= 0.96;
-      if (p.size < 0.2) particles.splice(i, 1);
-    });
-
-    requestAnimationFrame(drawTrail);
-  }
-
-  function addParticles(x, y) {
-    for (let i = 0; i < 5; i++) {
-      particles.push({
-        x,
-        y,
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: (Math.random() - 0.5) * 1.5,
-        size: Math.random() * 5 + 2,
-        color: randomColor(i * 10),
-      });
-    }
-  }
-
-  // 🎶 Audio setup
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  const audioCtx = new AudioContext();
-  let audioStarted = false;
-  let oscillator = null;
-  let gainNode = null;
-  let isMuted = false;
-
-  function ensureAudioContext() {
-    if (!audioStarted) {
-      audioCtx.resume();
-      audioStarted = true;
-    }
-  }
-
-  function startTheremin() {
-    if (oscillator) return;
-    oscillator = audioCtx.createOscillator();
-    gainNode = audioCtx.createGain();
-    oscillator.type = 'sine';
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.start();
-  }
-
-  function updateTheremin(x, y, width, height) {
-    if (!oscillator || !gainNode) return;
-    const freq = 200 + (x / width) * 1000;
-    const volume = 1 - (y / height);
-    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.2, audioCtx.currentTime);
-  }
-
-  function stopTheremin() {
-    if (oscillator) {
-      oscillator.stop();
-      oscillator.disconnect();
-      gainNode.disconnect();
-      oscillator = null;
-      gainNode = null;
-    }
-  }
-
-  // ✅ Mute toggle setup
-  const audioToggleBtn = document.getElementById('audio-toggle');
-  const audioIcon = document.getElementById('audio-icon');
-
-  if (audioToggleBtn && audioIcon) {
-    audioToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // prevent bubbling to canvas
-        ensureAudioContext();
-        isMuted = !isMuted;
-
-        if (!isMuted) {
-            startTheremin();
-            if (gainNode) {
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            }
-        } else {
-            stopTheremin();
-        }
-
-        audioIcon.classList.toggle('muted', isMuted);
-        audioIcon.classList.toggle('active', !isMuted);
-        audioIcon.textContent = isMuted ? '🔇' : '🔊';
-    });
-  }
-
-  // 🎯 Interactions
-  container.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    addParticles(x, y);
-
-    if (!isMuted) {
-        updateTheremin(x, y, rect.width, rect.height);
-     }
-  });
-
-  container.addEventListener('mouseleave', stopTheremin);
-
-  container.addEventListener('mouseenter', () => {
-        if (!isMuted) {
-            startTheremin();
-            if (gainNode) {
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            }
-        }
-    });
-
-let touchInside = false;
-
-container.addEventListener('touchmove', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  touchInside = false;
-
-  for (let touch of e.touches) {
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-
-    if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
-      touchInside = true;
-      addParticles(x, y);
-
-      if (!isMuted) {
-        startTheremin();
-        updateTheremin(x, y, rect.width, rect.height);
-      }
-    }
-  }
-
-  // If touch moved outside the canvas, stop sound
-  if (!touchInside && !isMuted) {
-    stopTheremin();
-  }
-}, { passive: true });
-
-  container.addEventListener('touchend', stopTheremin);
-
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  drawTrail();
-});
+    crossorigin="anonymous">
 </script>
-
 <script src="{{asset "built/main.min.js"}}"></script>
 
 {{{block "scripts"}}}

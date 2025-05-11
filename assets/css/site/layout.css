@@ -6,7 +6,7 @@
 
 .site-content {
     flex-grow: 1;
-    padding: 80px 0 40px;
+    padding: 5px 0 5px;
 }
 
 .page-template .site-content {
@@ -15,7 +15,7 @@
 
 @media (max-width: 767px) {
     .site-content {
-        padding: 40px 0;
+        padding: 0px 0;
     }
 }
 
