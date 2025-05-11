@@ -101,7 +101,24 @@
                 "type": "color",
                 "label": "Link Color",
                 "default": "#bb86fc"
+            },
+            "events_api_url": {
+                "type": "text",
+                "label": "Events API Base URL (no trailing slash)",
+                "default": "http://localhost:3000/api"
+            },
+            "events_token": {
+                "type": "text",
+                "label": "Events API Token",
+                "default": "YOUR_DEFAULT_TOKEN_HERE"
+            },
+              "events_tags": {
+                "type": "text",
+                "label": "Event Tags Filter (comma separated)",
+                "default": ""
             }
+
+
         }
     },
     "scripts": {
