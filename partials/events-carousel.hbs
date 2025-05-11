@@ -1,46 +1,79 @@
 <section class="events-carousel">
-  <div class="carousel-track-container">
-    <div class="carousel-track" id="eventCarouselTrack"></div>
-  </div>
+    
+    <h2 class="gh-section-title" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-color);">
+    Upcoming Events
+    </h2>
+    <hr class="section-divider">
+    <a href="{{@site.url}}/events" class="carousel-link-wrapper">
+        <div class="carousel-track-container">
+            <div class="carousel-track" id="eventCarouselTrack"></div>
+        </div>
+    </a>
+
+  <!-- for testing of handlebars replacement and theme variables
   <p>{{@custom.events_api_url}} /events/upcoming?token={{@custom.events_token}} {{@custom.events_tags}} </p>
 <div class="test-div"></div>
+-->
+
 
 </section>
 
 <style>
-  .events-carousel {
+
+.events-carousel {
     overflow: hidden;
     width: 100%;
     max-width: 960px;
     margin: 2rem auto;
-  }
-  .carousel-track-container {
+}
+
+.carousel-link-wrapper {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.carousel-link-wrapper:hover {
+    cursor: pointer;
+}
+
+.carousel-track-container {
     overflow: hidden;
     position: relative;
-  }
-  .carousel-track {
+}
+.carousel-track {
     display: flex;
     transition: transform 0.6s ease-in-out;
-  }
-  .event-card {
+}
+.event-card {
     flex: 0 0 33.3333%;
     box-sizing: border-box;
     padding: 1rem;
     text-align: center;
-  }
-  .event-card img {
+}
+.event-card img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-  }
-  .event-card h3 {
+}
+.event-card h3 {
     margin-top: 0.5rem;
-    font-size: 1.1rem;
-  }
-  .event-card p {
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+.event-card p {
     margin: 0.25rem 0;
     color: #888;
-  }
+}
+.section-divider {
+    width: 75%;
+    margin: 0 auto 2rem auto;
+    border: none;
+    border-top: 2px solid var(--text-color);
+}
+
+
+  
 </style>
 
 <script>
