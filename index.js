@@ -2,7 +2,7 @@
 module.exports = {
     helpers: {
       hasChildren: require('./helpers/hasChildren'),
-      eachChild: require('./helpers/eachChild'),
+      childrenOfNav: require('./helpers/childrenOfNav'),
       trimPrefix: require('./helpers/trimPrefix')
     }
   };

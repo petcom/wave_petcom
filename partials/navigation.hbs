@@ -1,5 +1,3 @@
-
-
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.querySelector('.nav-toggle');
@@ -17,27 +15,28 @@
 <ul class="nav">
   {{!-- Prepare for nested nav items --}}
   {{#let null as |parentNav|}}
-  {{#foreach navigation}}
-    {{#if (not (starts-with label "-- "))}}
-      {{!-- Render parent item --}}
-      <li class="nav-item has-dropdown">
-        <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>{{label}}</a>
+    {{#foreach navigation}}
+      {{#if (not (starts-with label "-- "))}}
+        {{!-- Render parent item --}}
+        <li class="nav-item has-dropdown">
+          <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>{{label}}</a>
 
-        {{!-- Look ahead to find child items --}}
-        {{#let @index as |i|}}
-          {{#if (hasChildren navigation i)}}
-            <ul class="dropdown">
-              {{#eachChild navigation i as |child|}}
-                <li>
-                  <a href="{{child.url}}" {{#if child.current}}aria-current="page"{{/if}}>
-                    {{trimPrefix child.label "-- "}}
-                  </a>
-                </li>
-              {{/eachChild}}
-            </ul>
-          {{/if}}
-        {{/let}}
-      </li>
-    {{/if}}
-  {{/foreach}}
+          {{!-- Look ahead to find child items --}}
+          {{#let @index as |i|}}
+            {{#if (hasChildren navigation i)}}
+              <ul class="dropdown">
+                {{#childrenOfNav navigation i as |child|}}
+                  <li>
+                    <a href="{{child.url}}" {{#if child.current}}aria-current="page"{{/if}}>
+                      {{trimPrefix child.label "-- "}}
+                    </a>
+                  </li>
+                {{/eachChild}}
+              </ul>
+            {{/if}}
+          {{/let}}
+        </li>
+      {{/if}}
+    {{/foreach}}
+  {{/let}}
 </ul>

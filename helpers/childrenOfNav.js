@@ -1,4 +1,4 @@
-module.exports = function eachChild(navigation, index, options) {
+module.exports = function childrenOfNav(navigation, index, options) {
     let children = [];
     for (let i = index + 1; i < navigation.length; i++) {
       if (navigation[i].label.trim().startsWith('--')) {
