@@ -1,0 +1,55 @@
+.featured-authors-strip {
+    height: 100px;
+    padding: 0 1rem;
+    background: var(--background-color, #111);
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+  }
+  
+  .authors-scroll {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    width: 100%;
+  }
+  
+  .author-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color, #f0f0f0);
+    width: 80px;
+    flex-shrink: 0;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .author-image,
+  .author-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #333;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .author-name {
+    font-size: 0.65rem;
+    line-height: 1.2;
+    margin-top: 4px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
