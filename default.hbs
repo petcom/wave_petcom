@@ -184,5 +184,22 @@
 
 {{ghost_foot}}
 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const navItems = document.querySelectorAll(".has-dropdown > a");
+
+    navItems.forEach(link => {
+      link.addEventListener("click", (e) => {
+        // Only trigger toggle on small screens
+        if (window.innerWidth <= 768) {
+          e.preventDefault(); // Prevent navigation
+          const parent = e.target.closest(".has-dropdown");
+          parent.classList.toggle("open");
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>
