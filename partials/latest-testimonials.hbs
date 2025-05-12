@@ -44,17 +44,19 @@
     transition: transform 0.3s ease;
   }
 
+
   .testimonial-card:hover {
     transform: scale(1.03);
   }
 
   .testimonial-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color: var(--text-color);
   }
 
   .testimonial-excerpt {
-    font-size: 0.95rem;
+    font-size: 1.35rem;
     color: var(--text-color);
   }
 
@@ -64,6 +66,7 @@
     color: var(--link-color);
     text-decoration: underline;
     font-weight: 500;
+    font-size: 1.25rem;
   }
 
   /* Optional: apply some visual variation using nth-child */
@@ -74,3 +77,15 @@
   .card-4 { background: rgba(255,255,255,0.06); }
 
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.testimonial-card');
+
+  cards.forEach(card => {
+    const hue = Math.floor(Math.random() * 360);
+    const bgColor = `hsl(${hue}, 40%, 20%)`; // Darker tone
+    card.style.backgroundColor = bgColor;
+  });
+});
+</script>
