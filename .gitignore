@@ -1,41 +1,5 @@
-# Node modules (Gulp dependencies)
-node_modules/
+# Ignore the original repository files
+_references/Wave-main/ 
 
-# Gulp config files
-gulpfile.js
-gulpfile.babel.js
-gulp-config.js
-gulp/              # in case you use a gulp/ directory
-
-# Gulp build output
-/dist/
-/build/
-/public/built/
-
-# Temporary or cache files
-*.log
-.sass-cache/
-.cache/
-.tmp/
-
-# System/OS files
-.DS_Store
-Thumbs.db
-
-# Editor settings
-.vscode/
-.idea/
-
-# Environment files
-.env
-.env.local
-
-# Backup/temp files
-*.bak
-*.swp
-*.tmp
-
-# Optional: lockfiles (depending on your workflow)
-package-lock.json
-yarn.lock
-
+# Ignore .gitignore
+.gitignore

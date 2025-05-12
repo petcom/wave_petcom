@@ -25,6 +25,9 @@ This document outlines the differences between this repository and the original 
 
 ## Additional Files
 - New directories and files such as `docs`, `node_modules`, and `package-lock.json`.
+- **Assets**: New files and directories in `assets/` including `css/`, `js/`, `fonts/`, and `built/`.
+- **Partials**: New files in `partials/` including `sonic-calendar.hbs`, `post-meta.hbs`, `player.hbs`, `loop.hbs`, `feature-image.hbs`, and `author-box.hbs`.
+- **Root**: New files in the root directory including `events.hbs`, `page-events.hbs`, and `routes.yaml`.
 
 ## File Differences
 - Various differences in CSS files indicating changes in styling and layout. 
