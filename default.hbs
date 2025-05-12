@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="{{@site.locale}}">
-  <style>
+ 
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{^is "blog"}}
+        <title>{{meta_title}}</title>
+    {{else}}
+        <title>{{block "title"}}</title>
+        {{{block "description"}}}
+    {{/is}}
+    <link rel="stylesheet" href="{{asset "built/screen.css"}}">
+
+    {{ghost_head}}
+ <style>
         :root {
             --background-color: {{@custom.background_color}};
             --text-color: {{@custom.text_color}};
@@ -51,21 +66,6 @@
         }
 
     </style>
-
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{^is "blog"}}
-        <title>{{meta_title}}</title>
-    {{else}}
-        <title>{{block "title"}}</title>
-        {{{block "description"}}}
-    {{/is}}
-    <link rel="stylesheet" href="{{asset "built/screen.css"}}">
-
-    {{ghost_head}}
-
 
 </head>
 
@@ -184,19 +184,35 @@
 
 {{ghost_foot}}
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const navItems = document.querySelectorAll(".has-dropdown > a");
 
-    navItems.forEach(link => {
-      link.addEventListener("click", (e) => {
-        // Only trigger toggle on small screens
-        if (window.innerWidth <= 768) {
-          e.preventDefault(); // Prevent navigation
-          const parent = e.target.closest(".has-dropdown");
-          parent.classList.toggle("open");
+<!-- for dropdown functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dropdownParents = document.querySelectorAll('.has-dropdown > a');
+
+    dropdownParents.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const parentLi = link.parentElement;
+        const dropdown = parentLi.querySelector('.dropdown');
+
+        if (dropdown) {
+          e.preventDefault();
+
+          // Toggle open class
+          const isOpen = parentLi.classList.contains('open');
+          document.querySelectorAll('.has-dropdown.open').forEach(el => el.classList.remove('open'));
+          if (!isOpen) {
+            parentLi.classList.add('open');
+          }
         }
       });
+    });
+
+    // Close all dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.has-dropdown')) {
+        document.querySelectorAll('.has-dropdown.open').forEach(el => el.classList.remove('open'));
+      }
     });
   });
 </script>

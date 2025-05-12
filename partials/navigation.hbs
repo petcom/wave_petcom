@@ -1,31 +1,43 @@
-<button class="nav-toggle" onclick="document.querySelector('.nav').classList.toggle('show')">
-  ☰
-</button>
-<ul class="nav">
-  {{#foreach navigation}}
-    {{! Check if this is a parent item (no "- " prefix) }}
-    {{#unless (starts-with label "- ")}}
-      {{! Define the current label as the parentLabel }}
-      {{#let label as |parentLabel|}}
-        <li class="{{#if current}}nav-current{{/if}} {{#if (any navigation (lambda (item) (starts-with item.label (concat "- " parentLabel))))}}has-dropdown{{/if}}">
-          <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>{{label}}</a>
 
-          {{! Find children whose labels start with "- parentLabel" }}
-          {{#let (filter navigation items=(item) => (starts-with item.label (concat "- " parentLabel))) as |children|}}
-            {{#if children.length}}
-              <ul class="dropdown">
-                {{#each children}}
-                  <li class="{{#if current}}nav-current{{/if}}">
-                    <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>
-                      {{label replace=(concat "- " parentLabel " ") ""}}
-                    </a>
-                  </li>
-                {{/each}}
-              </ul>
-            {{/if}}
-          {{/let}}
-        </li>
-      {{/let}}
-    {{/unless}}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('.nav');
+    if (toggle && nav) {
+      toggle.addEventListener('click', () => {
+        nav.classList.toggle('show');
+      });
+    }
+  });
+</script>
+
+<button class="nav-toggle">☰</button>
+
+<ul class="nav">
+  {{!-- Prepare for nested nav items --}}
+  {{#let null as |parentNav|}}
+  {{#foreach navigation}}
+    {{#if (not (starts-with label "-- "))}}
+      {{!-- Render parent item --}}
+      <li class="nav-item has-dropdown">
+        <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>{{label}}</a>
+
+        {{!-- Look ahead to find child items --}}
+        {{#let @index as |i|}}
+          {{#if (hasChildren navigation i)}}
+            <ul class="dropdown">
+              {{#eachChild navigation i as |child|}}
+                <li>
+                  <a href="{{child.url}}" {{#if child.current}}aria-current="page"{{/if}}>
+                    {{trimPrefix child.label "-- "}}
+                  </a>
+                </li>
+              {{/eachChild}}
+            </ul>
+          {{/if}}
+        {{/let}}
+      </li>
+    {{/if}}
   {{/foreach}}
 </ul>
