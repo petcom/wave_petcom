@@ -1,1 +1,5 @@
+# Ignore the original repository files
 _references/Wave-main/ 
+
+# Ignore .gitignore
+.gitignore

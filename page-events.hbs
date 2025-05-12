@@ -22,6 +22,10 @@
 </main>
 
 <style>
+.gh-page-title {
+  color: var(--accent-color);
+}
+
   .events-wrapper {
     padding-left: 4rem;
     padding-right: 4rem;
@@ -93,7 +97,7 @@
   .event-content time {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: inherit;
     opacity: 0.85;
     margin-bottom: 1rem;
   }
@@ -125,7 +129,7 @@
   const DEFAULT_TAG = "sonar";
 
   function getDateRange(daysOut) {
-    if (!daysOut) return null;
+    if (!daysOut || typeof daysOut !== "number") return null;
     const now = new Date();
     const future = new Date();
     future.setDate(now.getDate() + daysOut);
@@ -135,16 +139,18 @@
     };
   }
 
-  async function loadEvents(tag = "", daysOut = 14) {
+  async function loadEvents(tag = "", daysOut) {
     try {
       const token = "c037d7ad1aeb0b3f7f2f72ea5e7ba335";
       const url = new URL("http://localhost:3000/api/events");
       url.searchParams.append("token", token);
 
-      const range = getDateRange(daysOut);
-      if (range) {
-        url.searchParams.append("startDate", range.start);
-        url.searchParams.append("endDate", range.end);
+      if (daysOut !== undefined) {
+        const range = getDateRange(daysOut);
+        if (range) {
+          url.searchParams.append("startDate", range.start);
+          url.searchParams.append("endDate", range.end);
+        }
       }
 
       if (tag) url.searchParams.append("tag", tag.toLowerCase());
@@ -154,8 +160,6 @@
 
       const container = document.getElementById("events-container");
       container.innerHTML = ""; // Clear previous
-
-      console.log(`[DEBUG] Loaded ${events.length} events for tag "${tag}" and range ${range ? `${range.start} to ${range.end}` : "ALL"}`);
 
       events.forEach((event, index) => {
         const card = document.createElement("article");
@@ -207,15 +211,17 @@
 
     document.getElementById("sixMonthBtn").addEventListener("click", () => {
       const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 180); // Load 6 months
+      loadEvents(tag, 180); // 6 months
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
       const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, null); // Load all dates (no filter)
+      loadEvents(tag, 1440); // 4 years
     });
+   
   });
 </script>
+
 
 
 

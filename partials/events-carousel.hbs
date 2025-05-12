@@ -1,0 +1,146 @@
+<section class="events-carousel">
+    
+    <h2 class="gh-section-title" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-color);">
+    Upcoming Events
+    </h2>
+    <hr class="section-divider">
+    <a href="{{@site.url}}/events" class="carousel-link-wrapper">
+        <div class="carousel-track-container">
+            <div class="carousel-track" id="eventCarouselTrack"></div>
+        </div>
+    </a>
+
+  <!-- for testing of handlebars replacement and theme variables
+  <p>{{@custom.events_api_url}} /events/upcoming?token={{@custom.events_token}} {{@custom.events_tags}} </p>
+<div class="test-div"></div>
+-->
+
+
+</section>
+
+<style>
+
+.events-carousel {
+    overflow: hidden;
+    width: 100%;
+    max-width: 960px;
+    margin: 2rem auto;
+}
+
+.carousel-link-wrapper {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.carousel-link-wrapper:hover {
+    cursor: pointer;
+}
+
+.carousel-track-container {
+    overflow: hidden;
+    position: relative;
+}
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+}
+.event-card {
+    flex: 0 0 33.3333%;
+    box-sizing: border-box;
+    padding: 1rem;
+    text-align: center;
+}
+.event-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+.event-card h3 {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+.event-card p {
+    margin: 0.25rem 0;
+    color: #888;
+}
+.section-divider {
+    width: 75%;
+    margin: 0 auto 2rem auto;
+    border: none;
+    border-top: 2px solid var(--text-color);
+}
+
+
+  
+</style>
+
+<script>
+  const carouselTrack = document.getElementById('eventCarouselTrack');
+  let events = [];
+  let currentIndex = 0;
+  const visibleCount = 3;
+
+  function createEventCard(event) {
+    const div = document.createElement('div');
+    div.className = 'event-card';
+    div.innerHTML = `
+      <img src="${event.thumbnail || '/assets/default-thumb.jpg'}" alt="${event.title}">
+      <h3>${event.title}</h3>
+      <p>${new Date(event.date).toLocaleDateString()}</p>
+    `;
+    return div;
+  }
+
+  function updateCarousel() {
+    carouselTrack.innerHTML = '';
+    for (let i = 0; i < visibleCount; i++) {
+      const index = (currentIndex + i) % events.length;
+      carouselTrack.appendChild(createEventCard(events[index]));
+    }
+  }
+
+  function startCarouselLoop() {
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % events.length;
+      updateCarousel();
+    }, 4000);
+  }
+
+async function loadEvents() {
+  const token = "{{@custom.events_token}}";
+  const tagsCsv = "{{@custom.events_tags}}";
+  const apiUrl = "{{@custom.events_api_url}}";
+  const tagParams = tagsCsv
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean)
+    .map(t => `tag=${encodeURIComponent(t)}`)
+    .join('&');
+
+    
+const eventRequestURL = `${apiUrl}/upcoming-events?token=${token}&${tagParams}`;
+
+const testDiv = document.querySelector('.test-div');
+if (testDiv) {
+  testDiv.innerText = eventRequestURL;
+}
+
+try {
+    const res = await fetch(eventRequestURL);
+    events = await res.json();
+    if (events.length >= 3) {
+    updateCarousel();
+    startCarouselLoop();
+    } else {
+    carouselTrack.innerHTML = '<p style="padding:1rem;">No upcoming events</p>';
+    }
+} catch (err) {
+    console.error('Error loading events:', err);
+    carouselTrack.innerHTML = '<p style="padding:1rem;">Unable to load events</p>';
+}
+}
+
+  loadEvents();
+</script>
