@@ -99,7 +99,7 @@
     const div = document.createElement('div');
     div.className = 'event-card';
     div.innerHTML = `
-      <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
+      <img src="${event.thumbnail || '/assets/default-thumb.jpg'}" alt="${event.title}">
       <h3>${event.title}</h3>
       <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;

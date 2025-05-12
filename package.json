@@ -4,8 +4,7 @@
     "version": "1.0.0",
     "private": true,
     "engines": {
-        "ghost": ">=5.0.0",
-        "ghostapi": "v5"
+        "ghost": ">=5.0.0"
     },
     "license": "MIT",
     "author": {

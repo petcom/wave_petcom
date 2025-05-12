@@ -1,21 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{@site.locale}}">
- 
-
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{^is "blog"}}
-        <title>{{meta_title}}</title>
-    {{else}}
-        <title>{{block "title"}}</title>
-        {{{block "description"}}}
-    {{/is}}
-    <link rel="stylesheet" href="{{asset "built/screen.css"}}">
-
-    {{ghost_head}}
- <style>
+  <style>
         :root {
             --background-color: {{@custom.background_color}};
             --text-color: {{@custom.text_color}};
@@ -67,6 +52,19 @@
 
     </style>
 
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{^is "blog"}}
+        <title>{{meta_title}}</title>
+    {{else}}
+        <title>{{block "title"}}</title>
+        {{{block "description"}}}
+    {{/is}}
+    <link rel="stylesheet" href="{{asset "built/screen.css"}}">
+
+    {{ghost_head}}
 </head>
 
 
@@ -91,10 +89,7 @@
             </div>
 
             <nav class="gh-head-menu">
-
-                    <!-- custom navigation {{navigation}}-->
-                {{>"navigation"}}
-                
+                {{navigation}}
                 {{#unless @site.members_enabled}}
                     {{#match @custom.navigation_layout "Stacked"}}
                         <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
@@ -183,39 +178,6 @@
 {{{block "scripts"}}}
 
 {{ghost_foot}}
-
-
-<!-- for dropdown functionality -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const dropdownParents = document.querySelectorAll('.has-dropdown > a');
-
-    dropdownParents.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const parentLi = link.parentElement;
-        const dropdown = parentLi.querySelector('.dropdown');
-
-        if (dropdown) {
-          e.preventDefault();
-
-          // Toggle open class
-          const isOpen = parentLi.classList.contains('open');
-          document.querySelectorAll('.has-dropdown.open').forEach(el => el.classList.remove('open'));
-          if (!isOpen) {
-            parentLi.classList.add('open');
-          }
-        }
-      });
-    });
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.has-dropdown')) {
-        document.querySelectorAll('.has-dropdown.open').forEach(el => el.classList.remove('open'));
-      }
-    });
-  });
-</script>
 
 </body>
 </html>
