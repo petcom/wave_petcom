@@ -1,0 +1,76 @@
+<section class="testimonials-section">
+  <h2 class="section-title">What People Are Saying</h2>
+  <div class="testimonials-grid">
+    {{#get "posts" filter="tag:testimonial" limit="5" order="published_at desc"}}
+      {{#foreach posts}}
+        <article class="testimonial-card card-{{@index}}">
+          <h3 class="testimonial-title">{{title}}</h3>
+          <p class="testimonial-excerpt">{{excerpt words="30"}}</p>
+          <a href="{{url}}" class="read-more">Read Full Testimonial →</a>
+        </article>
+      {{/foreach}}
+    {{else}}
+      <p>No testimonials available right now. Check back soon!</p>
+    {{/get}}
+  </div>
+</section>
+
+<style>
+  .testimonials-section {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .testimonial-card {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--text-color);
+    transition: transform 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: scale(1.03);
+  }
+
+  .testimonial-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-excerpt {
+    font-size: 0.95rem;
+    color: var(--text-color);
+  }
+
+  .read-more {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--link-color);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  /* Optional: apply some visual variation using nth-child */
+  .card-0 { transform: rotate(-1deg); }
+  .card-1 { transform: scale(1.02); }
+  .card-2 { background: rgba(255,255,255,0.03); }
+  .card-3 { transform: translateY(-2px); }
+  .card-4 { background: rgba(255,255,255,0.06); }
+
+</style>
