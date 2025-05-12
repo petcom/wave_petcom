@@ -122,6 +122,25 @@
     </header>
 
     {{> "authors-strip"}}
+<<<<<<< HEAD
+=======
+
+    {{#is "home"}}
+    {{#if @site.cover_image}}
+        <div class="site-cover u-overlay">
+            <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
+            <div class="cover-content">
+                {{#if @site.logo}}
+                    <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+                {{/if}}
+                {{#if @site.description}}
+                    <div class="cover-description">{{@site.description}}</div>
+                {{/if}}
+            </div>
+        </div>
+    {{/if}}
+    {{/is}}
+>>>>>>> 49100ab9 (added authors strip to the top)
 
     <div class="site-content">
         {{{body}}}
