@@ -1,0 +1,28 @@
+<ul class="nav">
+  {{#foreach navigation}}
+    {{! Check if this is a parent item (no "- " prefix) }}
+    {{#unless (starts-with label "- ")}}
+      {{! Define the current label as the parentLabel }}
+      {{#let label as |parentLabel|}}
+        <li class="{{#if current}}nav-current{{/if}} {{#if (any navigation (lambda (item) (starts-with item.label (concat "- " parentLabel))))}}has-dropdown{{/if}}">
+          <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>{{label}}</a>
+
+          {{! Find children whose labels start with "- parentLabel" }}
+          {{#let (filter navigation items=(item) => (starts-with item.label (concat "- " parentLabel))) as |children|}}
+            {{#if children.length}}
+              <ul class="dropdown">
+                {{#each children}}
+                  <li class="{{#if current}}nav-current{{/if}}">
+                    <a href="{{url}}" {{#if current}}aria-current="page"{{/if}}>
+                      {{label replace=(concat "- " parentLabel " ") ""}}
+                    </a>
+                  </li>
+                {{/each}}
+              </ul>
+            {{/if}}
+          {{/let}}
+        </li>
+      {{/let}}
+    {{/unless}}
+  {{/foreach}}
+</ul>

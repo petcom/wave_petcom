@@ -3,6 +3,7 @@
 @import "general/vars.css";
 @import "site/layout.css";
 @import "site/header.css";
+@import "site/navigation.css";
 @import "site/cover.css";
 @import "site/term.css";
 @import "site/subscribe.css";

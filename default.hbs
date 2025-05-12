@@ -65,6 +65,8 @@
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
 
     {{ghost_head}}
+
+
 </head>
 
 
@@ -89,7 +91,10 @@
             </div>
 
             <nav class="gh-head-menu">
-                {{navigation}}
+
+                    <!-- custom navigation {{navigation}}-->
+                {{>"navigation"}}
+                
                 {{#unless @site.members_enabled}}
                     {{#match @custom.navigation_layout "Stacked"}}
                         <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
