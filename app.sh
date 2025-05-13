@@ -26,6 +26,7 @@ function show_help {
     echo "  stop     - Stop the local Ghost server"
     echo "  restart  - Restart the local Ghost server"
     echo "  refresh  - Update theme and restart Ghost in development mode"
+    echo "  status   - Check Ghost server status and configuration"
     echo "  view     - Open the local Ghost site in the browser"
     echo "  publish  - Zip the project into ../wave_petcom.zip"
     echo "  help     - Show this help message"
@@ -44,6 +45,9 @@ case "$1" in
         ;;
     refresh)
         ./scripts/refresh.sh
+        ;;
+    status)
+        ./scripts/status.sh
         ;;
     view)
         ./scripts/launch.sh
