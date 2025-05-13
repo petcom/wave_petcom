@@ -15,7 +15,38 @@ This is a Petcom-maintained clone of the [Wave](https://github.com/TryGhost/Wave
 1. [Download this theme](https://github.com/petcom/wave_petcom/archive/main.zip)
 2. Log into Ghost, and go to the `Design` settings area to upload the zip file
 
-# Development
+# Local Development
+
+## Using app.sh
+
+The theme includes a CLI tool (`app.sh`) to help with local development. Before using it, create a `.env` file in the project root with your Ghost installation path:
+
+```bash
+GHOST_LOCAL_PATH=/path/to/your/ghost/installation
+```
+
+Available commands:
+
+```bash
+./app.sh [command]
+
+Commands:
+  start    - Start the local Ghost server
+  stop     - Stop the local Ghost server
+  restart  - Restart the local Ghost server
+  refresh  - Update theme and restart Ghost in development mode
+  view     - Open the local Ghost site in the browser
+  publish  - Zip the project into ../wave_petcom.zip
+  help     - Show this help message
+```
+
+The `refresh` command is particularly useful during development as it:
+- Updates the theme in Ghost
+- Restarts Ghost in development mode
+- Enables live reloading
+- Shows detailed error messages
+
+## Traditional Development
 
 Edition styles are compiled using Gulp/PostCSS to polyfill future CSS spec. You'll need [Node](https://nodejs.org/), [Yarn](https://yarnpkg.com/) and [Gulp](https://gulpjs.com) installed globally. After that, from the theme's root directory:
 
