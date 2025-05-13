@@ -1,0 +1,16 @@
+<section class="featured-authors-strip">
+  <div class="authors-scroll">
+    {{#get "authors" limit="6" include="count.posts" order="name asc"}}
+      {{#foreach authors}}
+        <a class="author-card" href="{{url}}" title="{{name}}">
+          {{#if profile_image}}
+            <img src="{{profile_image}}" alt="{{name}}" />
+          {{else}}
+            <div class="author-placeholder">👤</div>
+          {{/if}}
+          <div class="author-name">{{name}}</div>
+        </a>
+      {{/foreach}}
+    {{/get}}
+  </div>
+</section>

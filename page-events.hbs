@@ -126,10 +126,16 @@
 </style>
 
 <script>
-  const DEFAULT_TAG = "sonar";
+  const token = "{{@custom.events_token}}";
+  const tagsCsv = "{{@custom.events_tags}}";
+  const apiUrl = "{{@custom.events_api_url}}";
+
+  const DEFAULT_TAGS = tagsCsv
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
 
   function getDateRange(daysOut) {
-    if (!daysOut || typeof daysOut !== "number") return null;
     const now = new Date();
     const future = new Date();
     future.setDate(now.getDate() + daysOut);
@@ -139,21 +145,22 @@
     };
   }
 
-  async function loadEvents(tag = "", daysOut) {
+  async function loadEvents(tagsArray = [], daysOut = 14) {
     try {
-      const token = "c037d7ad1aeb0b3f7f2f72ea5e7ba335";
-      const url = new URL("http://localhost:3000/api/events");
+      const url = new URL(`${apiUrl}/events`);
       url.searchParams.append("token", token);
 
-      if (daysOut !== undefined) {
+      // Add date range
+      if (daysOut) {
         const range = getDateRange(daysOut);
-        if (range) {
-          url.searchParams.append("startDate", range.start);
-          url.searchParams.append("endDate", range.end);
-        }
+        url.searchParams.append("startDate", range.start);
+        url.searchParams.append("endDate", range.end);
       }
 
-      if (tag) url.searchParams.append("tag", tag.toLowerCase());
+      // Add tag params
+      tagsArray.forEach(tag => {
+        url.searchParams.append("tag", tag.toLowerCase());
+      });
 
       const res = await fetch(url);
       const events = await res.json();
@@ -170,7 +177,7 @@
         const thumbnailFilename = event.thumbnail
           ? event.thumbnail.split("/").pop()
           : "default-thumb.jpg";
-        const thumbnailUrl = `http://localhost:3000/api/images/${thumbnailFilename}`;
+        const thumbnailUrl = `${apiUrl}/images/${thumbnailFilename}`;
 
         const thumbDiv = document.createElement("div");
         thumbDiv.className = "event-thumbnail";
@@ -201,26 +208,30 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("tagInput").value = DEFAULT_TAG;
-    loadEvents(DEFAULT_TAG, 14); // default: 2-week view
+    // Default values
+    const tagInput = document.getElementById("tagInput");
+    tagInput.value = DEFAULT_TAGS.join(", ");
+
+    // Load default: 2-week view with custom tags
+    loadEvents(DEFAULT_TAGS, 14);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 14);
+      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
+      loadEvents(tags, 14);
     });
 
     document.getElementById("sixMonthBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 180); // 6 months
+      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
+      loadEvents(tags, 180);
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 1440); // 4 years
+      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
+      loadEvents(tags, 1440);
     });
-   
   });
 </script>
+
 
 
 
