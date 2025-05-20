@@ -82,18 +82,24 @@
   let currentIndex = 0;
   const visibleCount = 3;
 
+  const API_URL = "{{@custom.events_api_url}}";
+  const TOKEN = "{{@custom.events_token}}";
+  const DEFAULT_TAGS = "{{@custom.events_tags}}";
+
   function createEventCard(event) {
+    const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
     const div = document.createElement('div');
     div.className = 'event-card';
     div.innerHTML = `
-      <img src="${event.thumbnail || '/assets/default-thumb.jpg'}" alt="${event.title}">
+      <img src="${thumbUrl}" alt="${event.title}">
       <h3>${event.title}</h3>
-      <p>${new Date(event.date).toLocaleDateString()}</p>
+      <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;
     return div;
   }
 
   function updateCarousel() {
+    console.log("[Carousel] Updating display");
     carouselTrack.innerHTML = '';
     for (let i = 0; i < visibleCount; i++) {
       const index = (currentIndex + i) % events.length;
@@ -102,45 +108,58 @@
   }
 
   function startCarouselLoop() {
+    console.log("[Carousel] Starting auto-scroll");
     setInterval(() => {
       currentIndex = (currentIndex + 1) % events.length;
       updateCarousel();
     }, 4000);
   }
 
-async function loadEvents() {
-  const token = "{{@custom.events_token}}";
-  const tagsCsv = "{{@custom.events_tags}}";
-  const apiUrl = "{{@custom.events_api_url}}";
-  const tagParams = tagsCsv
-    .split(',')
-    .map(t => t.trim())
-    .filter(Boolean)
-    .map(t => `tag=${encodeURIComponent(t)}`)
-    .join('&');
+  async function loadEvents() {
+    try {
+      console.log("[Carousel] Loading upcoming events...");
+      const url = new URL(`${API_URL}/upcoming-events`);
+      url.searchParams.append("token", TOKEN);
 
-    
-const eventRequestURL = `${apiUrl}/upcoming-events?token=${token}&${tagParams}`;
+      const logic = "or"; // You could make this configurable later
+      const tags = DEFAULT_TAGS.split(',').map(t => t.trim()).filter(Boolean);
 
-const testDiv = document.querySelector('.test-div');
-if (testDiv) {
-  testDiv.innerText = eventRequestURL;
-}
+      console.log(`[Carousel] Logic: ${logic}`);
+      console.log(`[Carousel] Tags:`, tags);
 
-try {
-    const res = await fetch(eventRequestURL);
-    events = await res.json();
-    if (events.length >= 3) {
-    updateCarousel();
-    startCarouselLoop();
-    } else {
-    carouselTrack.innerHTML = '<p style="padding:1rem;">No upcoming events</p>';
+      if (logic === "or") {
+        tags.forEach(tag => {
+          console.log(`[Carousel] Adding tag param: ${tag}`);
+          url.searchParams.append("tag", tag);
+        });
+      } else {
+        const tagJoined = tags.join(',');
+        console.log(`[Carousel] Adding AND logic tags param: ${tagJoined}`);
+        url.searchParams.append("tags", tagJoined);
+        url.searchParams.append("tag_logic", "and");
+      }
+
+      console.log(`[Carousel] Final fetch URL: ${url.toString()}`);
+
+      const res = await fetch(url);
+      console.log(`[Carousel] Fetch status: ${res.status}`);
+      events = await res.json();
+      console.log(`[Carousel] Events loaded: ${events.length}`);
+
+      if (events.length >= visibleCount) {
+        updateCarousel();
+        startCarouselLoop();
+      } else {
+        console.warn("[Carousel] Not enough events to show carousel.");
+        carouselTrack.innerHTML = '<p style="padding:1rem;">No upcoming events</p>';
+      }
+
+    } catch (err) {
+      console.error("[Carousel] Error loading events:", err);
+      carouselTrack.innerHTML = '<p style="padding:1rem;">Unable to load events</p>';
     }
-} catch (err) {
-    console.error('Error loading events:', err);
-    carouselTrack.innerHTML = '<p style="padding:1rem;">Unable to load events</p>';
-}
-}
+  }
 
   loadEvents();
 </script>
+

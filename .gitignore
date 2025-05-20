@@ -3,3 +3,5 @@ _references/Wave-main/
 
 # Ignore .gitignore
 .gitignore
+node_modules/
+built/

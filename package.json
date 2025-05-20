@@ -112,13 +112,11 @@
                 "label": "Events API Token",
                 "default": "YOUR_DEFAULT_TOKEN_HERE"
             },
-              "events_tags": {
+            "events_tags": {
                 "type": "text",
                 "label": "Event Tags Filter (comma separated)",
                 "default": ""
             }
-
-
         }
     },
     "scripts": {

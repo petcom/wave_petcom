@@ -126,7 +126,9 @@
 </style>
 
 <script>
-  const DEFAULT_TAG = "sonar";
+  const DEFAULT_TAGS = "{{@custom.events_tags}}";
+  const API_URL = "{{@custom.events_api_url}}";
+  const TOKEN = "{{@custom.events_token}}";
 
   function getDateRange(daysOut) {
     if (!daysOut || typeof daysOut !== "number") return null;
@@ -139,50 +141,79 @@
     };
   }
 
-  async function loadEvents(tag = "", daysOut) {
+  async function loadEvents(tagCsv = "", daysOut) {
     try {
-      const token = "c037d7ad1aeb0b3f7f2f72ea5e7ba335";
-      const url = new URL("http://localhost:3000/api/events");
-      url.searchParams.append("token", token);
+      console.log("[Events] Starting event load...");
+      const url = new URL(`${API_URL}/events`);
+      url.searchParams.append("token", TOKEN);
+
+      const logic = document.getElementById("tagLogicSelect")?.value || "or";
+      const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
+
+      console.log(`[Events] Logic: ${logic}`);
+      console.log(`[Events] Tags:`, tags);
+      console.log(`[Events] Days Out: ${daysOut}`);
+
+      if (logic === "or") {
+        tags.forEach(tag => {
+          console.log(`[Events] Adding tag param: ${tag}`);
+          url.searchParams.append("tag", tag);
+        });
+      } else {
+        const tagJoined = tags.join(',');
+        console.log(`[Events] Adding AND logic tags param: ${tagJoined}`);
+        url.searchParams.append("tags", tagJoined);
+        url.searchParams.append("tag_logic", "and");
+      }
 
       if (daysOut !== undefined) {
         const range = getDateRange(daysOut);
         if (range) {
           url.searchParams.append("startDate", range.start);
           url.searchParams.append("endDate", range.end);
+          console.log(`[Events] Date range: ${range.start} to ${range.end}`);
         }
       }
 
-      if (tag) url.searchParams.append("tag", tag.toLowerCase());
+      console.log(`[Events] Final fetch URL: ${url.toString()}`);
+      const container = document.getElementById("events-container");
+      container.innerHTML = "<p>Loading events...</p>";
 
       const res = await fetch(url);
+      console.log(`[Events] Fetch status: ${res.status}`);
       const events = await res.json();
+      console.log(`[Events] Events loaded: ${events.length}`);
 
-      const container = document.getElementById("events-container");
-      container.innerHTML = ""; // Clear previous
+      container.innerHTML = "";
+
+      if (events.length === 0) {
+        console.log("[Events] No events found for current filters.");
+        container.innerHTML = "<p>No events found for the selected filters.</p>";
+        return;
+      }
 
       events.forEach((event, index) => {
+        console.log(`[Events] Rendering event: ${event.title} (${event.id})`);
         const card = document.createElement("article");
         const isEven = index % 2 === 0;
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
         const alignmentClass = isEven ? "event-content-left" : "event-content-right";
 
-        const thumbnailFilename = event.thumbnail
-          ? event.thumbnail.split("/").pop()
-          : "default-thumb.jpg";
-        const thumbnailUrl = `http://localhost:3000/api/images/${thumbnailFilename}`;
+        const thumbUrl = event.thumb_url || "/assets/default-thumb.jpg";
+        console.log(`[Events] Using thumbnail: ${thumbUrl}`);
 
         const thumbDiv = document.createElement("div");
         thumbDiv.className = "event-thumbnail";
-        thumbDiv.innerHTML = `<img src="${thumbnailUrl}" alt="Event Thumbnail">`;
+        thumbDiv.innerHTML = `<img src="${thumbUrl}" alt="Event Thumbnail">`;
 
         const contentDiv = document.createElement("div");
         contentDiv.className = `event-content ${alignmentClass}`;
         contentDiv.innerHTML = `
           <h2>${event.title}</h2>
-          <time datetime="${event.date}">${new Date(event.date).toLocaleDateString()}</time>
+          <time datetime="${event.event_date}">${new Date(event.event_date).toLocaleDateString()}</time>
           <p>${event.description}</p>
           ${event.tags?.length ? `<p><strong>Tags:</strong> ${event.tags.join(", ")}</p>` : ""}
+          ${event.group_id ? `<p><strong>Group:</strong> ${event.group_id}</p>` : ""}
         `;
 
         if (isEven) {
@@ -195,32 +226,40 @@
 
         container.appendChild(card);
       });
+
     } catch (err) {
-      console.error("Error loading events:", err);
+      console.error("[Events] Error loading events:", err);
+      const container = document.getElementById("events-container");
+      container.innerHTML = `<p>Error loading events. Please try again later.</p>`;
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("tagInput").value = DEFAULT_TAG;
-    loadEvents(DEFAULT_TAG, 14); // default: 2-week view
+    console.log("[Events] DOM ready. Setting default tag input.");
+    document.getElementById("tagInput").value = DEFAULT_TAGS;
+
+    loadEvents(DEFAULT_TAGS, 14);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
       const tag = document.getElementById("tagInput").value.trim();
+      console.log("[Events] Tag filter button clicked. Tag input:", tag);
       loadEvents(tag, 14);
     });
 
     document.getElementById("sixMonthBtn").addEventListener("click", () => {
       const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 180); // 6 months
+      console.log("[Events] 6-Month button clicked. Tag input:", tag);
+      loadEvents(tag, 180);
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
       const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 1440); // 4 years
+      console.log("[Events] All Dates button clicked. Tag input:", tag);
+      loadEvents(tag, 1440);
     });
-   
   });
 </script>
+
 
 
 
