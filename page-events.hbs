@@ -124,7 +124,12 @@
 
 <script>
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
+<<<<<<< HEAD
   const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
+=======
+  const API_URL = "{{@custom.events_api_url}}";
+  const TOKEN = "{{@custom.events_token}}";
+>>>>>>> ec15e82e (fixed thumb_image_url)
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -138,6 +143,7 @@
 
   async function loadEvents(tagCsv = "", daysOut) {
     try {
+<<<<<<< HEAD
       console.log("[Events] Loading events...");
       const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
       const body = {
@@ -165,16 +171,73 @@
       container.innerHTML = "";
 
       if (!events.length) {
+=======
+      console.log("[Events] Starting event load...");
+      const url = new URL(`${API_URL}/events`);
+      url.searchParams.append("token", TOKEN);
+
+      const logic = document.getElementById("tagLogicSelect")?.value || "or";
+      const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
+
+      console.log(`[Events] Logic: ${logic}`);
+      console.log(`[Events] Tags:`, tags);
+      console.log(`[Events] Days Out: ${daysOut}`);
+
+      if (logic === "or") {
+        tags.forEach(tag => {
+          console.log(`[Events] Adding tag param: ${tag}`);
+          url.searchParams.append("tag", tag);
+        });
+      } else {
+        const tagJoined = tags.join(',');
+        console.log(`[Events] Adding AND logic tags param: ${tagJoined}`);
+        url.searchParams.append("tags", tagJoined);
+        url.searchParams.append("tag_logic", "and");
+      }
+
+      if (daysOut !== undefined) {
+        const range = getDateRange(daysOut);
+        if (range) {
+          url.searchParams.append("startDate", range.start);
+          url.searchParams.append("endDate", range.end);
+          console.log(`[Events] Date range: ${range.start} to ${range.end}`);
+        }
+      }
+
+      console.log(`[Events] Final fetch URL: ${url.toString()}`);
+      const container = document.getElementById("events-container");
+      container.innerHTML = "<p>Loading events...</p>";
+
+      const res = await fetch(url);
+      console.log(`[Events] Fetch status: ${res.status}`);
+      const events = await res.json();
+      console.log(`[Events] Events loaded: ${events.length}`);
+
+      container.innerHTML = "";
+
+      if (events.length === 0) {
+        console.log("[Events] No events found for current filters.");
+>>>>>>> ec15e82e (fixed thumb_image_url)
         container.innerHTML = "<p>No events found for the selected filters.</p>";
         return;
       }
 
       events.forEach((event, index) => {
+<<<<<<< HEAD
+=======
+        console.log(`[Events] Rendering event: ${event.title} (${event.id})`);
+        const card = document.createElement("article");
+>>>>>>> ec15e82e (fixed thumb_image_url)
         const isEven = index % 2 === 0;
         const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
 
+<<<<<<< HEAD
         const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
+=======
+        const thumbUrl = event.thumb_url || "/assets/default-thumb.jpg";
+        console.log(`[Events] Using thumbnail: ${thumbUrl}`);
+>>>>>>> ec15e82e (fixed thumb_image_url)
 
         const thumbDiv = document.createElement("div");
         thumbDiv.className = "event-thumbnail";
@@ -203,7 +266,8 @@
 
     } catch (err) {
       console.error("[Events] Error loading events:", err);
-      document.getElementById("events-container").innerHTML = `<p>Error loading events. Please try again later.</p>`;
+      const container = document.getElementById("events-container");
+      container.innerHTML = `<p>Error loading events. Please try again later.</p>`;
     }
   }
 

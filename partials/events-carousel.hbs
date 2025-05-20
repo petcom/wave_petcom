@@ -94,12 +94,16 @@
   const API_URL = "{{@custom.events_api_url}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 
+  const API_URL = "{{@custom.events_api_url}}";
+  const TOKEN = "{{@custom.events_token}}";
+  const DEFAULT_TAGS = "{{@custom.events_tags}}";
+
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
     const div = document.createElement('div');
     div.className = 'event-card';
     div.innerHTML = `
-      <img src="${event.thumbnail || '/assets/default-thumb.jpg'}" alt="${event.title}">
+      <img src="${thumbUrl}" alt="${event.title}">
       <h3>${event.title}</h3>
       <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;
@@ -107,6 +111,7 @@
   }
 
   function updateCarousel() {
+    console.log("[Carousel] Updating display");
     carouselTrack.innerHTML = '';
     for (let i = 0; i < visibleCount; i++) {
       const index = (currentIndex + i) % events.length;
@@ -115,6 +120,7 @@
   }
 
   function startCarouselLoop() {
+    console.log("[Carousel] Starting auto-scroll");
     setInterval(() => {
       currentIndex = (currentIndex + 1) % events.length;
       updateCarousel();
@@ -158,3 +164,4 @@ async function loadEvents() {
 
   loadEvents();
 </script>
+
