@@ -95,8 +95,9 @@
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 
   const API_URL = "{{@custom.events_api_url}}";
-  const TOKEN = "{{@custom.events_token}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
+  const AUTH_USER = "{{@custom.events_auth_user}}";
+  const AUTH_PASS = "{{@custom.events_auth_pw}}"; // should match hash in users.json
 
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
@@ -111,7 +112,6 @@
   }
 
   function updateCarousel() {
-    console.log("[Carousel] Updating display");
     carouselTrack.innerHTML = '';
     for (let i = 0; i < visibleCount; i++) {
       const index = (currentIndex + i) % events.length;
@@ -120,7 +120,6 @@
   }
 
   function startCarouselLoop() {
-    console.log("[Carousel] Starting auto-scroll");
     setInterval(() => {
       currentIndex = (currentIndex + 1) % events.length;
       updateCarousel();
@@ -164,4 +163,5 @@ async function loadEvents() {
 
   loadEvents();
 </script>
+
 
