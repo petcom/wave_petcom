@@ -116,6 +116,16 @@
                 "type": "text",
                 "label": "Event Tags Filter (comma separated)",
                 "default": ""
+            },
+            "events_auth_user": {
+                "type": "text",
+                "label": "Events API User",
+                "default": "admin"
+            },
+            "events_auth_pw": {
+                "type": "text",
+                "label": "Events API Password Hash",
+                "default": "ThisIsAPassword!"
             }
         }
     },
