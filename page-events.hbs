@@ -125,6 +125,7 @@
 <script>
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 <<<<<<< HEAD
+<<<<<<< HEAD
   const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
 =======
   const API_URL = "{{@custom.events_api_url}}";
@@ -135,6 +136,9 @@
   const AUTH_USER = "{{@custom.events_auth_user}}";
   const AUTH_PASS = "{{@custom.events_auth_pw}}";
 >>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
+=======
+  const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
+>>>>>>> 47640d3c (fixed events to point to proxy)
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -144,34 +148,6 @@
       start: now.toISOString().split('T')[0],
       end: future.toISOString().split('T')[0]
     };
-  }
-
-  function isTokenExpired(token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 < Date.now();
-    } catch {
-      return true;
-    }
-  }
-
-  async function fetchToken() {
-    const storedToken = sessionStorage.getItem('authToken');
-    if (storedToken && !isTokenExpired(storedToken)) {
-      return storedToken;
-    }
-
-    const res = await fetch(`${API_URL}/jwtlogin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: AUTH_USER, password: AUTH_PASS })
-    });
-
-    if (!res.ok) throw new Error('Authentication failed');
-
-    const data = await res.json();
-    sessionStorage.setItem('authToken', data.token);
-    return data.token;
   }
 
   async function loadEvents(tagCsv = "", daysOut) {
@@ -213,37 +189,34 @@
       const logic = document.getElementById("tagLogicSelect")?.value || "or";
 =======
       console.log("[Events] Loading events...");
+<<<<<<< HEAD
       const token = await fetchToken();
       const logic = "or"; // could be made dynamic
 >>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
+=======
+>>>>>>> 47640d3c (fixed events to point to proxy)
       const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
-      const dateRange = daysOut ? getDateRange(daysOut) : null;
-
       const body = {
         tags,
-        tag_logic: logic
+        tag_logic: "or"
       };
 
-      if (dateRange) {
-        body.startDate = dateRange.start;
-        body.endDate = dateRange.end;
+      if (daysOut) {
+        const { start, end } = getDateRange(daysOut);
+        body.startDate = start;
+        body.endDate = end;
       }
 
-      const options = {
+      const res = await fetch(`${API_URL}/events/query`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
-      };
+      });
 
       const container = document.getElementById("events-container");
       container.innerHTML = "<p>Loading events...</p>";
 
-      const res = await fetch(`${API_URL}/events`, options);
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-
       const events = await res.json();
       container.innerHTML = "";
 
@@ -261,12 +234,15 @@
       events.forEach((event, index) => {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         console.log(`[Events] Rendering event: ${event.title} (${event.id})`);
 =======
 >>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
         const card = document.createElement("article");
 >>>>>>> ec15e82e (fixed thumb_image_url)
+=======
+>>>>>>> 47640d3c (fixed events to point to proxy)
         const isEven = index % 2 === 0;
         const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
@@ -315,13 +291,17 @@
 
   document.addEventListener("DOMContentLoaded", () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     console.log("[Events] DOM ready.");
 >>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
+=======
+>>>>>>> 47640d3c (fixed events to point to proxy)
     document.getElementById("tagInput").value = DEFAULT_TAGS;
     loadEvents(DEFAULT_TAGS, 14);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
+<<<<<<< HEAD
 <<<<<<< HEAD
       loadEvents(document.getElementById("tagInput").value.trim(), 14);
     });
@@ -338,19 +318,21 @@
 =======
       const tag = document.getElementById("tagInput").value.trim();
       loadEvents(tag, 14);
+=======
+      loadEvents(document.getElementById("tagInput").value.trim(), 14);
+>>>>>>> 47640d3c (fixed events to point to proxy)
     });
 
     document.getElementById("sixMonthBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 180);
+      loadEvents(document.getElementById("tagInput").value.trim(), 180);
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 1440);
+      loadEvents(document.getElementById("tagInput").value.trim(), 1440);
     });
   });
 </script>
+<<<<<<< HEAD
 
 
 
@@ -359,3 +341,5 @@
 
 
 >>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
+=======
+>>>>>>> 47640d3c (fixed events to point to proxy)

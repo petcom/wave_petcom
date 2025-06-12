@@ -16,6 +16,10 @@
 /* -- custom css below */
 @import "custom/authors-strip.css";
 <<<<<<< HEAD
+<<<<<<< HEAD
 @import "custom/card.css";
 =======
 >>>>>>> 49100ab9 (added authors strip to the top)
+=======
+@import "custom/card.css";
+>>>>>>> 47640d3c (fixed events to point to proxy)

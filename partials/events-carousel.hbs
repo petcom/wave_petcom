@@ -96,15 +96,13 @@
 
   const API_URL = "{{@custom.events_api_url}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
-  const AUTH_USER = "{{@custom.events_auth_user}}";
-  const AUTH_PASS = "{{@custom.events_auth_pw}}"; // should match hash in users.json
 
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
     const div = document.createElement('div');
     div.className = 'event-card';
     div.innerHTML = `
-      <img src="${thumbUrl}" alt="${event.title}">
+      <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
       <h3>${event.title}</h3>
       <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;
@@ -163,5 +161,3 @@ async function loadEvents() {
 
   loadEvents();
 </script>
-
-
