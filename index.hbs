@@ -134,9 +134,11 @@
 <main class="site-main gh-inner">
 
     <div class="post-feed gh-feed">
-        {{#foreach posts}}
-            {{> "loop"}}
-        {{/foreach}}
+      {{#get "posts" filter="tag:news" limit="5" order="published_at desc"}}
+          {{#foreach posts}}
+              {{> "loop"}}
+          {{/foreach}}
+      {{/get}}
     </div>
 
 </main>

@@ -3,28 +3,24 @@
 <main class="gh-main">
   <section class="gh-container events-wrapper">
 
-      <div class="tag-filter" style="margin-bottom: 1.5rem;">
-        <label for="tagInput"><strong>Filter by tag:</strong></label>
-        <input type="text" id="tagInput" placeholder="e.g., workshop" />
-        <button id="tagFilterBtn">Apply Filter</button>
-        <button id="sixMonthBtn" class="range-toggle-btn" style="margin-left: 1rem;">Show 6-Month View</button>
-        <button id="allDatesBtn" class="range-toggle-btn" style="margin-left: 1rem;">All Dates</button>
-      </div>
+    <div class="tag-filter" style="margin-bottom: 1.5rem;">
+      <label for="tagInput"><strong>Filter by tag:</strong></label>
+      <input type="text" id="tagInput" placeholder="e.g., workshop" />
+      <button id="tagFilterBtn">Apply Filter</button>
+      <button id="sixMonthBtn" class="range-toggle-btn" style="margin-left: 1rem;">Show 6-Month View</button>
+      <button id="allDatesBtn" class="range-toggle-btn" style="margin-left: 1rem;">All Dates</button>
+    </div>
 
     <h1 class="gh-page-title">Upcoming Events</h1>
-
-  
-
     <div id="events-container" class="gh-feed"></div>
-
 
   </section>
 </main>
 
 <style>
-.gh-page-title {
-  color: var(--accent-color);
-}
+  .gh-page-title {
+    color: var(--accent-color);
+  }
 
   .events-wrapper {
     padding-left: 4rem;
@@ -109,30 +105,28 @@
   .event-content strong {
     font-weight: 600;
   }
-  .range-toggle-btn {
-  background-color: transparent;
-  border: 1px solid var(--accent-color);
-  color: var(--accent-color);
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-.range-toggle-btn.active {
-  background-color: var(--accent-color);
-  color: white;
-}
+  .range-toggle-btn {
+    background-color: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .range-toggle-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+  }
 </style>
 
 <script>
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
-  const API_URL = "{{@custom.events_api_url}}";
-  const AUTH_USER = "{{@custom.events_auth_user}}";
-  const AUTH_PASS = "{{@custom.events_auth_pw}}";
+  const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
 
   function getDateRange(daysOut) {
-    if (!daysOut || typeof daysOut !== "number") return null;
     const now = new Date();
     const future = new Date();
     future.setDate(now.getDate() + daysOut);
@@ -142,67 +136,31 @@
     };
   }
 
-  function isTokenExpired(token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 < Date.now();
-    } catch {
-      return true;
-    }
-  }
-
-  async function fetchToken() {
-    const storedToken = sessionStorage.getItem('authToken');
-    if (storedToken && !isTokenExpired(storedToken)) {
-      return storedToken;
-    }
-
-    const res = await fetch(`${API_URL}/jwtlogin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: AUTH_USER, password: AUTH_PASS })
-    });
-
-    if (!res.ok) throw new Error('Authentication failed');
-
-    const data = await res.json();
-    sessionStorage.setItem('authToken', data.token);
-    return data.token;
-  }
-
   async function loadEvents(tagCsv = "", daysOut) {
     try {
       console.log("[Events] Loading events...");
-      const token = await fetchToken();
-      const logic = "or"; // could be made dynamic
       const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
-      const dateRange = daysOut ? getDateRange(daysOut) : null;
-
       const body = {
         tags,
-        tag_logic: logic
+        tag_logic: "or"
       };
 
-      if (dateRange) {
-        body.startDate = dateRange.start;
-        body.endDate = dateRange.end;
+      if (daysOut) {
+        const { start, end } = getDateRange(daysOut);
+        body.startDate = start;
+        body.endDate = end;
       }
 
-      const options = {
+      const res = await fetch(`${API_URL}/events/query`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
-      };
+      });
 
       const container = document.getElementById("events-container");
       container.innerHTML = "<p>Loading events...</p>";
 
-      const res = await fetch(`${API_URL}/events`, options);
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-
       const events = await res.json();
       container.innerHTML = "";
 
@@ -212,10 +170,9 @@
       }
 
       events.forEach((event, index) => {
-        const card = document.createElement("article");
         const isEven = index % 2 === 0;
+        const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
-        const alignmentClass = isEven ? "event-content-left" : "event-content-right";
 
         const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
 
@@ -224,7 +181,7 @@
         thumbDiv.innerHTML = `<img src="${thumbUrl}" alt="Event Thumbnail">`;
 
         const contentDiv = document.createElement("div");
-        contentDiv.className = `event-content ${alignmentClass}`;
+        contentDiv.className = `event-content ${isEven ? "event-content-left" : "event-content-right"}`;
         contentDiv.innerHTML = `
           <h2>${event.title}</h2>
           <time datetime="${event.event_date}">${new Date(event.event_date).toLocaleDateString()}</time>
@@ -251,31 +208,19 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    console.log("[Events] DOM ready.");
     document.getElementById("tagInput").value = DEFAULT_TAGS;
-
     loadEvents(DEFAULT_TAGS, 14);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 14);
+      loadEvents(document.getElementById("tagInput").value.trim(), 14);
     });
 
     document.getElementById("sixMonthBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 180);
+      loadEvents(document.getElementById("tagInput").value.trim(), 180);
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 1440);
+      loadEvents(document.getElementById("tagInput").value.trim(), 1440);
     });
   });
 </script>
-
-
-
-
-
-
-

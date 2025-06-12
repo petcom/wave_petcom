@@ -1,98 +1,105 @@
 <section class="events-carousel">
-    
-    <h2 class="gh-section-title" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-color);">
+  <h2 class="gh-section-title" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-color);">
     Upcoming Events
-    </h2>
-    <hr class="section-divider">
-    <a href="{{@site.url}}/events" class="carousel-link-wrapper">
-        <div class="carousel-track-container">
-            <div class="carousel-track" id="eventCarouselTrack"></div>
-        </div>
-    </a>
+  </h2>
+  <hr class="section-divider">
+  <a href="{{@site.url}}/events" class="carousel-link-wrapper">
+    <div class="carousel-track-container">
+      <div class="carousel-track" id="eventCarouselTrack"></div>
+    </div>
+  </a>
 
-  <!-- for testing of handlebars replacement and theme variables
-  <p>{{@custom.events_api_url}} /events/upcoming?token={{@custom.events_token}} {{@custom.events_tags}} </p>
-<div class="test-div"></div>
--->
-
-
+  {{!-- for testing --}}
+   <p>{{@custom.events_api_url}}/tags?{{@custom.events_tags}}</p>
 </section>
 
 <style>
-
-.events-carousel {
+  .events-carousel {
     overflow: hidden;
     width: 100%;
     max-width: 960px;
     margin: 2rem auto;
-}
+  }
 
-.carousel-link-wrapper {
+  .carousel-link-wrapper {
     display: block;
     text-decoration: none;
     color: inherit;
-}
+  }
 
-.carousel-link-wrapper:hover {
+  .carousel-link-wrapper:hover {
     cursor: pointer;
-}
+  }
 
-.carousel-track-container {
+  .carousel-track-container {
     overflow: hidden;
     position: relative;
-}
-.carousel-track {
+  }
+
+  .carousel-track {
     display: flex;
     transition: transform 0.6s ease-in-out;
-}
-.event-card {
+  }
+
+  .event-card {
     flex: 0 0 33.3333%;
     box-sizing: border-box;
     padding: 1rem;
     text-align: center;
-}
-.event-card img {
+  }
+
+  .event-card img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-}
-.event-card h3 {
+  }
+
+  .event-card h3 {
     margin-top: 0.5rem;
     font-size: 1.5rem;
     color: var(--text-color);
-}
-.event-card p {
+  }
+
+  .event-card p {
     margin: 0.25rem 0;
     color: #888;
-}
-.section-divider {
+  }
+
+  .section-divider {
     width: 75%;
     margin: 0 auto 2rem auto;
     border: none;
     border-top: 2px solid var(--text-color);
-}
+  }
 
+  @media (max-width: 768px) {
+    .event-card {
+      flex: 0 0 100%;
+    }
+  }
 
-  
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .event-card {
+      flex: 0 0 50%;
+    }
+  }
 </style>
 
 <script>
   const carouselTrack = document.getElementById('eventCarouselTrack');
   let events = [];
   let currentIndex = 0;
-  const visibleCount = 3;
+  let visibleCount = 3;
 
   const API_URL = "{{@custom.events_api_url}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
-  const AUTH_USER = "{{@custom.events_auth_user}}";
-  const AUTH_PASS = "{{@custom.events_auth_pw}}"; // should match hash in users.json
 
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
     const div = document.createElement('div');
     div.className = 'event-card';
     div.innerHTML = `
-      <img src="${thumbUrl}" alt="${event.title}">
+      <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
       <h3>${event.title}</h3>
       <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;
@@ -114,88 +121,40 @@
     }, 4000);
   }
 
-function isTokenExpired(token) {
+async function loadEvents() {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const expiry = new Date(payload.exp * 1000);
-    console.log(`[Auth] Token expires at: ${expiry.toLocaleTimeString()}`);
-    return expiry.getTime() < Date.now();
-  } catch (err) {
-    console.warn('[Auth] Token decode failed');
-    return true;
-  }
-}
+    const tags = DEFAULT_TAGS
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean)
+      .join(','); // comma-separated string for query param
 
-async function fetchToken() {
-  const storedToken = sessionStorage.getItem('authToken');
-  if (storedToken && !isTokenExpired(storedToken)) {
-    return storedToken;
-  }
+    const url = `${API_URL}/events/upcoming?tags=${encodeURIComponent(tags)}`;
 
-  const res = await fetch(`${API_URL}/jwtlogin`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: AUTH_USER, password: AUTH_PASS })
-  });
-
-  if (!res.ok) throw new Error('Authentication failed');
-
-  const data = await res.json();
-  sessionStorage.setItem('authToken', data.token);
-  return data.token;
-}
-
-  async function loadEvents() {
-    try {
-      console.log("[Carousel] Authenticating...");
-      const token = await fetchToken();
-
-      const logic = "or"; // Could be made dynamic
-      const tags = DEFAULT_TAGS.split(',').map(t => t.trim()).filter(Boolean);
-
-      let body = {};
-      if (logic === "or") {
-        body = { tags, tag_logic: "or" };
-      } else {
-        body = { tags, tag_logic: "and" };
-      }
-
-      console.log(`[Carousel] prefetch: ${token} , ${tags}`);
-
-    const options = {
-      method: 'POST',
+    const res = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        tags: tags,
-        tag_logic: logic
-      })
-    };  
-
-      console.log(`[Carousel] Fetching events with options:`, options);
-
-      const res = await fetch(`${API_URL}/upcoming-events`, options);
-
-      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-      events = await res.json();
-      console.log(`[Carousel] Events loaded: ${events.length}`);
-
-      if (events.length >= visibleCount) {
-        updateCarousel();
-        startCarouselLoop();
-      } else {
-        carouselTrack.innerHTML = '<p style="padding:1rem;">No upcoming events</p>';
+        'Content-Type': 'application/json'
+        // No body for GET
       }
+    });
 
-    } catch (err) {
-      console.error("[Carousel] Error loading events:", err);
-      carouselTrack.innerHTML = '<p style="padding:1rem;">Unable to load events</p>';
+    if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+    events = await res.json();
+
+    if (!events.length) {
+      carouselTrack.innerHTML = '<p style="padding:1rem;">No upcoming events</p>';
+    } else {
+      visibleCount = Math.min(visibleCount, events.length);
+      updateCarousel();
+      if (events.length > 1) startCarouselLoop();
     }
+  } catch (err) {
+    console.error("[Carousel] Error loading events:", err);
+    carouselTrack.innerHTML = '<p style="padding:1rem;">Unable to load events</p>';
   }
+}
+
 
   loadEvents();
 </script>
-
-

@@ -68,6 +68,22 @@
     font-weight: 500;
     font-size: 1.25rem;
   }
+  .testimonials-grid {
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.testimonial-card {
+  position: relative;
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.testimonials-grid.neat .testimonial-card {
+  transform: none !important;
+  z-index: 1;
+}
+
 
   /* Optional: apply some visual variation using nth-child */
   .card-0 { transform: rotate(-1deg); }
@@ -79,13 +95,29 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const cards = document.querySelectorAll('.testimonial-card');
+  const grid = document.querySelector('.testimonials-grid');
 
-  cards.forEach(card => {
+  cards.forEach((card, i) => {
     const hue = Math.floor(Math.random() * 360);
-    const bgColor = `hsl(${hue}, 40%, 20%)`; // Darker tone
+    const bgColor = `hsl(${hue}, 40%, 20%)`;
     card.style.backgroundColor = bgColor;
+
+    const rotate = (Math.random() - 0.5) * 6; // -3deg to +3deg
+    const translateX = (Math.random() - 0.5) * 20; // -10px to +10px
+    const translateY = (Math.random() - 0.5) * 20; // -10px to +10px
+
+    card.style.transform = `rotate(${rotate}deg) translate(${translateX}px, ${translateY}px)`;
+
+    // Random stacking order for overlap effect
+    card.style.zIndex = Math.floor(Math.random() * 5) + 1;
+  });
+
+  // Neaten layout on click
+  grid.addEventListener('click', () => {
+    grid.classList.toggle('neat');
   });
 });
 </script>
+

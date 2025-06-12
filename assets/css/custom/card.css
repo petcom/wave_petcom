@@ -1,0 +1,62 @@
+.gh-container {
+  max-width: 720px; /* Match typical post body width */
+  margin: 0 auto;
+  padding: 0 4vw;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.collab-card {
+  background-color: rgba(255, 255, 255, 0.04); /* subtle Wave-style background */
+  border: 1px solid var(--accent-color);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  margin: 4rem auto;
+  text-align: center;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.collab-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.collab-card h2 {
+  font-size: 2.3rem;
+  color: var(--accent-color);
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
+}
+
+.collab-card p {
+  font-size: 1.75rem;
+  line-height: 1.75;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.collab-card .gh-btn-primary {
+  font-size: 1.125rem;
+  background-color: var(--accent-color);
+  color: var(--background-color);
+  border: none;
+  padding: 0.85rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.collab-card .gh-btn-primary:hover {
+  background-color: var(--link-color);
+}
+.collab-card .gh-btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
+.collab-card .gh-btn-primary:active {
+  background-color: var(--link-color);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
