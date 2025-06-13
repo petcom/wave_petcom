@@ -3,12 +3,11 @@
 <main class="gh-main">
   <section class="gh-container events-wrapper">
 
-    <div class="tag-filter" style="margin-bottom: 1.5rem;">
+    <div class="tag-filter">
       <label for="tagInput"><strong>Filter by tag:</strong></label>
       <input type="text" id="tagInput" placeholder="e.g., workshop" />
-      <button id="tagFilterBtn">Apply Filter</button>
-      <button id="sixMonthBtn" class="range-toggle-btn" style="margin-left: 1rem;">Show 6-Month View</button>
-      <button id="allDatesBtn" class="range-toggle-btn" style="margin-left: 1rem;">All Dates</button>
+      <button id="tagFilterBtn" class="range-toggle-btn">Apply Filter</button>
+      <button id="allDatesBtn" class="range-toggle-btn">Show All Dates</button>
     </div>
 
     <h1 class="gh-page-title">Upcoming Events</h1>
@@ -17,114 +16,10 @@
   </section>
 </main>
 
-<style>
-  .gh-page-title {
-    color: var(--accent-color);
-  }
-
-  .events-wrapper {
-    padding-left: 4rem;
-    padding-right: 4rem;
-  }
-
-  #events-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 2rem 0;
-  }
-
-  .event-card {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 1.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    align-items: center;
-  }
-
-  .event-left {
-    border-left: 4px solid var(--accent-color);
-  }
-
-  .event-right {
-    border-right: 4px solid var(--accent-color);
-  }
-
-  .event-thumbnail {
-    flex: 0 0 150px;
-    height: 150px;
-    overflow: hidden;
-    border-radius: 8px;
-  }
-
-  .event-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 4px;
-  }
-
-  .event-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .event-content-left {
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  .event-content-right {
-    text-align: right;
-    align-items: flex-end;
-  }
-
-  .event-content h2 {
-    margin: 0 0 0.3rem;
-    font-size: 1.8rem;
-    color: var(--accent-color);
-  }
-
-  .event-content time {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: inherit;
-    opacity: 0.85;
-    margin-bottom: 1rem;
-  }
-
-  .event-content p {
-    margin-bottom: 0.5rem;
-  }
-
-  .event-content strong {
-    font-weight: 600;
-  }
-
-  .range-toggle-btn {
-    background-color: transparent;
-    border: 1px solid var(--accent-color);
-    color: var(--accent-color);
-    padding: 0.4rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .range-toggle-btn.active {
-    background-color: var(--accent-color);
-    color: white;
-  }
-</style>
 
 <script>
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
-  const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
+  const API_URL = "{{@custom.events_api_url}}";
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -138,7 +33,6 @@
 
   async function loadEvents(tagCsv = "", daysOut) {
     try {
-      console.log("[Events] Loading events...");
       const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
       const body = {
         tags,
@@ -209,13 +103,9 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("tagInput").value = DEFAULT_TAGS;
-    loadEvents(DEFAULT_TAGS, 14);
+    loadEvents(DEFAULT_TAGS, 180); // default to 6 months
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
-      loadEvents(document.getElementById("tagInput").value.trim(), 14);
-    });
-
-    document.getElementById("sixMonthBtn").addEventListener("click", () => {
       loadEvents(document.getElementById("tagInput").value.trim(), 180);
     });
 

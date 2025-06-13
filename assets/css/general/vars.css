@@ -1,6 +1,6 @@
 :root {
     --brand-color: var(--ghost-accent-color, #fc7e0f);
-    --primary-text-color: #5a656b;
+    --primary-text-color:  var(--text-color); /*#5a656b;*/
     --secondary-text-color: #aaa;
     --white-color: #fff;
     --light-gray-color: #f6f6f6;
@@ -14,7 +14,17 @@
     --content-font-size: 1.6rem;
     --header-spacing: 80px;
 
+    /* Modular Type Scale: 1.25 ratio from base 1.6rem (16px) */
+    --font-size-xs: 1.28rem;   /* ~12.8px */
+    --font-size-sm: 1.44rem;   /* ~14.4px */
+    --font-size-md: 1.6rem;    /* 16px (base) */
+    --font-size-lg: 2rem;      /* 20px */
+    --font-size-xl: 2.5rem;    /* 25px */
+    --font-size-xxl: 3.125rem; /* 31.25px */
+    --font-size-xxxl: 3.906rem; /* 39px */
+
 }
+
 
 @media (max-width: 767px) {
     :root {
@@ -22,7 +32,7 @@
     }
 }
 
-/*
+/*  Dark mode variables *
 
     --background-color: #121212;
     --text-color: #f0f0f0;

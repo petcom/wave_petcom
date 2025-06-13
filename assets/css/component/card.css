@@ -1,7 +1,7 @@
 .gh-container {
-  max-width: 720px; /* Match typical post body width */
+  max-width: 1200px; /* Match typical post body width */
   margin: 0 auto;
-  padding: 0 4vw;
+  padding: 0 6vw;
   width: 100%;
   box-sizing: border-box;
 }

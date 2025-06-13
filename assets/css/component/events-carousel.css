@@ -1,0 +1,115 @@
+/* Events Carousel Layout */
+.events-carousel {
+  width: 100%;
+  max-width: 960px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.events-carousel .section-divider {
+  width: 75%;
+  margin: 0 auto 2rem auto;
+  border: none;
+  border-top: 2px solid var(--text-color);
+}
+
+/* Scrollable horizontal container */
+.carousel-track-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: center; /* Center track when not scrolling */
+}
+
+.carousel-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 1rem;
+}
+
+/* Event card base */
+.events-carousel .event-card {
+  flex: 0 0 auto;
+  width: 200px; /* Optional: shrink this to better fit the 150px image */
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  text-align: center;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease-in-out;
+}
+
+
+.events-carousel .event-card:hover {
+  transform: scale(1.02);
+}
+
+/* Image and title block */
+.events-carousel .event-media {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
+.events-carousel .event-media img {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Title */
+.events-carousel .event-media h6 {
+  margin-top: 0.5rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-color);
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Date / meta */
+.events-carousel .event-card p {
+  margin: 0.5rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--secondary-text-color);
+  line-height: 1.4;
+}
+
+/* Responsive card widths */
+@media (max-width: 768px) {
+  .event-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-card {
+    width: 90%;
+  }
+}
+
+/* Debug outlines – remove when finalized 
+.event-card {
+  outline: 2px dashed red;
+}
+
+.carousel-track {
+  outline: 2px solid lime;
+}
+
+.carousel-track-container {
+  outline: 2px solid orange;
+}
+*/
