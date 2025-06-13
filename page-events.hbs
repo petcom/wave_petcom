@@ -124,21 +124,7 @@
 
 <script>
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
-<<<<<<< HEAD
-<<<<<<< HEAD
   const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
-=======
-  const API_URL = "{{@custom.events_api_url}}";
-<<<<<<< HEAD
-  const TOKEN = "{{@custom.events_token}}";
->>>>>>> ec15e82e (fixed thumb_image_url)
-=======
-  const AUTH_USER = "{{@custom.events_auth_user}}";
-  const AUTH_PASS = "{{@custom.events_auth_pw}}";
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
-=======
-  const API_URL = "{{@custom.events_api_url}}"; // e.g. https://yourdomain.com/proxy-api
->>>>>>> 47640d3c (fixed events to point to proxy)
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -152,8 +138,6 @@
 
   async function loadEvents(tagCsv = "", daysOut) {
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
       console.log("[Events] Loading events...");
       const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
       const body = {
@@ -181,82 +165,16 @@
       container.innerHTML = "";
 
       if (!events.length) {
-=======
-      console.log("[Events] Starting event load...");
-      const url = new URL(`${API_URL}/events`);
-      url.searchParams.append("token", TOKEN);
-
-      const logic = document.getElementById("tagLogicSelect")?.value || "or";
-=======
-      console.log("[Events] Loading events...");
-<<<<<<< HEAD
-      const token = await fetchToken();
-      const logic = "or"; // could be made dynamic
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
-=======
->>>>>>> 47640d3c (fixed events to point to proxy)
-      const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
-      const body = {
-        tags,
-        tag_logic: "or"
-      };
-
-      if (daysOut) {
-        const { start, end } = getDateRange(daysOut);
-        body.startDate = start;
-        body.endDate = end;
-      }
-
-      const res = await fetch(`${API_URL}/events/query`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-
-      const container = document.getElementById("events-container");
-      container.innerHTML = "<p>Loading events...</p>";
-
-      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-      const events = await res.json();
-      container.innerHTML = "";
-
-<<<<<<< HEAD
-      if (events.length === 0) {
-        console.log("[Events] No events found for current filters.");
->>>>>>> ec15e82e (fixed thumb_image_url)
-=======
-      if (!events.length) {
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
         container.innerHTML = "<p>No events found for the selected filters.</p>";
         return;
       }
 
       events.forEach((event, index) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        console.log(`[Events] Rendering event: ${event.title} (${event.id})`);
-=======
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
-        const card = document.createElement("article");
->>>>>>> ec15e82e (fixed thumb_image_url)
-=======
->>>>>>> 47640d3c (fixed events to point to proxy)
         const isEven = index % 2 === 0;
         const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
-=======
-        const thumbUrl = event.thumb_url || "/assets/default-thumb.jpg";
-        console.log(`[Events] Using thumbnail: ${thumbUrl}`);
->>>>>>> ec15e82e (fixed thumb_image_url)
-=======
-        const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
 
         const thumbDiv = document.createElement("div");
         thumbDiv.className = "event-thumbnail";
@@ -290,19 +208,10 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    console.log("[Events] DOM ready.");
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
-=======
->>>>>>> 47640d3c (fixed events to point to proxy)
     document.getElementById("tagInput").value = DEFAULT_TAGS;
     loadEvents(DEFAULT_TAGS, 14);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
       loadEvents(document.getElementById("tagInput").value.trim(), 14);
     });
 
@@ -315,31 +224,3 @@
     });
   });
 </script>
-=======
-      const tag = document.getElementById("tagInput").value.trim();
-      loadEvents(tag, 14);
-=======
-      loadEvents(document.getElementById("tagInput").value.trim(), 14);
->>>>>>> 47640d3c (fixed events to point to proxy)
-    });
-
-    document.getElementById("sixMonthBtn").addEventListener("click", () => {
-      loadEvents(document.getElementById("tagInput").value.trim(), 180);
-    });
-
-    document.getElementById("allDatesBtn").addEventListener("click", () => {
-      loadEvents(document.getElementById("tagInput").value.trim(), 1440);
-    });
-  });
-</script>
-<<<<<<< HEAD
-
-
-
-
-
-
-
->>>>>>> 890b7a2a (--fixed thumb-image-url and post logic)
-=======
->>>>>>> 47640d3c (fixed events to point to proxy)
