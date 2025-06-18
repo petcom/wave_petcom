@@ -13,5 +13,12 @@
 @import "blog/single.css";
 @import "blog/author.css";
 @import "misc/utilities.css";
+
 /* -- custom css below */
-@import "custom/authors-strip.css";
+@import "misc/global.css";
+@import "component/authors-strip.css";
+@import "component/card.css";
+@import "component/events-carousel.css";
+@import "component/events.css";
+
+

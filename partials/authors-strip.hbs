@@ -10,6 +10,9 @@
           {{/if}}
           <div class="author-name">{{name}}</div>
         </a>
+          {{#if website}}
+            <a href="{{website}}" target="_blank" rel="noopener" class="website-button">Website</a>
+          {{/if}} 
       {{/foreach}}
     {{/get}}
   </div>

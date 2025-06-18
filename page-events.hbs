@@ -3,137 +3,23 @@
 <main class="gh-main">
   <section class="gh-container events-wrapper">
 
-      <div class="tag-filter" style="margin-bottom: 1.5rem;">
-        <label for="tagInput"><strong>Filter by tag:</strong></label>
-        <input type="text" id="tagInput" placeholder="e.g., workshop" />
-        <button id="tagFilterBtn">Apply Filter</button>
-        <button id="sixMonthBtn" class="range-toggle-btn" style="margin-left: 1rem;">Show 6-Month View</button>
-        <button id="allDatesBtn" class="range-toggle-btn" style="margin-left: 1rem;">All Dates</button>
-      </div>
+    <div class="tag-filter">
+      <label for="tagInput"><strong>Filter by tag:</strong></label>
+      <input type="text" id="tagInput" placeholder="e.g., workshop" />
+      <button id="tagFilterBtn" class="range-toggle-btn">Apply Filter</button>
+      <button id="allDatesBtn" class="range-toggle-btn">Show All Dates</button>
+    </div>
 
     <h1 class="gh-page-title">Upcoming Events</h1>
-
-  
-
     <div id="events-container" class="gh-feed"></div>
-
 
   </section>
 </main>
 
-<style>
-.gh-page-title {
-  color: var(--accent-color);
-}
-
-  .events-wrapper {
-    padding-left: 4rem;
-    padding-right: 4rem;
-  }
-
-  #events-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 2rem 0;
-  }
-
-  .event-card {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 1.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    align-items: center;
-  }
-
-  .event-left {
-    border-left: 4px solid var(--accent-color);
-  }
-
-  .event-right {
-    border-right: 4px solid var(--accent-color);
-  }
-
-  .event-thumbnail {
-    flex: 0 0 150px;
-    height: 150px;
-    overflow: hidden;
-    border-radius: 8px;
-  }
-
-  .event-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 4px;
-  }
-
-  .event-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .event-content-left {
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  .event-content-right {
-    text-align: right;
-    align-items: flex-end;
-  }
-
-  .event-content h2 {
-    margin: 0 0 0.3rem;
-    font-size: 1.8rem;
-    color: var(--accent-color);
-  }
-
-  .event-content time {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: inherit;
-    opacity: 0.85;
-    margin-bottom: 1rem;
-  }
-
-  .event-content p {
-    margin-bottom: 0.5rem;
-  }
-
-  .event-content strong {
-    font-weight: 600;
-  }
-  .range-toggle-btn {
-  background-color: transparent;
-  border: 1px solid var(--accent-color);
-  color: var(--accent-color);
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.range-toggle-btn.active {
-  background-color: var(--accent-color);
-  color: white;
-}
-</style>
 
 <script>
-  const token = "{{@custom.events_token}}";
-  const tagsCsv = "{{@custom.events_tags}}";
-  const apiUrl = "{{@custom.events_api_url}}";
-
-  const DEFAULT_TAGS = tagsCsv
-    .split(',')
-    .map(t => t.trim())
-    .filter(Boolean);
+  const DEFAULT_TAGS = "{{@custom.events_tags}}";
+  const API_URL = "{{@custom.events_api_url}}";
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -145,51 +31,57 @@
     };
   }
 
-  async function loadEvents(tagsArray = [], daysOut = 14) {
+  async function loadEvents(tagCsv = "", daysOut) {
     try {
-      const url = new URL(`${apiUrl}/events`);
-      url.searchParams.append("token", token);
+      const tags = tagCsv.split(',').map(t => t.trim()).filter(Boolean);
+      const body = {
+        tags,
+        tag_logic: "or"
+      };
 
-      // Add date range
       if (daysOut) {
-        const range = getDateRange(daysOut);
-        url.searchParams.append("startDate", range.start);
-        url.searchParams.append("endDate", range.end);
+        const { start, end } = getDateRange(daysOut);
+        body.startDate = start;
+        body.endDate = end;
       }
 
-      // Add tag params
-      tagsArray.forEach(tag => {
-        url.searchParams.append("tag", tag.toLowerCase());
+      const res = await fetch(`${API_URL}/events/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
 
-      const res = await fetch(url);
-      const events = await res.json();
-
       const container = document.getElementById("events-container");
-      container.innerHTML = ""; // Clear previous
+      container.innerHTML = "<p>Loading events...</p>";
+
+      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+      const events = await res.json();
+      container.innerHTML = "";
+
+      if (!events.length) {
+        container.innerHTML = "<p>No events found for the selected filters.</p>";
+        return;
+      }
 
       events.forEach((event, index) => {
-        const card = document.createElement("article");
         const isEven = index % 2 === 0;
+        const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
-        const alignmentClass = isEven ? "event-content-left" : "event-content-right";
 
-        const thumbnailFilename = event.thumbnail
-          ? event.thumbnail.split("/").pop()
-          : "default-thumb.jpg";
-        const thumbnailUrl = `${apiUrl}/images/${thumbnailFilename}`;
+        const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
 
         const thumbDiv = document.createElement("div");
         thumbDiv.className = "event-thumbnail";
-        thumbDiv.innerHTML = `<img src="${thumbnailUrl}" alt="Event Thumbnail">`;
+        thumbDiv.innerHTML = `<img src="${thumbUrl}" alt="Event Thumbnail">`;
 
         const contentDiv = document.createElement("div");
-        contentDiv.className = `event-content ${alignmentClass}`;
+        contentDiv.className = `event-content ${isEven ? "event-content-left" : "event-content-right"}`;
         contentDiv.innerHTML = `
           <h2>${event.title}</h2>
-          <time datetime="${event.date}">${new Date(event.date).toLocaleDateString()}</time>
+          <time datetime="${event.event_date}">${new Date(event.event_date).toLocaleDateString()}</time>
           <p>${event.description}</p>
           ${event.tags?.length ? `<p><strong>Tags:</strong> ${event.tags.join(", ")}</p>` : ""}
+          ${event.group_id ? `<p><strong>Group:</strong> ${event.group_id}</p>` : ""}
         `;
 
         if (isEven) {
@@ -202,38 +94,23 @@
 
         container.appendChild(card);
       });
+
     } catch (err) {
-      console.error("Error loading events:", err);
+      console.error("[Events] Error loading events:", err);
+      document.getElementById("events-container").innerHTML = `<p>Error loading events. Please try again later.</p>`;
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    // Default values
-    const tagInput = document.getElementById("tagInput");
-    tagInput.value = DEFAULT_TAGS.join(", ");
-
-    // Load default: 2-week view with custom tags
-    loadEvents(DEFAULT_TAGS, 14);
+    document.getElementById("tagInput").value = DEFAULT_TAGS;
+    loadEvents(DEFAULT_TAGS, 180); // default to 6 months
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
-      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
-      loadEvents(tags, 14);
-    });
-
-    document.getElementById("sixMonthBtn").addEventListener("click", () => {
-      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
-      loadEvents(tags, 180);
+      loadEvents(document.getElementById("tagInput").value.trim(), 180);
     });
 
     document.getElementById("allDatesBtn").addEventListener("click", () => {
-      const tags = tagInput.value.split(",").map(t => t.trim()).filter(Boolean);
-      loadEvents(tags, 1440);
+      loadEvents(document.getElementById("tagInput").value.trim(), 1440);
     });
   });
 </script>
-
-
-
-
-
-

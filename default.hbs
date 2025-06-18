@@ -8,48 +8,6 @@
             --link-color: {{@custom.link_color}};
         }
 
-        body {
-            background-color:  var(--background-color);
-            color: var(--text-color);
-        }
-
-        a {
-            color: var(--accent-color);
-        }
-
-        a:hover {
-            color: var(--link-color);
-        }
-
-        .gh-head {
-        padding: 0.5rem 0;
-        }
-
-        .gh-head-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        }
-
-        .gh-head-logo {
-        font-size: 1.2rem;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        }
-
-        .gh-head-logo img {
-        max-height: 40px;
-        width: auto;
-        display: block;
-        }
-
-        .gh-head-menu,
-        .gh-head-actions {
-        display: flex;
-        align-items: center;
-        }
-
     </style>
 
 
@@ -123,21 +81,7 @@
 
     {{> "authors-strip"}}
 
-    {{#is "home"}}
-    {{#if @site.cover_image}}
-        <div class="site-cover u-overlay">
-            <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
-            <div class="cover-content">
-                {{#if @site.logo}}
-                    <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-                {{/if}}
-                {{#if @site.description}}
-                    <div class="cover-description">{{@site.description}}</div>
-                {{/if}}
-            </div>
-        </div>
-    {{/if}}
-    {{/is}}
+
 
     <div class="site-content">
         {{{body}}}

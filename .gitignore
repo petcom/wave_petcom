@@ -1,5 +1,37 @@
-# Ignore the original repository files
-_references/Wave-main/ 
+# Node dependencies
+node_modules/
 
-# Ignore .gitignore
-.gitignore
+# Build output (if you're using a build process like Gulp/Webpack)
+dist/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# VSCode settings
+.vscode/
+
+# SASS/SCSS cache
+.sass-cache/
+
+# Env/local config (if applicable)
+.env
+.env.local
+
+# Ignore compiled zip if packaging theme
+wave.zip
+
+
+

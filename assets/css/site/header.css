@@ -1,35 +1,20 @@
 
   .gh-head, .site-header-content {
-    background-color: var(--background-color) !important;
-    color: var(--text-color) !important;
+    background-color: var(--background-color);
+    color: var(--text-color);
   }
   .gh-head a, .site-header-content a {
-    color: var(--text-color) !important;
+    color: var(--text-color);
   }
   .gh-head a:hover, .site-header-content a:hover {
-    color: var(--accent-color) !important;
+    color: var(--accent-color);
+    padding: 0.5rem 0;
   }
 
+  
 
 
-/*  .gh-head {
-    font-weight: 500;
-}
-.header-wrapper {
-  background-color: var(--background-color) !important;
-}
-.site-header a,
-.site-header nav a {
-  color: #f0f0f0 !important;
-}. */
 
-/* .gh-head-btn.gh-btn {
-    padding: 10px 16px;
-    font-size: 1.6rem;
-    font-weight: 600;
-    line-height: 1.1;
-} */
 
-/* .gh-head-btn.gh-btn:hover {
-    opacity: 0.95;
-} */
+
+

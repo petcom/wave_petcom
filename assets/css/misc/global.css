@@ -1,0 +1,69 @@
+body, p, span, li, a,
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-text-color);
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: var(--font-size-md); /* 1.6rem */
+    line-height: 1.6;
+}
+
+a {
+    color: var(--accent-color);
+    font-size: var(--font-size-md);
+}
+
+a:hover {
+    color: var(--link-color);
+}
+
+h1 {
+    font-size: var(--font-size-xxxl);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: var(--font-size-xxl);
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: var(--font-size-xl);
+    line-height: 1.3;
+}
+
+h4 {
+    font-size: var(--font-size-lg);
+    line-height: 1.4;
+}
+
+h5 {
+    font-size: var(--font-size-md);
+    line-height: 1.4;
+}
+
+h6 {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+p,
+span,
+li {
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+}
+
+.gh-main {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
