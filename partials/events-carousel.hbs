@@ -11,7 +11,7 @@
   </a>
 
   {{!-- for testing --}}
-  <p>{{@custom.events_api_url}}/tags?{{@custom.events_tags}}</p>
+ <!--/*  <p>{{@custom.events_api_url}}?tags={{@custom.events_tags}}</p> */ -->
 </section>
 
 <script>
@@ -21,22 +21,22 @@
   const API_URL = "{{@custom.events_api_url}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 
-function createEventCard(event) {
-  const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
- const linkUrl = '/events';
+  function createEventCard(event) {
+    const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
+    const linkUrl = '/events';
 
-  const wrapper = document.createElement('a');
-  wrapper.href = linkUrl;
-  wrapper.className = 'event-card';
-  wrapper.innerHTML = `
-    <div class="event-media">
-      <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
-      <h6>${event.title}</h6>
-    </div>
-    <p>${new Date(event.event_date).toLocaleDateString()}</p>
-  `;
-  return wrapper;
-}
+    const wrapper = document.createElement('a');
+    wrapper.href = linkUrl;
+    wrapper.className = 'event-card';
+    wrapper.innerHTML = `
+      <div class="event-media">
+        <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
+        <h6>${event.title}</h6>
+      </div>
+      <p>${new Date(event.event_date).toLocaleDateString()}</p>
+    `;
+    return wrapper;
+  }
 
   function updateCarousel() {
     carouselTrack.innerHTML = '';
@@ -50,16 +50,21 @@ function createEventCard(event) {
       const tags = DEFAULT_TAGS
         .split(',')
         .map(t => t.trim())
-        .filter(Boolean)
-        .join(',');
+        .filter(Boolean);
 
-      const url = `${API_URL}/events/upcoming?tags=${encodeURIComponent(tags)}`;
+      const body = {
+        tags,
+        tag_logic: 'or',
+        startDate: new Date().toISOString(),
+        endDate: null
+      };
 
-      const res = await fetch(url, {
-        method: 'GET',
+      const res = await fetch(API_URL, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(body)
       });
 
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
