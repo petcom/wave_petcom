@@ -1,0 +1,23 @@
+/* === SONAR: Match Subscribe button to header nav text === */
+.gh-head .gh-btn.gh-primary-btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  font-size: 1.75rem;         /* EXACT same as nav link */
+  font-weight: 500;        /* or 600 if you want it pop a bit more */
+  line-height: 1.75;        /* match nav link line-height */
+  padding: 0.4em 1em;      /* minimal vertical pad, keeps height aligned */
+  border-radius: 999px;    /* pill shape is optional */
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.gh-head .gh-btn.gh-primary-btn:hover {
+  background-color: var(--accent-color);
+  transform: none; /* prevent shrink */
+}
+
+
+.gh-head .gh-btn.gh-primary-btn:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
