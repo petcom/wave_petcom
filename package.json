@@ -105,27 +105,12 @@
             "events_api_url": {
                 "type": "text",
                 "label": "Events API Base URL (no trailing slash)",
-                "default": "http://localhost:3000/api"
-            },
-            "events_token": {
-                "type": "text",
-                "label": "Events API Token",
-                "default": "YOUR_DEFAULT_TOKEN_HERE"
+                "default": "http://localhost:8180/proxy-api"
             },
             "events_tags": {
                 "type": "text",
                 "label": "Event Tags Filter (comma separated)",
                 "default": ""
-            },
-            "events_auth_user": {
-                "type": "text",
-                "label": "Events API User",
-                "default": "admin"
-            },
-            "events_auth_pw": {
-                "type": "text",
-                "label": "Events API Password Hash",
-                "default": "ThisIsAPassword!"
             }
         }
     },

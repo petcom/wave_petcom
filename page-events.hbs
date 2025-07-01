@@ -18,8 +18,9 @@
 
 
 <script>
-  const DEFAULT_TAGS = "{{@custom.events_tags}}";
-  const API_URL = "{{@custom.events_api_url}}";
+  // Use dynamic tags and API URL from Ghost custom fields
+  const DEFAULT_TAGS = "{{@custom.events_tags}}" || "signal-9,sonar,public";
+  const EVENTS_API_URL = "{{@custom.events_api_url}}" || "http://localhost:8180/proxy-api/events/query";
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -45,14 +46,16 @@
         body.endDate = end;
       }
 
-      const res = await fetch(`${API_URL}/events/query`, {
+      console.log("Posting to:", EVENTS_API_URL, "with body:", body);
+
+      const container = document.getElementById("events-container");
+      container.innerHTML = "<p>Loading events...</p>";
+
+      const res = await fetch(EVENTS_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-
-      const container = document.getElementById("events-container");
-      container.innerHTML = "<p>Loading events...</p>";
 
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
       const events = await res.json();
@@ -103,7 +106,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("tagInput").value = DEFAULT_TAGS;
-    loadEvents(DEFAULT_TAGS, 180); // default to 6 months
+    loadEvents(DEFAULT_TAGS, 180);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
       loadEvents(document.getElementById("tagInput").value.trim(), 180);
@@ -114,3 +117,4 @@
     });
   });
 </script>
+
