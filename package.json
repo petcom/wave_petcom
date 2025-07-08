@@ -102,10 +102,20 @@
                 "label": "Link Color",
                 "default": "#bb86fc"
             },
-            "events_api_url": {
+             "proxy_api_url": {
+                "type": "text",
+                "label": "Events API URL Suffix (no trailing slash)",
+                "default": "http://localhost:8180/proxy-api/"
+            },
+            "forms_suffix": {
+                "type": "text",
+                "label": "Forms API URL Suffix (no trailing slash)",
+                "default": "/forms"
+            },
+            "events_suffix": {
                 "type": "text",
                 "label": "Events API Base URL (no trailing slash)",
-                "default": "http://localhost:8180/proxy-api"
+                "default": "/events/query"
             },
             "events_tags": {
                 "type": "text",

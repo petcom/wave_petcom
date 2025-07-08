@@ -11,14 +11,14 @@
   </a>
 
   {{!-- for testing --}}
- <!--/*  <p>{{@custom.events_api_url}}?tags={{@custom.events_tags}}</p> */ -->
+  <p>{{@custom.proxy_api_url}}{{@custom.events_suffix}}?tags={{@custom.events_tags}}</p>
 </section>
 
 <script>
   const carouselTrack = document.getElementById('eventCarouselTrack');
   let events = [];
 
-  const API_URL = "{{@custom.events_api_url}}";
+  const API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 
   function createEventCard(event) {
