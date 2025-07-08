@@ -20,7 +20,16 @@
 <script>
   // Use dynamic tags and API URL from Ghost custom fields
   const DEFAULT_TAGS = "{{@custom.events_tags}}" || "signal-9,sonar,public";
-  const EVENTS_API_URL = "{{@custom.events_api_url}}" || "http://localhost:8180/proxy-api/events/query";
+  const EVENTS_API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}" || "http://localhost:8180/proxy-api/events/query";
+
+  // Function to get URL parameters
+  function getUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+      tags: urlParams.get('tags') || '',
+      daysOut: urlParams.get('daysOut') || null
+    };
+  }
 
   function getDateRange(daysOut) {
     const now = new Date();
@@ -105,8 +114,16 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("tagInput").value = DEFAULT_TAGS;
-    loadEvents(DEFAULT_TAGS, 180);
+    // Get URL parameters
+    const urlParams = getUrlParams();
+    
+    // Use URL tags if provided, otherwise use default
+    const initialTags = urlParams.tags || DEFAULT_TAGS;
+    const initialDaysOut = urlParams.daysOut ? parseInt(urlParams.daysOut) : 180;
+    
+    // Set the input field and load events
+    document.getElementById("tagInput").value = initialTags;
+    loadEvents(initialTags, initialDaysOut);
 
     document.getElementById("tagFilterBtn").addEventListener("click", () => {
       loadEvents(document.getElementById("tagInput").value.trim(), 180);

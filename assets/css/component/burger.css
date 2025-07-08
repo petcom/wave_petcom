@@ -1,0 +1,39 @@
+/* === SONAR: Custom hamburger menu styling === */
+.gh-burger {
+  background-color: #666 !important; /* Grey background */
+  border-radius: 4px; /* Optional: rounded corners */
+  padding: 4px; /* Optional: some padding around the lines */
+}
+
+/* Ensure the hamburger lines are visible on grey background */
+.gh-burger:after,
+.gh-burger:before {
+  background-color: #fff !important; /* White lines for contrast */
+}
+
+/* For different theme variants */
+.is-head-transparent .gh-burger:after,
+.is-head-transparent .gh-burger:before,
+.is-head-dark:not(.is-head-transparent) .gh-burger:after,
+.is-head-dark:not(.is-head-transparent) .gh-burger:before,
+.is-head-brand:not(.is-head-transparent) .gh-burger:after,
+.is-head-brand:not(.is-head-transparent) .gh-burger:before {
+  background-color: #fff !important; /* Keep lines white for all theme variants */
+}
+
+/* === SONAR: Custom mobile menu open background === */
+/* Override all theme variants to use grey background when menu is open */
+.is-head-open:not(.is-head-brand):not(.is-head-dark):not(.is-head-transparent) #gh-head,
+.is-head-open.is-head-transparent #gh-head,
+.is-head-open.is-head-dark #gh-head,
+.is-head-open.is-head-brand #gh-head {
+  background-color: #666 !important; /* Grey background for all open menu states */
+}
+
+/* Also override the actions area background when menu is open */
+.is-head-open #gh-head .gh-head-actions,
+.is-head-open.is-head-transparent #gh-head .gh-head-actions,
+.is-head-open.is-head-dark #gh-head .gh-head-actions,
+.is-head-open.is-head-brand #gh-head .gh-head-actions {
+  background-color: #666 !important; /* Grey background for actions area */
+}

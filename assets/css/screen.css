@@ -17,6 +17,7 @@
 /* -- custom css below */
 @import "misc/global.css";
 @import "component/authors-strip.css";
+@import "component/burger.css";
 @import "component/card.css";
 @import "component/events-carousel.css";
 @import "component/events.css";

@@ -80,11 +80,22 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     preferred_dates: form.preferred_dates?.value || "",
     details: form.details?.value || "",
     source: form.source?.value || "Contact-Us",
-    "g-recaptcha-response": captchaResponse
+    "g-recaptcha-response": captchaResponse,
+    spreadsheetId: "1E45f3vjLTwZ8SaL0DnzZDOaqO0OKwVDtQ-KySkM2fUs", // Specify the Google Sheet ID
+    sheetName: "contact1" // Specify the sheet tab name
   };
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbzlx3vFwTb0YTDAyyqaaUUc90qo9hnyWNQ-0iGReL11wd5x9j7ln9xx2KVrFQhHDPvfuw/exec", {
+    // Extract the Google Apps Script URL for the proxy
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzeVDklCszH6LCueLKPYtumw3kVjQPKKe3bcV2zsy5xbyqIv5w-sH7kbu-cz28H-_2p/exec";
+    const FORMS_API_URL = "{{@custom.proxy_api_url}}{{@custom.forms_suffix}}";
+    
+    // Build the proxy URL with the script URL as a query parameter
+    const proxyUrl = FORMS_API_URL ? 
+      `${FORMS_API_URL}?scriptUrl=${encodeURIComponent(GOOGLE_SCRIPT_URL)}` : 
+      GOOGLE_SCRIPT_URL;
+    
+    const response = await fetch(proxyUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

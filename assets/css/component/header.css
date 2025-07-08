@@ -21,3 +21,14 @@
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
+
+/* === SONAR: Smooth scrolling for anchor links === */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optional: Add some padding-top to account for fixed header when scrolling to anchors */
+#booking-form,
+#bookings-section {
+  scroll-margin-top: 80px; /* Adjust based on your header height */
+}
