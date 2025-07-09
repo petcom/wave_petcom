@@ -103,40 +103,34 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
 
-    // If the server redirects to a success page, follow it
-    if (response.redirected) {
-      window.location.href = response.url;
-      return;
-    }
-
-    // Check if response is ok and content type is JSON
+    // Check if response is ok
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Response not ok:", response.status, response.statusText, errorText);
-      status.textContent = `Server error: ${response.status} ${response.statusText}`;
+      status.textContent = `Server error: ${response.status} ${response.statusText}. Please contact "contact@sonaraz.com" directly and let them know of this error. Data not received.`;
+      status.style.color = "#dc3545"; // Red color for error
       return;
     }
 
-    // Check content type before parsing as JSON
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      const responseText = await response.text();
-      console.error("Non-JSON response:", contentType, responseText.substring(0, 200));
-      status.textContent = "Server returned unexpected response format";
-      return;
-    }
-
-    const result = await response.json();
-    if (result.result === "success") {
-      status.textContent = "Message sent successfully!";
-      form.reset();
+    // Handle successful response
+    const responseText = await response.text();
+    console.log("Server response:", responseText);
+    
+    // Show success message
+    status.textContent = "Message sent: please allow for 24-48 hours for someone to reach out about your inquiry";
+    status.style.color = "#28a745"; // Green color for success
+    
+    // Reset the form
+    form.reset();
+    
+    // Reset reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
       grecaptcha.reset();
-    } else {
-      status.textContent = result.message || "Error sending message.";
     }
   } catch (err) {
     console.error(err);
-    status.textContent = "Failed to connect. Try again later.";
+    status.textContent = "Failed to connect. Try again later. Please contact \"contact@sonaraz.com\" directly and let them know of this error. Data not received.";
+    status.style.color = "#dc3545"; // Red color for error
   }
 });
 </script>
