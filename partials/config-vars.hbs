@@ -1,0 +1,10 @@
+<script>
+// Expose Ghost custom variables to JavaScript
+window.GHOST_CONFIG = {
+    proxyApiUrl: "{{@custom.proxy_api_url}}",
+    formsSuffix: "{{@custom.forms_suffix}}",
+    eventsSuffix: "{{@custom.events_suffix}}",
+    eventsApiUrl: "{{@custom.proxy_api_url}}{{@custom.events_suffix}}",
+    formsApiUrl: "{{@custom.proxy_api_url}}{{@custom.forms_suffix}}"
+};
+</script>

@@ -1,0 +1,153 @@
+/* === SONAR: Adjusted responsive navigation breakpoint === */
+/* Override Ghost's default 767px breakpoint to prevent navigation overflow issues */
+
+/* Mobile layout at 1020px instead of 767px */
+@media (max-width: 1019px) {
+  #gh-head {
+    height: 64px;
+  }
+  
+  #gh-head .gh-head-inner {
+    gap: 48px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+  
+  #gh-head .gh-head-brand {
+    align-items: center;
+    display: grid;
+    grid-column-start: 1;
+    grid-template-columns: 1fr auto auto;
+    height: 64px;
+  }
+  
+  #gh-head .gh-head-logo {
+    font-size: 2.2rem;
+  }
+  
+  .gh-burger {
+    display: block;
+  }
+  
+  #gh-head .gh-head-actions,
+  #gh-head .gh-head-menu {
+    justify-content: center;
+    opacity: 0;
+    position: fixed;
+    visibility: hidden;
+  }
+  
+  #gh-head .gh-head-menu {
+    transform: translateY(0);
+    transition: none;
+  }
+  
+  #gh-head .nav {
+    align-items: center;
+    gap: 20px;
+    line-height: 1.4;
+  }
+  
+  #gh-head .nav a {
+    font-size: 2.6rem;
+    font-weight: 600;
+    text-transform: none;
+  }
+  
+  #gh-head .nav li {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  
+  #gh-head .gh-head-actions {
+    text-align: center;
+  }
+  
+  #gh-head :is(.gh-head-btn, .gh-head-link) {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  
+  #gh-head .gh-head-btn {
+    font-size: 1.8rem;
+    text-transform: none;
+    width: 100%;
+  }
+  
+  #gh-head .gh-head-btn:not(.gh-btn) {
+    font-size: 2rem;
+  }
+  
+  #gh-main {
+    transition: opacity 0.4s;
+  }
+  
+  .is-head-open #gh-head {
+    height: 100%;
+    inset: 0;
+    overflow-y: scroll;
+    position: fixed;
+    z-index: 3999999;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .is-head-open:not(.is-head-brand):not(.is-head-dark):not(.is-head-transparent) #gh-head {
+    background-color: var(--color-white);
+  }
+  
+  .is-head-open.is-head-transparent #gh-head,
+  .is-head-open:is(.is-head-transparent, .is-head-brand) #gh-head .gh-head-actions {
+    background-color: var(--ghost-accent-color);
+  }
+  
+  .is-head-open.is-head-dark #gh-head,
+  .is-head-open.is-head-dark #gh-head .gh-head-actions {
+    background-color: var(--color-darker-gray);
+  }
+  
+  .is-head-open #gh-head .gh-head-actions,
+  .is-head-open #gh-head .gh-head-menu {
+    opacity: 1;
+    position: static;
+    visibility: visible;
+  }
+  
+  .is-head-open #gh-head .nav {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .is-head-open #gh-head .nav li {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  
+  .is-head-open #gh-head .gh-head-actions {
+    align-items: center;
+    background-color: var(--color-white);
+    bottom: 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 12px;
+    left: 0;
+    padding: var(--gap) 0 calc(var(--gap) + 8px);
+    position: sticky;
+    right: 0;
+  }
+  
+  .is-head-open #gh-head :is(.gh-head-btn, .gh-head-link) {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.4s, opacity 0.4s;
+    transition-delay: 0.2s;
+  }
+  
+  .is-head-open #gh-head .gh-head-link {
+    transition-delay: 0.4s;
+  }
+  
+  .is-head-open #gh-main {
+    opacity: 0;
+  }
+}

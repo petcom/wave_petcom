@@ -105,7 +105,7 @@
              "proxy_api_url": {
                 "type": "text",
                 "label": "Events API URL Suffix (no trailing slash)",
-                "default": "http://localhost:8180/proxy-api/"
+                "default": "http://localhost:8180/proxy-api"
             },
             "forms_suffix": {
                 "type": "text",
