@@ -3,6 +3,7 @@ $(function () {
     cover();
     pagination(true);
     player();
+    // responsiveNavigation(); // Removed custom navigation logic
 });
 
 function cover() {

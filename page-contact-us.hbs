@@ -86,14 +86,14 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
   };
 
   try {
-    // Extract the Google Apps Script URL for the proxy
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzeVDklCszH6LCueLKPYtumw3kVjQPKKe3bcV2zsy5xbyqIv5w-sH7kbu-cz28H-_2p/exec";
+    // Use the proxy API URL (Google Script URL is now handled in the proxy's .env file)
     const FORMS_API_URL = "{{@custom.proxy_api_url}}{{@custom.forms_suffix}}";
     
-    // Build the proxy URL with the script URL as a query parameter
-    const proxyUrl = FORMS_API_URL ? 
-      `${FORMS_API_URL}?scriptUrl=${encodeURIComponent(GOOGLE_SCRIPT_URL)}` : 
-      GOOGLE_SCRIPT_URL;
+    // Use the proxy URL directly
+    const proxyUrl = FORMS_API_URL;
+    
+    // Debug: Log the URL being used
+    console.log("Form submission URL:", proxyUrl);
     
     const response = await fetch(proxyUrl, {
       method: "POST",
@@ -106,6 +106,23 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     // If the server redirects to a success page, follow it
     if (response.redirected) {
       window.location.href = response.url;
+      return;
+    }
+
+    // Check if response is ok and content type is JSON
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Response not ok:", response.status, response.statusText, errorText);
+      status.textContent = `Server error: ${response.status} ${response.statusText}`;
+      return;
+    }
+
+    // Check content type before parsing as JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const responseText = await response.text();
+      console.error("Non-JSON response:", contentType, responseText.substring(0, 200));
+      status.textContent = "Server returned unexpected response format";
       return;
     }
 
