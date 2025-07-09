@@ -1,0 +1,147 @@
+/* 
+ * Override Ghost's default white backgrounds for post content areas
+ * This ensures individual posts use the custom post background color (more eye-friendly than pure black)
+ * Note: Excludes home page to preserve testimonial card styling
+ * Now includes contact page and default page content
+ */
+
+/* Main content areas - only for post/page templates, not home page */
+.post-template .gh-content,
+.post-template .gh-article,
+.post-template .post-full,
+.post-template .post-full-content,
+.page-template .gh-content,
+.page-template .gh-article,
+.author-template .gh-content,
+.author-template .gh-article {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 12px !important;
+  padding: var(--gap) !important;
+  margin: var(--gap) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Ghost content cards that might have white backgrounds - only in post templates */
+.post-template .kg-card,
+.post-template .kg-embed-card,
+.post-template .kg-bookmark-card,
+.post-template .kg-gallery-card,
+.post-template .kg-image-card,
+.post-template .kg-width-wide,
+.post-template .kg-width-full,
+.page-template .kg-card,
+.page-template .kg-embed-card,
+.page-template .kg-bookmark-card,
+.page-template .kg-gallery-card,
+.page-template .kg-image-card,
+.page-template .kg-width-wide,
+.page-template .kg-width-full {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 8px !important;
+  padding: calc(var(--gap) * 0.5) !important;
+  margin: calc(var(--gap) * 0.25) !important;
+}
+
+/* Override any remaining white backgrounds in content - only in post templates */
+.post-template .gh-content [style*="background: white"],
+.post-template .gh-content [style*="background-color: white"],
+.post-template .gh-content [style*="background: #fff"],
+.post-template .gh-content [style*="background-color: #fff"],
+.page-template .gh-content [style*="background: white"],
+.page-template .gh-content [style*="background-color: white"],
+.page-template .gh-content [style*="background: #fff"],
+.page-template .gh-content [style*="background-color: #fff"] {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+}
+
+/* Ensure main layout containers use custom background - only in post templates */
+.post-template .gh-main,
+.post-template .gh-article-header,
+.post-template .gh-article-content {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 12px !important;
+  padding: calc(var(--gap) * 0.75) !important;
+  margin: calc(var(--gap) * 0.5) !important;
+}
+
+/* Override specific Ghost theme elements that may be white - only in post templates */
+.post-template .post-content,
+.post-template .post-excerpt,
+.post-template .single,
+.post-template .single > .post-header,
+.page-template .post-content,
+.page-template .post-excerpt,
+.page-template .single,
+.page-template .single > .post-header {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 10px !important;
+  padding: calc(var(--gap) * 0.75) !important;
+  margin: calc(var(--gap) * 0.5) !important;
+}
+
+/* Author cards on post pages */
+.post-template .author,
+.page-template .author {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  color: var(--text-color, var(--color-primary-text)) !important;
+  border-radius: 10px !important;
+  padding: calc(var(--gap) * 0.75) !important;
+  margin: calc(var(--gap) * 0.5) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Author list on post pages */
+.post-template .author-list,
+.page-template .author-list {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  color: var(--text-color, var(--color-primary-text)) !important;
+  border-radius: 10px !important;
+  padding: calc(var(--gap) * 0.75) !important;
+  margin: calc(var(--gap) * 0.5) !important;
+}
+
+/* Author wrapper and header elements */
+.post-template .author-wrapper,
+.post-template .author-header,
+.page-template .author-wrapper,
+.page-template .author-header {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  color: var(--text-color, var(--color-primary-text)) !important;
+}
+
+/* Contact page specific sections - only background the card itself, not the section */
+.page-contact-us .contact-section {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 12px !important;
+  padding: var(--gap) !important;
+  margin: var(--gap) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Collaboration section - no background/padding here since the card has it */
+.page-contact-us .collab-section {
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: var(--gap) !important;
+  box-shadow: none !important;
+}
+
+/* Contact page forms */
+.page-contact-us .contact-form,
+.page-contact-us .bookings-form {
+  background-color: transparent !important;
+  border-radius: 10px !important;
+  padding: 0 !important;
+  margin: calc(var(--gap) * 0.5) !important;
+  box-shadow: none !important;
+}
+
+/* Contact page cards - this is where the background should be */
+.page-contact-us .collab-card,
+.page-contact-us .gh-card {
+  background-color: var(--post-background-color, #2d2d2d) !important;
+  border-radius: 12px !important;
+  padding: var(--gap) !important;
+  margin: 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
