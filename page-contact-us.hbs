@@ -26,11 +26,42 @@
 </section>
 
 <style>
+  /* Collaboration section styling */
+  .collab-section {
+    max-width: 800px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .collab-card {
+    /* Padding is now handled by post-backgrounds.css */
+    text-align: center;
+  }
+
+  /* Contact section styling */
   .contact-section {
     max-width: 600px;
+    width: 100%;
     margin: 3rem auto;
-    padding: 1rem;
+    padding: 2rem;
     color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .contact-form {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
   }
 
   .contact-form input,
@@ -42,6 +73,7 @@
     background: #1e1e1e;
     color: #fff;
     border-radius: 5px;
+    box-sizing: border-box;
   }
 
   .contact-form button {
@@ -51,11 +83,102 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    margin: 1rem auto;
+    display: block;
+  }
+
+  .contact-form button:hover {
+    opacity: 0.9;
   }
 
   .status-message {
     margin-top: 1rem;
     font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .g-recaptcha {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  .section-title {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+  }
+
+  /* Override any positioning from post-backgrounds.css */
+  .page-contact-us .contact-section {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .page-contact-us .collab-section {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .collab-section {
+      margin: 2rem auto;
+      padding: 0 1rem;
+      max-width: 90%;
+    }
+    
+    .collab-card {
+      /* Padding is now handled by post-backgrounds.css */
+    }
+    
+    .contact-section {
+      margin: 2rem auto;
+      padding: 1rem;
+      max-width: 90%;
+    }
+    
+    .contact-form {
+      max-width: 100%;
+    }
+    
+    .contact-form input,
+    .contact-form textarea {
+      padding: 0.6rem;
+    }
+    
+    .contact-form button {
+      padding: 0.6rem 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collab-section {
+      margin: 1rem auto;
+      padding: 0 0.5rem;
+      max-width: 95%;
+    }
+    
+    .collab-card {
+      /* Padding is now handled by post-backgrounds.css */
+    }
+    
+    .contact-section {
+      margin: 1rem auto;
+      padding: 0.5rem;
+      max-width: 95%;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+    }
   }
 </style>
 

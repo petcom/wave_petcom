@@ -102,6 +102,11 @@
                 "label": "Link Color",
                 "default": "#bb86fc"
             },
+            "post_background_color": {
+                "type": "color",
+                "label": "Post Background Color",
+                "default": "#2d2d2d"
+            },
              "proxy_api_url": {
                 "type": "text",
                 "label": "Events API URL Suffix (no trailing slash)",
