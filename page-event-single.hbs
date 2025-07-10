@@ -166,9 +166,10 @@
       ).join('');
     }
 
-    // Set group
-    if (event.group_id) {
-      document.getElementById('event-group').innerHTML = `<span class="event-group-label">Group: ${event.group_id}</span>`;
+    // Hide group section
+    const groupContainer = document.getElementById('event-group');
+    if (groupContainer) {
+      groupContainer.style.display = 'none';
     }
   }
 
