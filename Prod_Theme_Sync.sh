@@ -11,6 +11,26 @@ echo "Source: $SRC_DIR"
 echo "Destination: $DEST_DIR"
 echo "Exclude file: $EXCLUDE_FILE"
 
+
+# === Check for package.json differences ===
+SRC_PKG="package.json"
+DEST_PKG="${DEST_DIR}package.json"
+
+if [ -f "$SRC_PKG" ] && ssh yourserver "test -f $DEST_PKG"; then
+  echo "Checking for differences in package.json..."
+  DIFF=$(diff "$SRC_PKG" <(ssh yourserver "cat $DEST_PKG"))
+  if [ -n "$DIFF" ]; then
+    echo "WARNING: package.json differs between source and destination!"
+    echo "Differences:"
+    echo "$DIFF"
+  else
+    echo "package.json is identical."
+  fi
+else
+  echo "WARNING: package.json not found in source or destination. Skipping check."
+fi
+
+
 # === Check that exclude file exists ===
 if [ ! -f "$EXCLUDE_FILE" ]; then
   echo "ERROR: Exclude file not found at: $EXCLUDE_FILE"
