@@ -138,6 +138,41 @@
   font-weight: 600;
 }
 
+/* Event Details Link */
+.event-details-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.event-details-link:hover {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+/* Event Click Hint */
+.event-click-hint {
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-style: italic;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.event-card:hover .event-click-hint {
+  opacity: 1;
+}
+
+/* Cursor pointer for clickable cards */
+.event-card[style*="cursor: pointer"] {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-card[style*="cursor: pointer"]:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
 /* Responsive fixes for small screens */
 @media (max-width: 768px) {
   .tag-filter {

@@ -46,6 +46,16 @@
   transition: transform 0.2s ease-in-out;
 }
 
+/* Enhanced styling for clickable events */
+.events-carousel .event-card.clickable-event {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.events-carousel .event-card.clickable-event:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 .events-carousel .event-card:hover {
   transform: scale(1.02);
@@ -77,14 +87,6 @@
   text-align: center;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-}
-
-/* Date / meta */
-.events-carousel .event-card p {
-  margin: 0.5rem 0 0;
-  font-size: var(--font-size-xs);
-  color: var(--secondary-text-color);
-  line-height: 1.4;
 }
 
 /* Responsive card widths */

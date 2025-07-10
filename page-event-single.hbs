@@ -1,0 +1,251 @@
+{{!< default}}
+
+<main class="gh-main">
+  <div class="gh-container">
+    
+    <!-- Loading State -->
+    <div id="loading-state" class="event-loading">
+      <p>Loading event...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="event-error" style="display: none;">
+      <h1>Event Not Found</h1>
+      <p>The requested event could not be found.</p>
+      <a href="/events/" class="btn-back">← Back to Events</a>
+    </div>
+
+    <!-- Event Content -->
+    <article id="event-content" class="event-single" style="display: none;">
+      
+      <!-- Hero Image Section -->
+      <div class="event-hero">
+        <img id="event-image" src="" alt="" class="event-hero-image" />
+        <div class="event-hero-overlay">
+          <div class="event-meta-overlay">
+            <time id="event-date" class="event-date-overlay"></time>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Details Section -->
+      <div class="event-details">
+        <header class="event-header">
+          <h1 id="event-title" class="event-title"></h1>
+          <div class="event-meta">
+            <time id="event-datetime" class="event-datetime"></time>
+            <div id="event-tags" class="event-tags"></div>
+            <div id="event-group" class="event-group"></div>
+          </div>
+        </header>
+
+        <!-- Short Description -->
+        <div class="event-summary">
+          <p id="event-description" class="event-description"></p>
+        </div>
+
+        <!-- Long Description (Markdown) -->
+        <div class="event-content-body">
+          <div id="event-long-description" class="event-long-description"></div>
+        </div>
+
+        <!-- Navigation -->
+        <footer class="event-footer">
+          <a href="/events/" class="btn-back">← Back to Events</a>
+        </footer>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<!-- Include marked.js for markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+
+<script>
+  // Configuration
+  const EVENTS_API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}" || "http://localhost:8180/proxy-api/events/query";
+
+  // Get event ID from URL parameters
+  function getEventId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('event-id');
+  }
+
+  // Detect if text contains markdown
+  function isMarkdown(text) {
+    if (!text) return false;
+    // Simple markdown detection patterns
+    const markdownPatterns = [
+      /^#{1,6}\s/m,           // Headers
+      /\*\*.*\*\*/,           // Bold
+      /\*.*\*/,               // Italic
+      /\[.*\]\(.*\)/,         // Links
+      /^[-*+]\s/m,            // Lists
+      /^>\s/m,                // Blockquotes
+      /`.*`/,                 // Inline code
+      /```[\s\S]*```/         // Code blocks
+    ];
+    return markdownPatterns.some(pattern => pattern.test(text));
+  }
+
+  // Process text content (markdown or plain text)
+  function processContent(text) {
+    if (!text) return '';
+    
+    if (isMarkdown(text)) {
+      try {
+        return marked.parse(text);
+      } catch (error) {
+        console.warn('Markdown parsing failed, falling back to plain text:', error);
+        return text.replace(/\n/g, '<br>');
+      }
+    } else {
+      // Convert plain text line breaks to HTML
+      return text.replace(/\n/g, '<br>');
+    }
+  }
+
+  // Format date for display
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return {
+      full: date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      short: date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+      })
+    };
+  }
+
+  // Render event data
+  function renderEvent(event) {
+    // Set title
+    document.getElementById('event-title').textContent = event.title || 'Untitled Event';
+    document.title = `${event.title || 'Event'} - SONAR AZ`;
+
+    // Set dates
+    if (event.event_date) {
+      const dates = formatDate(event.event_date);
+      document.getElementById('event-date').textContent = dates.short;
+      document.getElementById('event-datetime').textContent = dates.full;
+    }
+
+    // Set image
+    const heroImage = document.getElementById('event-image');
+    const imageUrl = event.large_image_url || event.small_image_url || '/assets/default-event.jpg';
+    heroImage.src = imageUrl;
+    heroImage.alt = event.title || 'Event Image';
+
+    // Set descriptions
+    if (event.description) {
+      document.getElementById('event-description').innerHTML = processContent(event.description);
+    }
+    
+    if (event.long_description) {
+      document.getElementById('event-long-description').innerHTML = processContent(event.long_description);
+    } else if (event.description) {
+      // Hide summary if we're showing the same content in long description
+      document.querySelector('.event-summary').style.display = 'none';
+      document.getElementById('event-long-description').innerHTML = processContent(event.description);
+    }
+
+    // Set tags
+    if (event.tags && event.tags.length > 0) {
+      const tagsContainer = document.getElementById('event-tags');
+      tagsContainer.innerHTML = event.tags.map(tag => 
+        `<span class="event-tag">${tag}</span>`
+      ).join('');
+    }
+
+    // Set group
+    if (event.group_id) {
+      document.getElementById('event-group').innerHTML = `<span class="event-group-label">Group: ${event.group_id}</span>`;
+    }
+  }
+
+  // Fetch single event by ID
+  async function loadEvent(eventId) {
+    try {
+      // First try to fetch the specific event
+      const body = {
+        event_id: eventId
+      };
+
+      console.log("Fetching event with ID:", eventId);
+      console.log("Fetching event:", EVENTS_API_URL, "with body:", body);
+
+      const res = await fetch(EVENTS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (!res.ok) {
+        throw new Error(`API request failed: ${res.status}`);
+      }
+
+      const events = await res.json();
+      console.log("API returned events:", events);
+      
+      if (!events || events.length === 0) {
+        throw new Error('Event not found');
+      }
+
+      // Find the specific event by ID
+      let event = events.find(e => e.id === eventId);
+      
+      // If not found by direct ID match, try string comparison
+      if (!event) {
+        event = events.find(e => String(e.id) === String(eventId));
+      }
+      
+      // If still not found, log available IDs and use first event as fallback
+      if (!event) {
+        console.warn("Could not find event with ID:", eventId);
+        console.warn("Available event IDs:", events.map(e => e.id));
+        event = events[0];
+      }
+      
+      console.log("Selected event:", event);
+      
+      // Hide loading, show content
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('event-content').style.display = 'block';
+      
+      // Render the event
+      renderEvent(event);
+
+    } catch (error) {
+      console.error('Error loading event:', error);
+      
+      // Hide loading, show error
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
+    }
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', () => {
+    const eventId = getEventId();
+    
+    if (!eventId) {
+      // No event ID provided, show error
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
+      document.querySelector('#error-state p').textContent = 'No event ID provided in URL.';
+      return;
+    }
+
+    // Load the event
+    loadEvent(eventId);
+  });
+</script>

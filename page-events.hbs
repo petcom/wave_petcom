@@ -79,6 +79,26 @@
         const isEven = index % 2 === 0;
         const card = document.createElement("article");
         card.className = `event-card ${isEven ? "event-left" : "event-right"}`;
+        
+        // Make the entire card clickable if event has an ID
+        if (event.id) {
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', (e) => {
+            // Prevent navigation if clicking on a link
+            if (e.target.tagName === 'A') return;
+            window.location.href = `/event-single/?event-id=${event.id}`;
+          });
+          
+          // Add hover effect
+          card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-2px)';
+            card.style.transition = 'transform 0.2s ease';
+          });
+          
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+          });
+        }
 
         const thumbUrl = event.thumb_image_url || "/assets/default-thumb.jpg";
 
@@ -94,6 +114,7 @@
           <p>${event.description}</p>
           ${event.tags?.length ? `<p><strong>Tags:</strong> ${event.tags.join(", ")}</p>` : ""}
           ${event.group_id ? `<p><strong>Group:</strong> ${event.group_id}</p>` : ""}
+          ${event.id ? `<p><span class="event-click-hint">Click anywhere to view details →</span></p>` : ""}
         `;
 
         if (isEven) {
