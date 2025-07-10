@@ -25,18 +25,25 @@
 
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
-    const linkUrl = '/events';
-
+    
     const wrapper = document.createElement('a');
-    wrapper.href = linkUrl;
-    wrapper.className = 'event-card';
+    
+    // If event has an ID, link to single event page, otherwise to events page
+    if (event.id) {
+      wrapper.href = `/event-single/?event-id=${event.id}`;
+      wrapper.className = 'event-card clickable-event';
+    } else {
+      wrapper.href = '/events';
+      wrapper.className = 'event-card';
+    }
+    
     wrapper.innerHTML = `
       <div class="event-media">
         <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
         <h6>${event.title}</h6>
       </div>
-      <p>${new Date(event.event_date).toLocaleDateString()}</p>
     `;
+    
     return wrapper;
   }
 
