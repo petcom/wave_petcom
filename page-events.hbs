@@ -112,8 +112,7 @@
           <h2>${event.title}</h2>
           <time datetime="${event.event_date}">${new Date(event.event_date).toLocaleDateString()}</time>
           <p>${event.description}</p>
-          ${event.tags?.length ? `<p><strong>Tags:</strong> ${event.tags.join(", ")}</p>` : ""}
-          ${event.group_id ? `<p><strong>Group:</strong> ${event.group_id}</p>` : ""}
+          ${event.tags?.length ? `<div class="event-tags-container">${event.tags.map(tag => `<span class="event-tag">${tag}</span>`).join('')}</div>` : ""}
           ${event.id ? `<p><span class="event-click-hint">Click anywhere to view details →</span></p>` : ""}
         `;
 
