@@ -89,6 +89,16 @@
   overflow-wrap: anywhere;
 }
 
+/* Event Date in Carousel */
+.events-carousel .event-date {
+  margin: 0.25rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--accent-color);
+  text-align: center;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
 /* Responsive card widths */
 @media (max-width: 768px) {
   .event-card {

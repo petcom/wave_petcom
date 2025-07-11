@@ -66,6 +66,30 @@
   // Configuration
   const EVENTS_API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}" || "http://localhost:8180/proxy-api/events/query";
 
+  // Helper function to parse date as local date (no timezone conversion)
+  function parseLocalDate(dateString) {
+    if (!dateString) return null;
+    
+    // If it's just a date (YYYY-MM-DD), treat as date-only
+    if (!dateString.includes('T')) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    // Parse full datetime but as local time
+    const [datePart, timePart] = dateString.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const timeOnly = timePart.split('Z')[0].split('+')[0]; // Remove timezone info
+    const [hour, minute, second] = timeOnly.split(':').map(Number);
+    
+    return new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
+  }
+
+  // Check if time is meaningful (not midnight)
+  function hasSignificantTime(date) {
+    return date.getHours() !== 0 || date.getMinutes() !== 0;
+  }
+
   // Get event ID from URL parameters
   function getEventId() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -108,21 +132,34 @@
 
   // Format date for display
   function formatDate(dateString) {
-    const date = new Date(dateString);
+    const date = parseLocalDate(dateString);
+    if (!date) return { full: '', short: '' };
+    
+    const showTime = hasSignificantTime(date);
+    
+    const fullOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric'
+    };
+    
+    const shortOptions = { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    };
+    
+    if (showTime) {
+      fullOptions.hour = '2-digit';
+      fullOptions.minute = '2-digit';
+      shortOptions.hour = '2-digit';
+      shortOptions.minute = '2-digit';
+    }
+    
     return {
-      full: date.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      short: date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: 'numeric'
-      })
+      full: date.toLocaleDateString('en-US', fullOptions),
+      short: date.toLocaleDateString('en-US', shortOptions)
     };
   }
 
