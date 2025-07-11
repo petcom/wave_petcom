@@ -22,6 +22,53 @@
   const DEFAULT_TAGS = "{{@custom.events_tags}}" || "signal-9,sonar,public";
   const EVENTS_API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}" || "http://localhost:8180/proxy-api/events/query";
 
+  // Helper function to parse date as local date (no timezone conversion)
+  function parseLocalDate(dateString) {
+    if (!dateString) return null;
+    
+    // If it's just a date (YYYY-MM-DD), treat as date-only
+    if (!dateString.includes('T')) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    // Parse full datetime but as local time
+    const [datePart, timePart] = dateString.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const timeOnly = timePart.split('Z')[0].split('+')[0]; // Remove timezone info
+    const [hour, minute, second] = timeOnly.split(':').map(Number);
+    
+    return new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
+  }
+
+  // Check if time is meaningful (not midnight)
+  function hasSignificantTime(date) {
+    return date.getHours() !== 0 || date.getMinutes() !== 0;
+  }
+
+  // Format date for events page display
+  function formatEventDate(dateString) {
+    const date = parseLocalDate(dateString);
+    if (!date) return '';
+    
+    const showTime = hasSignificantTime(date);
+    const options = {};
+    
+    if (showTime) {
+      options.year = 'numeric';
+      options.month = 'short';
+      options.day = 'numeric';
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    } else {
+      options.year = 'numeric';
+      options.month = 'short';
+      options.day = 'numeric';
+    }
+    
+    return date.toLocaleDateString('en-US', options);
+  }
+
   // Function to get URL parameters
   function getUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -110,7 +157,7 @@
         contentDiv.className = `event-content ${isEven ? "event-content-left" : "event-content-right"}`;
         contentDiv.innerHTML = `
           <h2>${event.title}</h2>
-          <time datetime="${event.event_date}">${new Date(event.event_date).toLocaleDateString()}</time>
+          <time datetime="${event.event_date}">${formatEventDate(event.event_date)}</time>
           <p>${event.description}</p>
           ${event.tags?.length ? `<div class="event-tags-container">${event.tags.map(tag => `<span class="event-tag">${tag}</span>`).join('')}</div>` : ""}
           ${event.id ? `<p><span class="event-click-hint">Click anywhere to view details →</span></p>` : ""}

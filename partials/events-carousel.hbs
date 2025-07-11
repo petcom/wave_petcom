@@ -23,6 +23,50 @@
   const API_URL = "{{@custom.proxy_api_url}}{{@custom.events_suffix}}";
   const DEFAULT_TAGS = "{{@custom.events_tags}}";
 
+  // Helper function to parse date as local date (no timezone conversion)
+  function parseLocalDate(dateString) {
+    if (!dateString) return null;
+    
+    // If it's just a date (YYYY-MM-DD), treat as date-only
+    if (!dateString.includes('T')) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    // Parse full datetime but as local time
+    const [datePart, timePart] = dateString.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const timeOnly = timePart.split('Z')[0].split('+')[0]; // Remove timezone info
+    const [hour, minute, second] = timeOnly.split(':').map(Number);
+    
+    return new Date(year, month - 1, day, hour || 0, minute || 0, second || 0);
+  }
+
+  // Check if time is meaningful (not midnight)
+  function hasSignificantTime(date) {
+    return date.getHours() !== 0 || date.getMinutes() !== 0;
+  }
+
+  // Format date for carousel display
+  function formatCarouselDate(dateString) {
+    const date = parseLocalDate(dateString);
+    if (!date) return '';
+    
+    const showTime = hasSignificantTime(date);
+    const options = { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    };
+    
+    if (showTime) {
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    }
+    
+    return date.toLocaleDateString('en-US', options);
+  }
+
   function createEventCard(event) {
     const thumbUrl = event.thumb_image_url || '/assets/default-thumb.jpg';
     
@@ -41,6 +85,7 @@
       <div class="event-media">
         <img src="${thumbUrl}" alt="${event.title || 'Event image'}">
         <h6>${event.title}</h6>
+        <p class="event-date">${formatCarouselDate(event.event_date)}</p>
       </div>
     `;
     
