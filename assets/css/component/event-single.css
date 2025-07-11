@@ -158,10 +158,34 @@
   margin-bottom: 3rem;
 }
 
-.event-long-description {
-  font-size: 1.2rem;
-  line-height: 1.8;
+/* Ticket Section */
+.event-ticket-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+}
+
+.ticket-label {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--text-color);
+}
+
+.ticket-link {
+  display: inline-block;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  word-break: break-all;
+  transition: color 0.2s ease;
+}
+
+.ticket-link:hover {
+  color: var(--link-color);
+  text-decoration: underline;
 }
 
 /* Markdown Content Styling */

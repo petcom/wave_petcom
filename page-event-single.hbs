@@ -49,6 +49,12 @@
           <div id="event-long-description" class="event-long-description"></div>
         </div>
 
+        <!-- Ticket Link Section -->
+        <div id="event-ticket-section" class="event-ticket-section" style="display: none;">
+          <p class="ticket-label">Click the link for tickets:</p>
+          <a id="event-ticket-link" href="" target="_blank" rel="noopener noreferrer" class="ticket-link"></a>
+        </div>
+
         <!-- Navigation -->
         <footer class="event-footer">
           <a href="/events/" class="btn-back">← Back to Events</a>
@@ -88,6 +94,16 @@
   // Check if time is meaningful (not midnight)
   function hasSignificantTime(date) {
     return date.getHours() !== 0 || date.getMinutes() !== 0;
+  }
+
+  // Validate if a string is a valid URL
+  function isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   // Get event ID from URL parameters
@@ -201,6 +217,18 @@
       tagsContainer.innerHTML = event.tags.map(tag => 
         `<span class="event-tag">${tag}</span>`
       ).join('');
+    }
+
+    // Set ticket link
+    const ticketSection = document.getElementById('event-ticket-section');
+    const ticketLink = document.getElementById('event-ticket-link');
+    
+    if (event.ticket_url && isValidUrl(event.ticket_url)) {
+      ticketLink.href = event.ticket_url;
+      ticketLink.textContent = event.ticket_url;
+      ticketSection.style.display = 'block';
+    } else {
+      ticketSection.style.display = 'none';
     }
 
     // Hide group section
