@@ -190,6 +190,43 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Ticket Link Section */
+.event-ticket-info {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-color);
+  border-radius: 9px;
+}
+
+.event-ticket-info p {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.ticket-link-small {
+  display: inline-block;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.35rem;
+  word-break: break-all;
+  transition: color 0.2s ease;
+}
+
+.ticket-link-small:hover {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+.event-click-hint {
+  color: var(--accent-color) !important;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 /* Responsive fixes for small screens */
 @media (max-width: 768px) {
   .tag-filter {

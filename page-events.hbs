@@ -46,6 +46,16 @@
     return date.getHours() !== 0 || date.getMinutes() !== 0;
   }
 
+  // Validate if a string is a valid URL
+  function isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   // Format date for events page display
   function formatEventDate(dateString) {
     const date = parseLocalDate(dateString);
@@ -155,11 +165,20 @@
 
         const contentDiv = document.createElement("div");
         contentDiv.className = `event-content ${isEven ? "event-content-left" : "event-content-right"}`;
+        
+        const ticketSection = event.ticket_url && isValidUrl(event.ticket_url) 
+          ? `<div class="event-ticket-info">
+               <p><strong>Click the link for tickets:</strong></p>
+               <a href="${event.ticket_url}" target="_blank" rel="noopener noreferrer" class="ticket-link-small">${event.ticket_url}</a>
+             </div>`
+          : "";
+        
         contentDiv.innerHTML = `
           <h2>${event.title}</h2>
           <time datetime="${event.event_date}">${formatEventDate(event.event_date)}</time>
           <p>${event.description}</p>
           ${event.tags?.length ? `<div class="event-tags-container">${event.tags.map(tag => `<span class="event-tag">${tag}</span>`).join('')}</div>` : ""}
+          ${ticketSection}
           ${event.id ? `<p><span class="event-click-hint">Click anywhere to view details →</span></p>` : ""}
         `;
 
