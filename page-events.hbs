@@ -90,10 +90,11 @@
 
   function getDateRange(daysOut) {
     const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const future = new Date();
     future.setDate(now.getDate() + daysOut);
     return {
-      start: now.toISOString().split('T')[0],
+      start: yesterday.toISOString().split('T')[0],
       end: future.toISOString().split('T')[0]
     };
   }
