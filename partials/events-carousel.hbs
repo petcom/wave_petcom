@@ -109,7 +109,7 @@
       const body = {
         tags,
         tag_logic: 'or',
-        startDate: new Date().toISOString(),
+        startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Start from yesterday to ensure today's events are included
         endDate: null
       };
 
