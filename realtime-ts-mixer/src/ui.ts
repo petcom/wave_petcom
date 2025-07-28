@@ -1,4 +1,12 @@
+
 // UI Components and DOM manipulation
+
+// Allow TypeScript to recognize window.mixer
+declare global {
+  interface Window {
+    mixer: any;
+  }
+}
 
 import { MixerState, TrackState, EffectType } from './types.js';
 import { MIXER_CONFIG } from './config.js';
@@ -21,17 +29,62 @@ export class MixerUI {
   }
 
   private getHTML(): string {
+    // Helper to format file names for display: text up to first _ and number at end
+    function formatFileName(filename: string): string {
+      // Remove extension
+      const base = filename.replace(/\.[^/.]+$/, "");
+      // Find first underscore
+      const firstUnderscore = base.indexOf("_");
+      let main = base;
+      if (firstUnderscore !== -1) {
+        main = base.substring(0, firstUnderscore);
+      }
+      // Find trailing number
+      const match = base.match(/(\d+)(?!.*\d)/);
+      const number = match ? match[1] : "";
+      // Replace dashes with spaces in display
+      const display = (number ? `${main} ${number}` : main).replace(/-/g, ' ');
+      return display;
+    }
+
+    // Helper to add file selector UI for a track
+    // Shows current file and half of next file (for peek effect)
+    const fileSelector = (trackId: string) => {
+      let files: string[] = [];
+      let currentFile = '';
+      let idx = 0;
+      try {
+        const mixer = (window as any).mixer;
+        if (mixer && mixer.manifestFiles && mixer.state && mixer.state.tracks) {
+          files = mixer.manifestFiles[trackId] || [];
+          const trackState = mixer.state.tracks.find((t: any) => t.id === trackId);
+          if (trackState && trackState.currentFile) {
+            idx = files.indexOf(trackState.currentFile);
+          }
+          currentFile = files[idx] || '';
+        }
+      } catch {}
+      // Render as a list of file buttons for selection
+      const fileButtons = files.map((file, i) => {
+        return `<button class="file-choice" data-control="selectFile" data-file="${file}" data-track="${trackId}" ${i === idx ? 'disabled' : ''}>${formatFileName(file)}</button>`;
+      }).join('');
+      return `<div class="file-selector" data-track="${trackId}">
+        <div class="file-window" data-file-window="${trackId}">
+          ${fileButtons || '<span style=\"opacity:0.5\">No files</span>'}
+        </div>
+      </div>`;
+    };
     return `
       <div class="mixer-panel">
         <div class="mixer-header">
           <h3>Binaural Relaxation Mixer</h3>
           <button class="mixer-close" data-action="close">×</button>
         </div>
-        
         <div class="mixer-channels">
           <!-- Track Channels -->
           <div class="channel" data-track="brainwave1">
             <div class="channel-header">Brainwave 1</div>
+            ${fileSelector('brainwave1')}
             <div class="channel-controls">
               <div class="pan-control">
                 <label>Pan</label>
@@ -49,9 +102,9 @@ export class MixerUI {
               </button>
             </div>
           </div>
-
           <div class="channel" data-track="brainwave2">
             <div class="channel-header">Brainwave 2</div>
+            ${fileSelector('brainwave2')}
             <div class="channel-controls">
               <div class="pan-control">
                 <label>Pan</label>
@@ -69,9 +122,9 @@ export class MixerUI {
               </button>
             </div>
           </div>
-
           <div class="channel" data-track="animals">
             <div class="channel-header">Animals</div>
+            ${fileSelector('animals')}
             <div class="channel-controls">
               <div class="pan-control">
                 <label>Pan</label>
@@ -89,9 +142,9 @@ export class MixerUI {
               </button>
             </div>
           </div>
-
           <div class="channel" data-track="nature">
             <div class="channel-header">Nature</div>
+            ${fileSelector('nature')}
             <div class="channel-controls">
               <div class="pan-control">
                 <label>Pan</label>
@@ -109,9 +162,9 @@ export class MixerUI {
               </button>
             </div>
           </div>
-
           <div class="channel" data-track="relaxing">
             <div class="channel-header">Relaxing</div>
+            ${fileSelector('relaxing')}
             <div class="channel-controls">
               <div class="pan-control">
                 <label>Pan</label>
@@ -129,7 +182,6 @@ export class MixerUI {
               </button>
             </div>
           </div>
-
           <!-- Effects Channel -->
           <div class="channel effects-channel">
             <div class="channel-header">Effects</div>
@@ -160,6 +212,7 @@ export class MixerUI {
       </div>
     `;
   }
+
 
   private attachEventListeners(): void {
     if (!this.container) return;
@@ -281,6 +334,31 @@ export class MixerUI {
     const panKnob = channel.querySelector('.pan-knob') as HTMLInputElement;
     if (panKnob) {
       panKnob.value = state.pan.toString();
+    }
+
+    // Update file selector display (show current and next file for 1.5 file effect)
+    const fileCurrent = channel.querySelector('.file-current') as HTMLElement;
+    const fileNext = channel.querySelector('.file-next') as HTMLElement;
+    if (fileCurrent) {
+      fileCurrent.textContent = state.currentFile ? (state.currentFile.split('/').pop() || state.currentFile) : '---';
+    }
+    if (fileNext) {
+      // Find the manifest files for this track (from global window, since UI doesn't have direct access)
+      let files: string[] = [];
+      try {
+        // @ts-ignore
+        if (window.mixer && typeof window.mixer.getTrackFiles === 'function') {
+          files = window.mixer.getTrackFiles(trackId);
+        }
+      } catch {}
+      let currentIdx = (state as any).currentFileIndex || 0;
+      if (files.length > 1) {
+        const nextIdx = (currentIdx + 1) % files.length;
+        const nextFile = files[nextIdx];
+        fileNext.textContent = nextFile ? (nextFile.split('/').pop() || nextFile) : '';
+      } else {
+        fileNext.textContent = '';
+      }
     }
   }
 

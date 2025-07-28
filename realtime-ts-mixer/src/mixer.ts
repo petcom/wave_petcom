@@ -1,40 +1,67 @@
-// Main Mixer Controller - Orchestrates audio engine and UI
 
+// Main Mixer Controller - Orchestrates audio engine and UI
 import { AudioEngine } from './audioEngine.js';
 import { MixerUI } from './ui.js';
 import { MixerState, TrackState, EffectType } from './types.js';
 import { AUDIO_TRACKS, EFFECTS, MIXER_CONFIG } from './config.js';
 
-export class BinauraRelaxationMixer {
+export class Mixer {
+
   private audioEngine: AudioEngine;
   private ui: MixerUI;
   private state: MixerState;
   private heroElement: HTMLElement | null = null;
   private isInitialized = false;
+  private manifestFiles: { [key: string]: string[] } = {};
 
   constructor() {
     this.audioEngine = new AudioEngine();
     this.ui = new MixerUI((trackId, action, value) => this.handleTrackControl(trackId, action, value));
-    
-    // Initialize state
-    this.state = {
-      isVisible: false,
-      masterVolume: 0.8,
-      tracks: AUDIO_TRACKS.map(track => ({
-        id: track.id,
-        isPlaying: false,
-        volume: 0.7,
-        pan: 0,
-        effectsEnabled: false,
-        currentFile: track.files[0]
-      })),
-      effects: [...EFFECTS],
-      lastInteraction: Date.now()
-    };
+    // State will be initialized after manifests are loaded
+        this.state = {
+            isVisible: false,
+            masterVolume: 0.8,
+            tracks: [],
+            effects: [...EFFECTS],
+            lastInteraction: Date.now()
+        };
+  }
+
+  // Loads all manifests and initializes state
+  private async loadManifestsAndInitState(): Promise<void> {
+    this.manifestFiles = {};
+    for (const track of AUDIO_TRACKS) {
+      try {
+        const resp = await fetch(track.manifest);
+        const data = await resp.json();
+        if (!data.directory) {
+          console.error(`Manifest for track '${track.id}' is missing required 'directory' field.`);
+          this.manifestFiles[track.id] = [];
+          continue;
+        }
+        const dir = data.directory.replace(/\/+$/, ''); // remove trailing slashes
+        this.manifestFiles[track.id] = (data.files || []).map((file: string) => `${dir}/${file}`);
+      } catch (e) {
+        console.error(`Failed to load manifest for ${track.id}:`, e);
+        this.manifestFiles[track.id] = [];
+      }
+    }
+    // Now initialize state.tracks
+    this.state.tracks = AUDIO_TRACKS.map(track => ({
+      id: track.id,
+      isPlaying: false,
+      volume: 0.7,
+      pan: 0,
+      effectsEnabled: false,
+      currentFile: (this.manifestFiles[track.id] && this.manifestFiles[track.id][0]) || ''
+    }));
   }
 
   async initialize(heroSelector: string = '.site-header'): Promise<boolean> {
     try {
+      // Load manifests and initialize state
+      await this.loadManifestsAndInitState();
+
       // Find hero element
       this.heroElement = document.querySelector(heroSelector);
       if (!this.heroElement) {
@@ -50,6 +77,9 @@ export class BinauraRelaxationMixer {
 
       // NOTE: Don't initialize audio engine here - defer until user interaction
       // This prevents hanging on browsers that require user gesture for AudioContext
+
+      // Expose this mixer instance globally for UI file selector access
+      (window as any).mixer = this;
 
       // Create UI
       const mixerElement = this.ui.create();
@@ -88,6 +118,7 @@ export class BinauraRelaxationMixer {
   }
 
   private async ensureAudioInitialized(): Promise<boolean> {
+// (end of file)
     // If audio is already initialized, return success
     if (this.audioEngine.isInitialized()) {
       return true;
@@ -174,27 +205,40 @@ export class BinauraRelaxationMixer {
       case 'play':
         await this.toggleTrackPlayback(trackId);
         break;
-      
       case 'volume':
         if (value !== undefined) {
           trackState.volume = value;
           this.audioEngine.setTrackVolume(trackId, value);
         }
         break;
-      
       case 'pan':
         if (value !== undefined) {
           trackState.pan = value;
           this.audioEngine.setTrackPan(trackId, value);
         }
         break;
-      
       case 'effects':
         trackState.effectsEnabled = !trackState.effectsEnabled;
         this.audioEngine.setTrackEffects(trackId, trackState.effectsEnabled);
         break;
+      case 'cycleFile':
+        if (typeof value === 'number') {
+          const files = this.manifestFiles[trackId] || [];
+          if (files.length > 0) {
+            const currentIdx = (trackState as any).currentFileIndex || 0;
+            let newIdx = (currentIdx + value + files.length) % files.length;
+            (trackState as any).currentFileIndex = newIdx;
+            trackState.currentFile = files[newIdx];
+            // If playing, switch file immediately
+            if (trackState.isPlaying) {
+              await this.audioEngine.stopTrack(trackId);
+              const success = await this.audioEngine.playTrack(trackId, trackState.currentFile);
+              trackState.isPlaying = success;
+            }
+          }
+        }
+        break;
     }
-
     // Update UI
     this.ui.updateTrackState(trackId, trackState);
   }
@@ -227,9 +271,10 @@ export class BinauraRelaxationMixer {
       trackState.isPlaying = false;
     } else {
       // Start track
-      const filename = trackConfig.files[trackConfig.currentFileIndex];
+      const files = this.manifestFiles[trackId] || [];
+      const currentFileIndex = (trackState as any).currentFileIndex || 0;
+      const filename = files[currentFileIndex] || '';
       const success = await this.audioEngine.playTrack(trackId, filename);
-      
       if (success) {
         trackState.isPlaying = true;
         trackState.currentFile = filename;
@@ -273,18 +318,18 @@ export class BinauraRelaxationMixer {
     const trackConfig = AUDIO_TRACKS.find(t => t.id === trackId);
     const trackState = this.state.tracks.find(t => t.id === trackId);
     
-    if (!trackConfig || !trackState || fileIndex >= trackConfig.files.length) {
+    const files = this.manifestFiles[trackId] || [];
+    if (!trackConfig || !trackState || fileIndex >= files.length) {
       return false;
     }
 
     const wasPlaying = trackState.isPlaying;
-    
     if (wasPlaying) {
       this.audioEngine.stopTrack(trackId);
     }
 
-    trackConfig.currentFileIndex = fileIndex;
-    trackState.currentFile = trackConfig.files[fileIndex];
+    (trackState as any).currentFileIndex = fileIndex;
+    trackState.currentFile = files[fileIndex];
 
     if (wasPlaying) {
       const success = await this.audioEngine.playTrack(trackId, trackState.currentFile);
@@ -297,8 +342,7 @@ export class BinauraRelaxationMixer {
   }
 
   getTrackFiles(trackId: string): string[] {
-    const track = AUDIO_TRACKS.find(t => t.id === trackId);
-    return track ? [...track.files] : [];
+    return this.manifestFiles[trackId] ? [...this.manifestFiles[trackId]] : [];
   }
 
   isVisible(): boolean {

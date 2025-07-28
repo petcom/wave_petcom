@@ -94,13 +94,18 @@ export class AudioEngine {
   }
 
   private async fetchAndDecodeAudio(filename: string): Promise<AudioBuffer> {
-    const url = `${MIXER_CONFIG.audioPath}/${filename}`;
+    // Ensure no duplicate slashes in URL
+    let base = MIXER_CONFIG.audioPath;
+    if (base.endsWith('/')) base = base.slice(0, -1);
+    let file = filename;
+    if (file.startsWith('/')) file = file.slice(1);
+    const url = `${base}/${file}`;
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+
     const arrayBuffer = await response.arrayBuffer();
     return await this.audioContext!.decodeAudioData(arrayBuffer);
   }
