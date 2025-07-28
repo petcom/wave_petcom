@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Working Mixer Test</title>
+    <link rel="stylesheet" href="dist/styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .site-header {
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect fill="%23667eea" width="1000" height="1000"/><circle fill="%23764ba2" cx="500" cy="500" r="300" opacity="0.3"/></svg>');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .site-header:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .site-header-content {
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .site-header h1 {
+            font-size: 3rem;
+            margin: 0 0 1rem 0;
+            font-weight: 700;
+        }
+        
+        .site-header p {
+            font-size: 1.2rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Initializing...</div>
+    
+    <header class="site-header">
+        <div class="site-header-content">
+            <h1>Binaural Relaxation</h1>
+            <p>Click anywhere on this background to open the mixer</p>
+        </div>
+    </header>
+
+    <script type="module">
+        const status = document.getElementById('status');
+        
+        async function initializeMixer() {
+            try {
+                console.log('Starting simple mixer initialization...');
+                status.textContent = 'Loading mixer...';
+                
+                // Import mixer class directly (skip index.js auto-initialization)
+                const { BinauraRelaxationMixer } = await import('./dist/mixer.js');
+                console.log('Mixer class imported');
+                status.textContent = 'Creating mixer...';
+                
+                // Create instance
+                const mixer = new BinauraRelaxationMixer();
+                console.log('Mixer instance created');
+                status.textContent = 'Initializing audio...';
+                
+                // Initialize with same pattern that worked
+                const success = await mixer.initialize('.site-header');
+                console.log('Initialize result:', success);
+                
+                if (success) {
+                    console.log('✅ Mixer ready!');
+                    window.binauraMixer = mixer;
+                    status.textContent = '✅ Ready! Click hero to open mixer.';
+                    status.style.background = 'rgba(0, 128, 0, 0.8)';
+                } else {
+                    console.log('❌ Initialization failed');
+                    status.textContent = '❌ Initialization failed';
+                    status.style.background = 'rgba(128, 0, 0, 0.8)';
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                status.textContent = '❌ Error: ' + error.message;
+                status.style.background = 'rgba(128, 0, 0, 0.8)';
+            }
+        }
+        
+        // Wait for DOM to be ready, then initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMixer);
+        } else {
+            initializeMixer();
+        }
+    </script>
+</body>
+</html>
