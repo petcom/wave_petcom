@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioContext Resume Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #00ff00;
+            line-height: 1.6;
+        }
+        button {
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #555; }
+        .step { margin: 5px 0; }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+        .pending { color: #ffff00; }
+    </style>
+</head>
+<body>
+    <h1>AudioContext Resume Test</h1>
+    <p>This will test if AudioContext.resume() hangs without user interaction.</p>
+    
+    <button onclick="testWithoutInteraction()">Test Without User Interaction</button>
+    <button onclick="testWithInteraction()">Test With User Interaction</button>
+    
+    <div id="log"></div>
+
+    <script>
+        let logElement = document.getElementById('log');
+        let stepCounter = 1;
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `step ${type}`;
+            div.innerHTML = `${stepCounter++}. ${message}`;
+            logElement.appendChild(div);
+            console.log(message);
+        }
+        
+        async function testWithoutInteraction() {
+            logElement.innerHTML = '';
+            stepCounter = 1;
+            
+            try {
+                log('Testing AudioContext without user interaction...');
+                
+                log('Creating AudioContext...');
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                log(`✅ AudioContext created, state: ${audioContext.state}`, 'success');
+                
+                if (audioContext.state === 'suspended') {
+                    log('⚠️  AudioContext suspended, testing resume...', 'pending');
+                    
+                    // Add timeout to catch hangs
+                    const resumePromise = audioContext.resume();
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Resume timeout after 5 seconds')), 5000)
+                    );
+                    
+                    try {
+                        await Promise.race([resumePromise, timeoutPromise]);
+                        log(`✅ Resume successful, state: ${audioContext.state}`, 'success');
+                    } catch (error) {
+                        log(`❌ Resume failed: ${error.message}`, 'error');
+                        if (error.message.includes('timeout')) {
+                            log('⚠️  AudioContext.resume() is hanging - this is the issue!', 'pending');
+                        }
+                    }
+                } else {
+                    log(`✅ AudioContext already running, state: ${audioContext.state}`, 'success');
+                }
+                
+                audioContext.close();
+                log('✅ AudioContext closed', 'success');
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testWithInteraction() {
+            logElement.innerHTML = '';
+            stepCounter = 1;
+            
+            try {
+                log('Testing AudioContext with user interaction...');
+                
+                log('Creating AudioContext...');
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                log(`✅ AudioContext created, state: ${audioContext.state}`, 'success');
+                
+                if (audioContext.state === 'suspended') {
+                    log('⚠️  AudioContext suspended, attempting resume with user interaction...', 'pending');
+                    
+                    await audioContext.resume();
+                    log(`✅ Resume successful, state: ${audioContext.state}`, 'success');
+                } else {
+                    log(`✅ AudioContext already running, state: ${audioContext.state}`, 'success');
+                }
+                
+                audioContext.close();
+                log('✅ AudioContext closed', 'success');
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

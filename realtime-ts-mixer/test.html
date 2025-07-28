@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binaural Relaxation Mixer Test</title>
+    <link rel="stylesheet" href="dist/styles.css?v=80transparent">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .site-header {
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect fill="%23667eea" width="1000" height="1000"/><circle fill="%23764ba2" cx="500" cy="500" r="300" opacity="0.3"/></svg>');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .site-header:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .site-header-content {
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .site-header h1 {
+            font-size: 3rem;
+            margin: 0 0 1rem 0;
+            font-weight: 700;
+        }
+        
+        .site-header p {
+            font-size: 1.2rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .instructions {
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Initializing mixer...</div>
+    
+    <header class="site-header">
+        <div class="site-header-content">
+            <h1>Binaural Relaxation</h1>
+            <p>Click anywhere on this background to open the mixer</p>
+        </div>
+    </header>
+    
+    <div class="instructions">
+        <h2>Instructions</h2>
+        <ul style="max-width: 600px; margin: 0 auto; text-align: left;">
+            <li>Click on the hero background above to show the mixer</li>
+            <li>Use volume sliders to adjust individual track levels</li>
+            <li>Pan knobs control left/right stereo positioning</li>
+            <li>Play/Stop buttons control individual tracks</li>
+            <li>FX buttons route tracks through the effects processor</li>
+            <li>Effects panel has toggles for reverb, delay, bit-shift, and distortion</li>
+            <li>Master volume controls overall output level</li>
+            <li>Mixer auto-hides after 15 seconds of inactivity</li>
+        </ul>
+        
+        <p style="margin-top: 2rem; opacity: 0.8;">
+            <strong>Note:</strong> Audio files need to be placed in <code>/audio/loops/</code> directory for the mixer to work.
+        </p>
+    </div>
+
+    <script type="module" src="dist/index.js"></script>
+    <script>
+        // Status updates
+        const status = document.getElementById('status');
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (window.binauraMixer) {
+                    status.textContent = '✅ Mixer ready! Click hero to open.';
+                    status.style.background = 'rgba(0, 128, 0, 0.8)';
+                } else {
+                    status.textContent = '❌ Mixer failed to initialize';
+                    status.style.background = 'rgba(128, 0, 0, 0.8)';
+                }
+            }, 2000);
+        });
+        
+        // Hide status after 5 seconds
+        setTimeout(() => {
+            status.style.opacity = '0';
+            setTimeout(() => status.remove(), 300);
+        }, 5000);
+    </script>
+</body>
+</html>

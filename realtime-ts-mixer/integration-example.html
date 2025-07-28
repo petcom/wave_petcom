@@ -1,0 +1,24 @@
+<!-- Integration example for Ghost theme -->
+<!-- Add this to your default.hbs or index.hbs template -->
+
+<!-- Include the CSS (add to <head> section) -->
+<link rel="stylesheet" href="{{asset "realtime-ts-mixer/dist/styles.css"}}">
+
+<!-- Include the JavaScript module (add before closing </body> tag) -->
+<script type="module" src="{{asset "realtime-ts-mixer/dist/index.js"}}"></script>
+
+<!-- Optional: Manual initialization script -->
+<script type="module">
+  // Wait for the mixer to be available
+  window.addEventListener('DOMContentLoaded', function() {
+    // The mixer auto-initializes, but you can access it via:
+    // window.binauraMixer (available after initialization)
+    
+    // Optional: Listen for mixer events
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.site-header')) {
+        console.log('Hero section clicked - mixer should appear');
+      }
+    });
+  });
+</script>

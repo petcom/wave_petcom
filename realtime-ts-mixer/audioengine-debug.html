@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioEngine Step-by-Step Debug</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #00ff00;
+            line-height: 1.6;
+        }
+        button {
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #555; }
+        .step { margin: 5px 0; }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+        .pending { color: #ffff00; }
+    </style>
+</head>
+<body>
+    <h1>AudioEngine Step-by-Step Debug</h1>
+    <p>This will test each step of AudioEngine initialization separately.</p>
+    
+    <button onclick="testStepByStep()">Test AudioEngine Step by Step</button>
+    
+    <div id="log"></div>
+
+    <script type="module">
+        let logElement = document.getElementById('log');
+        let stepCounter = 1;
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `step ${type}`;
+            div.innerHTML = `${stepCounter++}. ${message}`;
+            logElement.appendChild(div);
+            console.log(message);
+        }
+        
+        window.testStepByStep = async function() {
+            logElement.innerHTML = '';
+            stepCounter = 1;
+            
+            try {
+                log('Starting AudioEngine step-by-step test...');
+                
+                // Manual implementation of AudioEngine.initialize() with detailed logging
+                log('Step 1: Checking Web Audio API support...');
+                if (!window.AudioContext && !window.webkitAudioContext) {
+                    log('❌ Web Audio API not supported', 'error');
+                    return;
+                }
+                log('✅ Web Audio API supported', 'success');
+                
+                log('Step 2: Creating AudioContext...');
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                log(`✅ AudioContext created, state: ${audioContext.state}`, 'success');
+                
+                log('Step 3: Checking AudioContext state...');
+                if (audioContext.state === 'suspended') {
+                    log('⚠️  AudioContext suspended, attempting resume...', 'pending');
+                    await audioContext.resume();
+                    log(`✅ AudioContext resumed, state: ${audioContext.state}`, 'success');
+                } else {
+                    log(`✅ AudioContext already running, state: ${audioContext.state}`, 'success');
+                }
+                
+                log('Step 4: Creating master gain node...');
+                const masterGainNode = audioContext.createGain();
+                log('✅ Master gain node created', 'success');
+                
+                log('Step 5: Connecting master gain to destination...');
+                masterGainNode.connect(audioContext.destination);
+                log('✅ Master gain connected to destination', 'success');
+                
+                log('Step 6: Creating effect nodes...');
+                
+                log('Step 6a: Creating reverb node (ConvolverNode)...');
+                const reverbNode = audioContext.createConvolver();
+                log('✅ Reverb node created', 'success');
+                
+                log('Step 6b: Creating delay node...');
+                const delayNode = audioContext.createDelay(1.0);
+                log('✅ Delay node created', 'success');
+                
+                log('Step 6c: Setting delay time...');
+                delayNode.delayTime.value = 0.3;
+                log('✅ Delay time set', 'success');
+                
+                log('Step 6d: Creating distortion node (WaveShaperNode)...');
+                const distortionNode = audioContext.createWaveShaper();
+                log('✅ Distortion node created', 'success');
+                
+                log('Step 6e: Creating filter node (BiquadFilterNode)...');
+                const filterNode = audioContext.createBiquadFilter();
+                log('✅ Filter node created', 'success');
+                
+                log('Step 6f: Configuring filter...');
+                filterNode.type = 'lowpass';
+                filterNode.frequency.value = 1000;
+                log('✅ Filter configured', 'success');
+                
+                log('Step 7: Testing track node creation...');
+                const gainNode = audioContext.createGain();
+                const panNode = audioContext.createStereoPanner();
+                const effectsGain = audioContext.createGain();
+                log('✅ Track nodes created', 'success');
+                
+                log('Step 8: Connecting track nodes...');
+                gainNode.connect(panNode);
+                panNode.connect(effectsGain);
+                effectsGain.connect(masterGainNode);
+                log('✅ Track nodes connected', 'success');
+                
+                log('Step 9: Cleanup...');
+                audioContext.close();
+                log('✅ AudioContext closed', 'success');
+                
+                log('🎉 All AudioEngine steps completed successfully!', 'success');
+                
+            } catch (error) {
+                log(`❌ Error during step-by-step test: ${error.message}`, 'error');
+                console.error('Full error:', error);
+            }
+        };
+    </script>
+</body>
+</html>
