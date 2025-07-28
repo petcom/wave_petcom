@@ -4,7 +4,7 @@ export interface AudioTrack {
   id: string;
   name: string;
   category: 'brainwave1' | 'brainwave2' | 'animals' | 'nature' | 'relaxing';
-  files: string[];
+  manifest: string;
   currentFileIndex: number;
 }
 
