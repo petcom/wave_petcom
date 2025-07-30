@@ -83,8 +83,8 @@ export class AudioEngine {
     // Configure delay
     delayNode.delayTime.value = 0.3;
 
-    // Configure bitcrusher - start with minimal crushing
-    this.updateBitcrusherCurve(bitcrusherNode, 0);
+    // Configure bitcrusher - start with passthrough
+    this.createSafeBitcrusherCurve(bitcrusherNode, 0);
 
     // Configure distortion
     const distortionCurve = this.createDistortionCurve(400);
@@ -112,6 +112,91 @@ export class AudioEngine {
 
     // Initially all effects are bypassed
     this.setAllEffectsBypassed();
+
+    console.log('🎛️ Effects initialized with SAFE bitcrusher');
+  }
+
+// RELIABLE bitcrusher that guarantees audible output
+  private createSafeBitcrusherCurve(bitcrusherNode: WaveShaperNode, intensity: number): void {
+    const samples = 44100;
+    const curve = new Float32Array(samples);
+
+    if (intensity <= 0.01) {
+      // Passthrough mode - no processing
+      for (let i = 0; i < samples; i++) {
+        curve[i] = (i * 2) / samples - 1; // Linear: -1 to 1
+      }
+      console.log('🔊 Bitcrusher: PASSTHROUGH mode');
+    } else {
+      // Simple, reliable bit reduction
+      // Map intensity 0.1-1.0 to steps 32-4 (more conservative)
+      const steps = Math.max(4, Math.round(32 - (intensity * 28)));
+      const stepSize = 2 / steps; // Range from -1 to 1
+      
+      for (let i = 0; i < samples; i++) {
+        const x = (i * 2) / samples - 1; // Input from -1 to 1
+        
+        // Quantize to discrete steps
+        const quantized = Math.round(x / stepSize) * stepSize;
+        
+        // Apply slight gain reduction to prevent clipping
+        curve[i] = quantized * 0.8;
+      }
+
+      console.log(`🎛️ Bitcrusher: ${steps} levels at ${(intensity * 100).toFixed(1)}% intensity (should be audible)`);
+    }
+
+    bitcrusherNode.curve = curve;
+    bitcrusherNode.oversample = 'none';
+  }
+
+// NEW: Working bitcrusher implementation
+  private createWorkingBitcrusherCurve(bitcrusherNode: WaveShaperNode, intensity: number): void {
+    const samples = 65536; // Use power of 2 for better performance
+    const curve = new Float32Array(samples);
+    let bitDepth = 16; // Default bit depth
+
+    // Ensure we always create a valid curve
+    if (intensity <= 0.01) {
+      // Passthrough when intensity is very low
+      for (let i = 0; i < samples; i++) {
+        curve[i] = (i * 2) / samples - 1; // Linear passthrough: -1 to 1
+      }
+      bitDepth = 16; // Full bit depth for passthrough
+    } else {
+      // Bit crushing with safe parameters
+      bitDepth = Math.max(2, 12 - Math.floor(intensity * 8)); // 12-bit down to 2-bit
+      const quantizationLevels = Math.pow(2, bitDepth);
+      const stepSize = 2 / quantizationLevels;
+
+      for (let i = 0; i < samples; i++) {
+        let x = (i * 2) / samples - 1; // -1 to 1
+
+        // Quantize to reduce bit depth
+        const quantized = Math.round(x / stepSize) * stepSize;
+
+        // Ensure output is always in valid range
+        curve[i] = Math.max(-1, Math.min(1, quantized));
+      }
+    }
+
+    // Verify curve is valid before applying
+    let hasInvalidValues = false;
+    for (let i = 0; i < samples; i++) {
+      if (!isFinite(curve[i])) {
+        hasInvalidValues = true;
+        curve[i] = 0; // Replace invalid values with silence
+      }
+    }
+
+    if (hasInvalidValues) {
+      console.warn('⚠️ Fixed invalid values in bitcrusher curve');
+    }
+
+    bitcrusherNode.curve = curve;
+    bitcrusherNode.oversample = 'none';
+
+    console.log(`✅ Bitcrusher curve created - Intensity: ${(intensity * 100).toFixed(1)}%, Bit Depth: ${bitDepth}-bit, Samples: ${samples}`);
   }
 
   private setupSerialEffectsChain(): void {
@@ -180,7 +265,7 @@ export class AudioEngine {
 
 
   private setAllEffectsBypassed(): void {
-    // Start with all effects bypassed (dry signal passes through)
+    // Start with all effects bypassed (100% dry signal passes through)
     const effects = ['reverb', 'delay', 'bitcrush', 'distortion'];
 
     effects.forEach(effectId => {
@@ -188,12 +273,12 @@ export class AudioEngine {
       const bypassGain = this.effectsBypass.get(effectId);
 
       if (effectGain && bypassGain) {
-        effectGain.gain.value = 0;     // Disable processed signal
-        bypassGain.gain.value = 1;     // Enable bypass signal
+        effectGain.gain.value = 0.0;   // No processed signal
+        bypassGain.gain.value = 1.0;   // Full bypass (100% dry)
       }
     });
 
-    console.log('🔇 All effects initialized in bypass mode');
+    console.log('🔇 All effects initialized in bypass mode (100% dry)');
   }
 
   private async createReverbImpulse(): Promise<void> {
@@ -241,81 +326,33 @@ export class AudioEngine {
     return curve;
   }
 
-
-  private updateBitcrusherCurve(bitcrusherNode: WaveShaperNode, intensity: number): void {
-    // intensity: 0 = no crushing, 1 = maximum crushing
-    const samples = 44100;
-    const curve = new Float32Array(samples);
-
-    // AMPLIFIED: Much more aggressive bit depth reduction (16-bit down to 2-bit)
-    const bitDepth = Math.max(2, 16 - Math.floor(intensity * 14)); // Increased from 12 to 14
-    const levels = Math.pow(2, bitDepth);
-    const step = 2 / levels;
-
-    // AMPLIFIED: More aggressive sample rate reduction
-    const sampleRateReduction = 1 + Math.floor(intensity * 16); // Increased from 8 to 16 (up to 17x reduction)
-
-    for (let i = 0; i < samples; i++) {
-      let x = (i * 2) / samples - 1; // -1 to 1
-
-      // Apply sample rate reduction (creates aliasing) - more aggressive
-      if (sampleRateReduction > 1) {
-        const reducedIndex = Math.floor(i / sampleRateReduction) * sampleRateReduction;
-        x = (reducedIndex * 2) / samples - 1;
-      }
-
-      // Apply bit depth reduction (quantization) - more aggressive
-      const quantized = Math.round(x / step) * step;
-
-      // AMPLIFIED: Add additional harsh quantization for extreme crushing
-      let crushed = quantized;
-      if (intensity > 0.5) {
-        // Extra crushing for high intensity - creates more digital artifacts
-        const extraCrush = Math.floor(intensity * 8); // 0-8 levels of extra crushing
-        crushed = Math.round(crushed * extraCrush) / extraCrush;
-      }
-
-      curve[i] = Math.max(-1, Math.min(1, crushed));
-    }
-
-    bitcrusherNode.curve = curve;
-    bitcrusherNode.oversample = 'none'; // Preserve aliasing artifacts
-
-    console.log(`Bitcrusher AMPLIFIED - Intensity: ${(intensity * 100).toFixed(1)}%, Bit Depth: ${bitDepth}-bit, Sample Reduction: ${sampleRateReduction}x`);
-  }
-
+  // REPLACE calculateEffectsIntensity with a simpler version
   private calculateEffectsIntensity(): number {
-    // Calculate the combined volume intensity of all tracks with effects enabled
     let totalVolume = 0;
-    let effectsEnabledCount = 0;
+    let count = 0;
 
     for (const [trackId, nodes] of this.trackNodes) {
-      // Check if this track has effects enabled by looking at wet gain
       if (nodes.wetGain.gain.value > 0) {
         totalVolume += nodes.gainNode.gain.value;
-        effectsEnabledCount++;
+        count++;
       }
     }
 
-    if (effectsEnabledCount === 0) return 0;
+    if (count === 0) return 0;
 
-    // AMPLIFIED: Much more aggressive scaling - 4x the previous intensity
-    const averageVolume = totalVolume / effectsEnabledCount;
-    const amplifiedIntensity = Math.min(averageVolume * 2.8, 1.0); // Increased from 0.7 to 2.8 (4x)
-
-    // Add minimum floor when any effects are enabled to ensure audible crushing
-    return Math.max(amplifiedIntensity, 0.3); // Minimum 30% crushing when enabled
+    const avgVolume = totalVolume / count;
+    return Math.min(avgVolume * 0.8, 1.0); // Simple scaling
   }
 
+  // REPLACE updateBitcrusherIntensity
   private updateBitcrusherIntensity(): void {
     const bitcrusherNode = this.effectProcessors.get('bitcrush') as WaveShaperNode;
     if (!bitcrusherNode) return;
 
     const intensity = this.calculateEffectsIntensity();
-    this.updateBitcrusherCurve(bitcrusherNode, intensity);
-
-    console.log(`Bitcrusher intensity updated: ${(intensity * 100).toFixed(1)}%`);
+    this.createSafeBitcrusherCurve(bitcrusherNode, intensity);
   }
+
 
   async loadAudioFile(filename: string): Promise<AudioBuffer | null> {
     if (!this.audioContext) return null;
@@ -541,12 +578,11 @@ export class AudioEngine {
     setTimeout(() => this.updateBitcrusherIntensity(), 150);
   }
 
+  // 80% effect + 20% dry mixing system
   toggleEffect(effectId: string, enabled: boolean): void {
     if (!this.audioContext) return;
 
-    // Map bitshift to bitcrush internally
     const internalEffectId = effectId === 'bitshift' ? 'bitcrush' : effectId;
-
     const effectGain = this.effectsNodes.get(internalEffectId);
     const bypassGain = this.effectsBypass.get(internalEffectId);
 
@@ -558,38 +594,31 @@ export class AudioEngine {
     const now = this.audioContext.currentTime;
 
     if (enabled) {
-      // ENABLE: Process signal, bypass OFF
-      effectGain.gain.setValueAtTime(1.0, now);     // Process signal
-      bypassGain.gain.setValueAtTime(0.0, now);     // No bypass
-
+      // 80% effect + 20% dry mixing
+      effectGain.gain.setValueAtTime(0.8, now);   // 80% processed signal
+      bypassGain.gain.setValueAtTime(0.2, now);   // 20% dry signal
       this.activeEffects.add(effectId);
 
-      console.log(`🔥 ${effectId.toUpperCase()} ENABLED - Processing signal`);
-
-      // Force extreme bitcrusher for testing
+      // For bitcrusher, set up the processing curve
       if (internalEffectId === 'bitcrush') {
         const bitcrusherNode = this.effectProcessors.get('bitcrush') as WaveShaperNode;
         if (bitcrusherNode) {
-          this.updateBitcrusherCurve(bitcrusherNode, 1.0); // Force max intensity for testing
+          this.createSafeBitcrusherCurve(bitcrusherNode, 0.3); // 30% intensity
+          console.log('🎛️ BITCRUSHER: 80% crushed + 20% dry at 30% intensity');
         }
       }
-    } else {
-      // DISABLE: Bypass signal, processing OFF
-      effectGain.gain.setValueAtTime(0.0, now);     // No processing
-      bypassGain.gain.setValueAtTime(1.0, now);     // Bypass signal
 
+      console.log(`✅ ${effectId} ENABLED (80% effect + 20% dry)`);
+    } else {
+      // Full bypass (100% dry)
+      effectGain.gain.setValueAtTime(0.0, now);   // No processed signal
+      bypassGain.gain.setValueAtTime(1.0, now);   // Full dry signal
       this.activeEffects.delete(effectId);
 
-      console.log(`🔇 ${effectId.toUpperCase()} DISABLED - Bypassing signal`);
-    }
-
-    console.log(`Active effects: [${Array.from(this.activeEffects).join(', ')}]`);
-
-    // Update bitcrusher intensity based on volume levels (unless we're testing)
-    if (internalEffectId === 'bitcrush' && enabled) {
-      setTimeout(() => this.updateBitcrusherIntensity(), 150);
+      console.log(`❌ ${effectId} DISABLED (100% dry)`);
     }
   }
+
   isEffectEnabled(effectId: string): boolean {
     return this.activeEffects.has(effectId);
   }
