@@ -65,6 +65,46 @@ export class AudioEngine {
     const bitcrusherNode = this.audioContext.createWaveShaper();
     const distortionNode = this.audioContext.createWaveShaper();
 
+    // Create audible reverb impulse for ConvolverNode
+    console.log('🔧 CREATING AUDIBLE REVERB IMPULSE for ConvolverNode...');
+    const sampleRate = this.audioContext.sampleRate;
+    const length = Math.floor(1.0 * sampleRate); // 1 second reverb tail
+    const reverbBuffer = this.audioContext.createBuffer(2, length, sampleRate);
+    
+    for (let channel = 0; channel < 2; channel++) {
+      const channelData = reverbBuffer.getChannelData(channel);
+      
+      // Direct signal (dry)
+      channelData[0] = 0.5; // Initial direct sound
+      
+      // Early reflections (multiple taps for room sound)
+      const earlyReflections = [
+        { delay: 0.02, gain: 0.3 },  // 20ms - first wall
+        { delay: 0.04, gain: 0.25 }, // 40ms - opposite wall  
+        { delay: 0.06, gain: 0.2 },  // 60ms - ceiling
+        { delay: 0.08, gain: 0.15 }, // 80ms - floor
+        { delay: 0.12, gain: 0.1 }   // 120ms - corners
+      ];
+      
+      earlyReflections.forEach(reflection => {
+        const delaySamples = Math.floor(reflection.delay * sampleRate);
+        if (delaySamples < length) {
+          channelData[delaySamples] += reflection.gain * (Math.random() * 0.4 + 0.8); // Slight randomization
+        }
+      });
+      
+      // Diffuse reverb tail with exponential decay
+      for (let i = Math.floor(0.15 * sampleRate); i < length; i++) {
+        const time = i / sampleRate;
+        const decay = Math.exp(-3 * time); // Exponential decay over 1 second
+        channelData[i] += (Math.random() * 2 - 1) * decay * 0.15; // Diffuse noise
+      }
+    }
+    
+    reverbNode.buffer = reverbBuffer;
+    reverbNode.normalize = false; // Keep our custom levels
+    console.log('✅ AUDIBLE REVERB IMPULSE applied to ConvolverNode - should create room ambience');
+
     // Create bypass gain nodes for each effect
     const reverbBypass = this.audioContext.createGain();
     const delayBypass = this.audioContext.createGain();
@@ -673,11 +713,11 @@ export class AudioEngine {
       
       // Boost reverb to compensate for ConvolverNode volume reduction
       if (internalEffectId === 'reverb') {
-        effectLevel = 1.1;  // 10% boost to compensate for reverb attenuation
+        effectLevel = 3.0;  // 200% boost to compensate for reverb attenuation
       }
       
       effectGain.gain.setValueAtTime(effectLevel, now);   // Processed signal
-      bypassGain.gain.setValueAtTime(0.2, now);           // 20% dry signal
+      bypassGain.gain.setValueAtTime(0.0, now);           // No bypass when effect is on
       this.activeEffects.add(effectId);
 
       // Special handling for different effect types
@@ -693,6 +733,8 @@ export class AudioEngine {
           console.log(`🧪 REVERB ENABLE: Checking ConvolverNode state...`);
           console.log(`🧪 ConvolverNode: exists=${!!reverbNode}, buffer=${!!reverbNode.buffer}, normalize=${reverbNode.normalize}`);
           console.log(`🧪 Effect gains: effectGain=${effectLevel}, bypassGain=0.2`);
+          console.log(`🧪 REVERB ROUTING: Input → ReverbNode → ReverbGain(${effectLevel}) → Stage1Output`);
+          console.log(`🧪 BYPASS ROUTING: Input → ReverbBypass(0.2) → Stage1Output`);
           
           // Validate that reverb has a proper impulse buffer
           if (!reverbNode.buffer) {
@@ -715,13 +757,13 @@ export class AudioEngine {
           }
           
           // Log routing state
-          console.log(`🧪 REVERB: ${Math.round(effectLevel*100)}% reverb + 20% dry - ConvolverNode validated`);
+          console.log(`🧪 REVERB: ${Math.round(effectLevel*100)}% reverb + 0% dry - ConvolverNode validated`);
         } else {
           console.error('❌ REVERB: ConvolverNode not found during enable!');
         }
       }
 
-      console.log(`✅ ${effectId} ENABLED (80% effect + 20% dry)`);
+      console.log(`✅ ${effectId} ENABLED (${Math.round(effectLevel*100)}% effect + 0% dry)`);
     } else {
       // Full bypass (100% dry)
       effectGain.gain.setValueAtTime(0.0, now);   // No processed signal
