@@ -17,6 +17,7 @@ export interface EffectType {
 export interface TrackState {
   id: string;
   isPlaying: boolean;
+  isLoading: boolean;
   volume: number; // 0-1
   pan: number; // -1 to 1 (left to right)
   effectsEnabled: boolean;
@@ -35,7 +36,9 @@ export interface AudioNodes {
   source: AudioBufferSourceNode | null;
   gainNode: GainNode;
   panNode: StereoPannerNode;
-  effectsGain: GainNode;
+  dryGain: GainNode;
+  wetGain: GainNode;
+  effectsChain: GainNode;
   masterGain: GainNode;
 }
 
@@ -44,4 +47,5 @@ export interface MixerConfig {
   autoHideDelay: number;
   fadeInDuration: number;
   fadeOutDuration: number;
+  useCDN?: boolean;
 }
