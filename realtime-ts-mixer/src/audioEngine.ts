@@ -43,7 +43,7 @@ export class AudioEngine {
       this.masterGainNode.connect(this.audioContext.destination);
 
       // Initialize effects nodes
-      this.initializeEffects();
+      await this.initializeEffects();
 
       return true;
     } catch (error) {
@@ -52,7 +52,7 @@ export class AudioEngine {
     }
   }
 
-  private initializeEffects(): void {
+  private async initializeEffects(): Promise<void> {
     if (!this.audioContext) return;
 
     // Create effects input and output nodes
@@ -77,8 +77,6 @@ export class AudioEngine {
     const bitcrusherGain = this.audioContext.createGain();
     const distortionGain = this.audioContext.createGain();
 
-    // Create reverb impulse response
-    this.createReverbImpulse();
 
     // Configure delay
     delayNode.delayTime.value = 0.3;
@@ -90,6 +88,7 @@ export class AudioEngine {
     const distortionCurve = this.createDistortionCurve(400);
     distortionNode.curve = distortionCurve;
     distortionNode.oversample = '4x';
+
 
     // Store nodes in maps
     this.effectProcessors.set('reverb', reverbNode);
@@ -114,6 +113,16 @@ export class AudioEngine {
     this.setAllEffectsBypassed();
 
     console.log('🎛️ Effects initialized with SAFE bitcrusher');
+    console.log('🧪 CONTINUING EFFECTS INITIALIZATION...');
+
+    // Create reverb impulse response INSIDE the method
+    console.log('🧪 ABOUT TO CREATE REVERB IMPULSE...');
+    try {
+      await this.createReverbImpulse();
+      console.log('🧪 REVERB IMPULSE CREATION COMPLETED');
+    } catch (error) {
+      console.error('🧪 REVERB IMPULSE CREATION FAILED:', error);
+    }
   }
 
 // RELIABLE bitcrusher that guarantees audible output
@@ -221,17 +230,22 @@ export class AudioEngine {
     // Each stage has a clean switch between processed and bypass
 
     // Stage 1: Input → Reverb
+    console.log('🔗 REVERB STAGE: Setting up connections...');
+    
     // Input splits to reverb processor and bypass
     this.effectsInput.connect(reverbNode);
     this.effectsInput.connect(reverbBypass);
+    console.log('🔗 Connected effectsInput to reverbNode and reverbBypass');
 
     // Reverb processor goes through gain control
     reverbNode.connect(reverbGain);
+    console.log('🔗 Connected reverbNode to reverbGain');
 
     // Stage 1 Output: Mix processed + bypass (only one will be active)
     const stage1Output = this.audioContext.createGain();
     reverbGain.connect(stage1Output);
     reverbBypass.connect(stage1Output);
+    console.log('🔗 Connected reverbGain and reverbBypass to stage1Output');
 
     // Stage 2: Stage1 → Delay
     stage1Output.connect(delayNode);
@@ -282,34 +296,94 @@ export class AudioEngine {
   }
 
   private async createReverbImpulse(): Promise<void> {
-    if (!this.audioContext) return;
+    if (!this.audioContext) {
+      console.error('❌ Cannot create reverb impulse: AudioContext not available');
+      return;
+    }
 
-    // Create an impulse response for reverb
-    const sampleRate = this.audioContext.sampleRate;
-    const length = 2 * sampleRate; // 2 second impulse
-    const impulseBuffer = this.audioContext.createBuffer(2, length, sampleRate);
+    try {
+      // Create a SIMPLE test impulse for debugging
+      const sampleRate = this.audioContext.sampleRate;
+      const length = Math.floor(0.5 * sampleRate); // Shorter 0.5 second impulse for testing
+      const impulseBuffer = this.audioContext.createBuffer(2, length, sampleRate);
 
-    // Fill both channels with white noise and apply decay
-    for (let channel = 0; channel < 2; channel++) {
-      const channelData = impulseBuffer.getChannelData(channel);
+      console.log(`🧪 Creating SIMPLE test reverb impulse: ${length} samples at ${sampleRate}Hz`);
 
-      // Fill with white noise
-      for (let i = 0; i < length; i++) {
-        channelData[i] = (Math.random() * 2 - 1);
+      let totalEnergy = 0;
+      let maxValue = 0;
+
+      // Fill both channels with SIMPLE impulse
+      for (let channel = 0; channel < 2; channel++) {
+        const channelData = impulseBuffer.getChannelData(channel);
+
+        for (let i = 0; i < length; i++) {
+          let value = 0;
+          
+          if (i < 100) {
+            // Initial burst - guaranteed to have signal
+            value = (Math.random() * 2 - 1) * 0.5;
+          } else {
+            // Simple linear decay 
+            const decayFactor = 1 - (i / length);
+            value = (Math.random() * 2 - 1) * decayFactor * 0.2;
+          }
+          
+          channelData[i] = value;
+          totalEnergy += Math.abs(value);
+          maxValue = Math.max(maxValue, Math.abs(value));
+        }
       }
 
-      // Apply decay envelope
-      for (let i = 0; i < length; i++) {
-        channelData[i] = channelData[i] * Math.pow(0.5, i / (length / 3));
+      console.log(`🧪 Impulse stats: Total energy=${totalEnergy.toFixed(2)}, Max value=${maxValue.toFixed(4)}`);
+      
+      this.reverbImpulse = impulseBuffer;
+
+      // Apply to reverb convolver with extensive validation
+      const reverbNode = this.effectProcessors.get('reverb') as ConvolverNode;
+      if (reverbNode) {
+        console.log(`🧪 ConvolverNode before: buffer=${!!reverbNode.buffer}, normalize=${reverbNode.normalize}`);
+        
+        reverbNode.buffer = impulseBuffer;
+        reverbNode.normalize = false; // Disable normalization for testing
+        
+        console.log(`🧪 ConvolverNode after: buffer=${!!reverbNode.buffer}, normalize=${reverbNode.normalize}`);
+        console.log(`🧪 Buffer details: channels=${impulseBuffer.numberOfChannels}, length=${impulseBuffer.length}, sampleRate=${impulseBuffer.sampleRate}`);
+        
+        // Validate buffer was actually set
+        if (reverbNode.buffer === impulseBuffer) {
+          console.log('✅ REVERB: Impulse buffer successfully applied to ConvolverNode');
+        } else {
+          console.error('❌ REVERB: Buffer assignment failed!');
+        }
+      } else {
+        console.error('❌ REVERB: ConvolverNode not found in effectProcessors');
+      }
+
+    } catch (error) {
+      console.error('❌ REVERB: Failed to create impulse:', error);
+    }
+  }
+
+  private normalizeBuffer(buffer: AudioBuffer): void {
+    // Find peak amplitude across all channels
+    let peak = 0;
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      const channelData = buffer.getChannelData(channel);
+      for (let i = 0; i < channelData.length; i++) {
+        peak = Math.max(peak, Math.abs(channelData[i]));
       }
     }
 
-    this.reverbImpulse = impulseBuffer;
-
-    // Apply to reverb convolver
-    const reverbNode = this.effectProcessors.get('reverb') as ConvolverNode;
-    if (reverbNode) {
-      reverbNode.buffer = impulseBuffer;
+    // Normalize to prevent clipping while leaving headroom
+    if (peak > 0) {
+      const normalizeGain = 0.95 / peak; // Leave only 5% headroom for better volume
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        const channelData = buffer.getChannelData(channel);
+        for (let i = 0; i < channelData.length; i++) {
+          channelData[i] *= normalizeGain;
+        }
+      }
+      console.log(`🎚️ Normalized reverb impulse by ${normalizeGain.toFixed(3)}`);
     }
   }
 
@@ -579,7 +653,7 @@ export class AudioEngine {
   }
 
   // 80% effect + 20% dry mixing system
-  toggleEffect(effectId: string, enabled: boolean): void {
+  async toggleEffect(effectId: string, enabled: boolean): Promise<void> {
     if (!this.audioContext) return;
 
     const internalEffectId = effectId === 'bitshift' ? 'bitcrush' : effectId;
@@ -594,17 +668,56 @@ export class AudioEngine {
     const now = this.audioContext.currentTime;
 
     if (enabled) {
-      // 80% effect + 20% dry mixing
-      effectGain.gain.setValueAtTime(0.8, now);   // 80% processed signal
-      bypassGain.gain.setValueAtTime(0.2, now);   // 20% dry signal
+      // 80% effect + 20% dry mixing with reverb compensation
+      let effectLevel = 0.8;  // Default effect level
+      
+      // Boost reverb to compensate for ConvolverNode volume reduction
+      if (internalEffectId === 'reverb') {
+        effectLevel = 1.1;  // 10% boost to compensate for reverb attenuation
+      }
+      
+      effectGain.gain.setValueAtTime(effectLevel, now);   // Processed signal
+      bypassGain.gain.setValueAtTime(0.2, now);           // 20% dry signal
       this.activeEffects.add(effectId);
 
-      // For bitcrusher, set up the processing curve
+      // Special handling for different effect types
       if (internalEffectId === 'bitcrush') {
         const bitcrusherNode = this.effectProcessors.get('bitcrush') as WaveShaperNode;
         if (bitcrusherNode) {
           this.createSafeBitcrusherCurve(bitcrusherNode, 0.3); // 30% intensity
           console.log('🎛️ BITCRUSHER: 80% crushed + 20% dry at 30% intensity');
+        }
+      } else if (internalEffectId === 'reverb') {
+        const reverbNode = this.effectProcessors.get('reverb') as ConvolverNode;
+        if (reverbNode) {
+          console.log(`🧪 REVERB ENABLE: Checking ConvolverNode state...`);
+          console.log(`🧪 ConvolverNode: exists=${!!reverbNode}, buffer=${!!reverbNode.buffer}, normalize=${reverbNode.normalize}`);
+          console.log(`🧪 Effect gains: effectGain=${effectLevel}, bypassGain=0.2`);
+          
+          // Validate that reverb has a proper impulse buffer
+          if (!reverbNode.buffer) {
+            console.warn('⚠️ Reverb ConvolverNode missing buffer, creating simple test buffer...');
+            // Create a simple impulse directly here
+            const sampleRate = this.audioContext!.sampleRate;
+            const length = Math.floor(0.2 * sampleRate); // 0.2 second simple impulse
+            const impulseBuffer = this.audioContext!.createBuffer(2, length, sampleRate);
+            
+            for (let channel = 0; channel < 2; channel++) {
+              const channelData = impulseBuffer.getChannelData(channel);
+              for (let i = 0; i < length; i++) {
+                const decay = 1 - (i / length);
+                channelData[i] = (Math.random() * 2 - 1) * decay * 0.3;
+              }
+            }
+            
+            reverbNode.buffer = impulseBuffer;
+            console.log('✅ Simple reverb impulse created and applied');
+          }
+          
+          // Log routing state
+          console.log(`🧪 REVERB: ${Math.round(effectLevel*100)}% reverb + 20% dry - ConvolverNode validated`);
+        } else {
+          console.error('❌ REVERB: ConvolverNode not found during enable!');
         }
       }
 
