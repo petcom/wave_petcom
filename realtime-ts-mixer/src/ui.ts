@@ -91,7 +91,7 @@ export class MixerUI {
                 <input type="range" class="pan-knob" min="-1" max="1" step="0.1" value="0" data-control="pan">
               </div>
               <div class="volume-control">
-                <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7" data-control="volume" orient="vertical">
+                <input type="range" class="volume-slider" min="0" max="1.5" step="0.01" value="1.05" data-control="volume" orient="vertical">
               </div>
               <button class="play-button" data-control="play">
                 <span class="play-icon">▶</span>
@@ -111,7 +111,7 @@ export class MixerUI {
                 <input type="range" class="pan-knob" min="-1" max="1" step="0.1" value="0" data-control="pan">
               </div>
               <div class="volume-control">
-                <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7" data-control="volume" orient="vertical">
+                <input type="range" class="volume-slider" min="0" max="1.5" step="0.01" value="1.05" data-control="volume" orient="vertical">
               </div>
               <button class="play-button" data-control="play">
                 <span class="play-icon">▶</span>
@@ -131,7 +131,7 @@ export class MixerUI {
                 <input type="range" class="pan-knob" min="-1" max="1" step="0.1" value="0" data-control="pan">
               </div>
               <div class="volume-control">
-                <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7" data-control="volume" orient="vertical">
+                <input type="range" class="volume-slider" min="0" max="1.5" step="0.01" value="1.05" data-control="volume" orient="vertical">
               </div>
               <button class="play-button" data-control="play">
                 <span class="play-icon">▶</span>
@@ -151,7 +151,7 @@ export class MixerUI {
                 <input type="range" class="pan-knob" min="-1" max="1" step="0.1" value="0" data-control="pan">
               </div>
               <div class="volume-control">
-                <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7" data-control="volume" orient="vertical">
+                <input type="range" class="volume-slider" min="0" max="1.5" step="0.01" value="1.05" data-control="volume" orient="vertical">
               </div>
               <button class="play-button" data-control="play">
                 <span class="play-icon">▶</span>
@@ -171,7 +171,7 @@ export class MixerUI {
                 <input type="range" class="pan-knob" min="-1" max="1" step="0.1" value="0" data-control="pan">
               </div>
               <div class="volume-control">
-                <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.7" data-control="volume" orient="vertical">
+                <input type="range" class="volume-slider" min="0" max="1.5" step="0.01" value="1.05" data-control="volume" orient="vertical">
               </div>
               <button class="play-button" data-control="play">
                 <span class="play-icon">▶</span>
@@ -246,10 +246,17 @@ export class MixerUI {
       const control = button.dataset.control;
       const effect = button.dataset.effect;
       const action = button.dataset.action;
+      const fileToSelect = button.dataset.file;
 
       if (action === 'close') {
         // Send close action to mixer instead of hiding directly
         this.onTrackControl('mixer', 'close');
+        return;
+      }
+
+      if (fileToSelect && trackId) {
+        // Handle file selection
+        this.selectTrackFile(trackId, fileToSelect);
         return;
       }
 
@@ -304,6 +311,21 @@ export class MixerUI {
     }
   }
 
+  private selectTrackFile(trackId: string, filename: string): void {
+    try {
+      if (window.mixer && typeof window.mixer.switchTrackFile === 'function') {
+        const files = window.mixer.getTrackFiles(trackId);
+        const fileIndex = files.indexOf(filename);
+        if (fileIndex !== -1) {
+          window.mixer.switchTrackFile(trackId, fileIndex);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to select track file:', error);
+    }
+    this.recordInteraction();
+  }
+
   updateTrackState(trackId: string, state: TrackState): void {
     if (!this.container) return;
 
@@ -313,8 +335,14 @@ export class MixerUI {
     // Update play button
     const playButton = channel.querySelector('.play-button') as HTMLButtonElement;
     const playIcon = playButton?.querySelector('.play-icon') as HTMLElement;
-    if (playIcon) {
-      playIcon.textContent = state.isPlaying ? '⏸' : '▶';
+    if (playButton && playIcon) {
+      if (state.isLoading) {
+        playIcon.textContent = '⏳';
+        playButton.disabled = true;
+      } else {
+        playIcon.textContent = state.isPlaying ? '⏸' : '▶';
+        playButton.disabled = false;
+      }
     }
 
     // Update effects button LED
@@ -336,30 +364,13 @@ export class MixerUI {
       panKnob.value = state.pan.toString();
     }
 
-    // Update file selector display (show current and next file for 1.5 file effect)
-    const fileCurrent = channel.querySelector('.file-current') as HTMLElement;
-    const fileNext = channel.querySelector('.file-next') as HTMLElement;
-    if (fileCurrent) {
-      fileCurrent.textContent = state.currentFile ? (state.currentFile.split('/').pop() || state.currentFile) : '---';
-    }
-    if (fileNext) {
-      // Find the manifest files for this track (from global window, since UI doesn't have direct access)
-      let files: string[] = [];
-      try {
-        // @ts-ignore
-        if (window.mixer && typeof window.mixer.getTrackFiles === 'function') {
-          files = window.mixer.getTrackFiles(trackId);
-        }
-      } catch {}
-      let currentIdx = (state as any).currentFileIndex || 0;
-      if (files.length > 1) {
-        const nextIdx = (currentIdx + 1) % files.length;
-        const nextFile = files[nextIdx];
-        fileNext.textContent = nextFile ? (nextFile.split('/').pop() || nextFile) : '';
-      } else {
-        fileNext.textContent = '';
-      }
-    }
+    // Update file selector - highlight current file
+    const fileButtons = channel.querySelectorAll('.file-choice') as NodeListOf<HTMLButtonElement>;
+    fileButtons.forEach(button => {
+      const isCurrentFile = button.dataset.file === state.currentFile;
+      button.disabled = isCurrentFile;
+      button.classList.toggle('current', isCurrentFile);
+    });
   }
 
   updateEffectState(effects: EffectType[]): void {

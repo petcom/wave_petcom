@@ -50,7 +50,8 @@ export class Mixer {
     this.state.tracks = AUDIO_TRACKS.map(track => ({
       id: track.id,
       isPlaying: false,
-      volume: 0.7,
+      isLoading: false,
+      volume: 1.05,
       pan: 0,
       effectsEnabled: false,
       currentFile: (this.manifestFiles[track.id] && this.manifestFiles[track.id][0]) || ''
@@ -229,11 +230,19 @@ export class Mixer {
             let newIdx = (currentIdx + value + files.length) % files.length;
             (trackState as any).currentFileIndex = newIdx;
             trackState.currentFile = files[newIdx];
-            // If playing, switch file immediately
+            // If playing, switch file immediately with loading state
             if (trackState.isPlaying) {
               await this.audioEngine.stopTrack(trackId);
-              const success = await this.audioEngine.playTrack(trackId, trackState.currentFile);
-              trackState.isPlaying = success;
+              trackState.isPlaying = false;
+              trackState.isLoading = true;
+              this.ui.updateTrackState(trackId, trackState);
+              
+              try {
+                const success = await this.audioEngine.playTrack(trackId, trackState.currentFile);
+                trackState.isPlaying = success;
+              } finally {
+                trackState.isLoading = false;
+              }
             }
           }
         }
@@ -269,15 +278,34 @@ export class Mixer {
       // Stop track
       this.audioEngine.stopTrack(trackId);
       trackState.isPlaying = false;
+      this.ui.updateTrackState(trackId, trackState);
+    } else if (trackState.isLoading) {
+      // Already loading, ignore additional play requests
+      return;
     } else {
-      // Start track
+      // Start track with loading state
       const files = this.manifestFiles[trackId] || [];
       const currentFileIndex = (trackState as any).currentFileIndex || 0;
       const filename = files[currentFileIndex] || '';
-      const success = await this.audioEngine.playTrack(trackId, filename);
-      if (success) {
-        trackState.isPlaying = true;
-        trackState.currentFile = filename;
+      
+      if (!filename) return;
+
+      // Set loading state
+      trackState.isLoading = true;
+      this.ui.updateTrackState(trackId, trackState);
+
+      try {
+        // This will download if not cached, then auto-play
+        const success = await this.audioEngine.playTrack(trackId, filename);
+        if (success) {
+          trackState.isPlaying = true;
+          trackState.currentFile = filename;
+        }
+      } catch (error) {
+        console.error(`Failed to play track ${trackId}:`, error);
+      } finally {
+        trackState.isLoading = false;
+        this.ui.updateTrackState(trackId, trackState);
       }
     }
   }
@@ -326,16 +354,19 @@ export class Mixer {
     const wasPlaying = trackState.isPlaying;
     if (wasPlaying) {
       this.audioEngine.stopTrack(trackId);
+      trackState.isPlaying = false;
     }
 
+    // Update file selection
     (trackState as any).currentFileIndex = fileIndex;
     trackState.currentFile = files[fileIndex];
+    
+    // Update UI to show new selection (but don't load file yet)
+    this.ui.updateTrackState(trackId, trackState);
 
+    // If was playing, restart with new file (this will trigger loading)
     if (wasPlaying) {
-      const success = await this.audioEngine.playTrack(trackId, trackState.currentFile);
-      trackState.isPlaying = success;
-      this.ui.updateTrackState(trackId, trackState);
-      return success;
+      await this.toggleTrackPlayback(trackId);
     }
 
     return true;

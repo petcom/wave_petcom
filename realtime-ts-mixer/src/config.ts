@@ -6,7 +6,8 @@ export const MIXER_CONFIG: MixerConfig = {
   audioPath: 'https://sonar-media.sfo3.cdn.digitaloceanspaces.com/mixer/andrew',
   autoHideDelay: 15000, // 15 seconds
   fadeInDuration: 500,
-  fadeOutDuration: 300
+  fadeOutDuration: 300,
+  useCDN: true
 };
 
 export const AUDIO_TRACKS: AudioTrack[] = [

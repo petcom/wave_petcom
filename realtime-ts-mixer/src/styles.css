@@ -364,3 +364,58 @@
 .effect-led.active {
   animation: pulse 2s infinite;
 }
+
+/* File Selection Styles */
+.file-selector {
+  margin-bottom: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.file-window {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.file-choice {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.file-choice:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.file-choice:disabled,
+.file-choice.current {
+  background: rgba(64, 200, 64, 0.3);
+  border-color: rgba(64, 200, 64, 0.6);
+  cursor: default;
+}
+
+/* Loading State Styles */
+.play-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.play-button:disabled .play-icon {
+  animation: loading-pulse 1s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
