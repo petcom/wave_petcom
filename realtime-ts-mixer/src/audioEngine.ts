@@ -68,22 +68,22 @@ export class AudioEngine {
     // Create audible reverb impulse for ConvolverNode
     console.log('🔧 CREATING AUDIBLE REVERB IMPULSE for ConvolverNode...');
     const sampleRate = this.audioContext.sampleRate;
-    const length = Math.floor(1.0 * sampleRate); // 1 second reverb tail
+    const length = Math.floor(2.0 * sampleRate); // 1 second reverb tail
     const reverbBuffer = this.audioContext.createBuffer(2, length, sampleRate);
     
     for (let channel = 0; channel < 2; channel++) {
       const channelData = reverbBuffer.getChannelData(channel);
       
       // Direct signal (dry)
-      channelData[0] = 0.5; // Initial direct sound
+      channelData[0] = 0.1; // Much quieter initial direct sound
       
       // Early reflections (multiple taps for room sound)
       const earlyReflections = [
-        { delay: 0.02, gain: 0.3 },  // 20ms - first wall
-        { delay: 0.04, gain: 0.25 }, // 40ms - opposite wall  
-        { delay: 0.06, gain: 0.2 },  // 60ms - ceiling
-        { delay: 0.08, gain: 0.15 }, // 80ms - floor
-        { delay: 0.12, gain: 0.1 }   // 120ms - corners
+        { delay: 0.02, gain: 0.2 },  // 20ms - first wall
+        { delay: 0.04, gain: 0.1 }, // 40ms - opposite wall  
+        { delay: 0.06, gain: 0.08 }, // 60ms - ceiling
+        { delay: 0.08, gain: 0.05 }, // 80ms - floor
+        { delay: 0.12, gain: 0.03 }   // 120ms - corners
       ];
       
       earlyReflections.forEach(reflection => {
@@ -96,8 +96,8 @@ export class AudioEngine {
       // Diffuse reverb tail with exponential decay
       for (let i = Math.floor(0.15 * sampleRate); i < length; i++) {
         const time = i / sampleRate;
-        const decay = Math.exp(-3 * time); // Exponential decay over 1 second
-        channelData[i] += (Math.random() * 2 - 1) * decay * 0.15; // Diffuse noise
+        const decay = Math.exp(-1.2 * time); // Exponential decay over 1 second
+        channelData[i] += (Math.random() * 2 - 1) * decay * 0.05; // Much quieter diffuse noise
       }
     }
     
@@ -118,8 +118,18 @@ export class AudioEngine {
     const distortionGain = this.audioContext.createGain();
 
 
-    // Configure delay
+    // Configure delay with feedback loop
     delayNode.delayTime.value = 0.3;
+    
+    // Create feedback gain for delay (multiple echoes)
+    const delayFeedback = this.audioContext.createGain();
+    delayFeedback.gain.value = 0.3;  // 30% feedback for echo repeats
+    
+    // Create feedback loop: delayNode → delayFeedback → delayNode
+    delayNode.connect(delayFeedback);
+    delayFeedback.connect(delayNode);
+    
+    console.log('🔊 DELAY: 300ms with 30% feedback loop configured');
 
     // Configure bitcrusher - start with passthrough
     this.createSafeBitcrusherCurve(bitcrusherNode, 0);
@@ -711,10 +721,24 @@ export class AudioEngine {
       // 80% effect + 20% dry mixing with reverb compensation
       let effectLevel = 0.8;  // Default effect level
       
-      // Boost reverb to compensate for ConvolverNode volume reduction
+      // Reduced reverb level for better balance
       if (internalEffectId === 'reverb') {
-        effectLevel = 3.0;  // 200% boost to compensate for reverb attenuation
+        effectLevel = 0.15;  // Much quieter 10% reverb level
       }
+
+       if (internalEffectId === 'bitcrush') {
+        effectLevel = 0.2;  // Much quieter 10% reverb level
+      }
+
+      if (internalEffectId === 'delay') {
+        effectLevel = 0.8;  // Medium delay level for feedback loop
+      }
+
+      if (internalEffectId === 'distortion') {
+        effectLevel = 0.2;  // Much quieter 10% reverb level
+      }
+
+     
       
       effectGain.gain.setValueAtTime(effectLevel, now);   // Processed signal
       bypassGain.gain.setValueAtTime(0.0, now);           // No bypass when effect is on
@@ -748,7 +772,7 @@ export class AudioEngine {
               const channelData = impulseBuffer.getChannelData(channel);
               for (let i = 0; i < length; i++) {
                 const decay = 1 - (i / length);
-                channelData[i] = (Math.random() * 2 - 1) * decay * 0.3;
+                channelData[i] = (Math.random() * 2 - 1) * decay * 0.05;
               }
             }
             

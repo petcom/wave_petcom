@@ -31,8 +31,11 @@ export class MixerUI {
   private getHTML(): string {
     // Helper to format file names for display: text up to first _ and number at end
     function formatFileName(filename: string): string {
+      // Remove directory prefix if present (e.g. "nature/Rain-Street_rev_loop_1.mp3" → "Rain-Street_rev_loop_1.mp3")
+      const fileOnly = filename.includes('/') ? filename.split('/').pop() || filename : filename;
+      
       // Remove extension
-      const base = filename.replace(/\.[^/.]+$/, "");
+      const base = fileOnly.replace(/\.[^/.]+$/, "");
       // Find first underscore
       const firstUnderscore = base.indexOf("_");
       let main = base;
@@ -185,6 +188,7 @@ export class MixerUI {
           <!-- Effects Channel -->
           <div class="channel effects-channel">
             <div class="channel-header">Effects</div>
+            <div class="effects-warning">Adding Effects Could have surprising results! Please turn down the volume before enabling!</div>
             <div class="effects-controls">
               <button class="effect-button" data-effect="reverb">
                 <span class="effect-led"></span>
