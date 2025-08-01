@@ -2,13 +2,37 @@
 
 import { AudioTrack, EffectType, MixerConfig } from './types.js';
 
-export const MIXER_CONFIG: MixerConfig = {
-  audioPath: 'https://sonar-media.sfo3.cdn.digitaloceanspaces.com/mixer/andrew',
-  autoHideDelay: 15000, // 15 seconds
+// Environment detection
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.port === '8080' ||
+                     window.location.port === '3000';
+
+// Development configuration - direct connection to Express server
+const DEVELOPMENT_CONFIG: MixerConfig = {
+  audioPath: 'http://localhost:8180/audio-mixer/andrew',
+  autoHideDelay: 15000,
   fadeInDuration: 500,
   fadeOutDuration: 300,
-  useCDN: true
+  useCDN: false,
+  environment: 'development'
 };
+
+// Production configuration - relative path, nginx reverse proxy handles routing
+const PRODUCTION_CONFIG: MixerConfig = {
+  audioPath: '/audio-mixer/andrew',
+  autoHideDelay: 15000,
+  fadeInDuration: 500,
+  fadeOutDuration: 300,
+  useCDN: false,
+  environment: 'production'
+};
+
+export const MIXER_CONFIG: MixerConfig = isDevelopment ? DEVELOPMENT_CONFIG : PRODUCTION_CONFIG;
+
+// Debug logging
+console.log(`🔧 Mixer Environment: ${MIXER_CONFIG.environment}`);
+console.log(`🎵 Audio Path: ${MIXER_CONFIG.audioPath}`);
 
 export const AUDIO_TRACKS: AudioTrack[] = [
   {

@@ -48,4 +48,5 @@ export interface MixerConfig {
   fadeInDuration: number;
   fadeOutDuration: number;
   useCDN?: boolean;
+  environment?: 'development' | 'production';
 }
