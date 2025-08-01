@@ -507,61 +507,17 @@ export class AudioEngine {
   }
 
   private async fetchAndDecodeAudio(filename: string): Promise<AudioBuffer> {
-    // Ensure no duplicate slashes in URL
+    // Clean up base path and filename
     let base = MIXER_CONFIG.audioPath;
     if (base.endsWith('/')) base = base.slice(0, -1);
 
-    // Process filename for CDN or local use
     let file = filename;
     if (file.startsWith('/')) file = file.slice(1);
 
-    // Handle file extensions for CDN paths
-    if (MIXER_CONFIG.useCDN && !file.includes('.')) {
-      // Extract category and specific sound
-      const parts = file.split('_');
-      const category = parts[0];
-      const soundName = parts.slice(1).join('_');
-
-      // Format the file according to JSON manifest structure
-      let cdnFile;
-
-      // Map to proper file format based on category
-      switch(category) {
-        case 'brainwave1':
-        case 'brainwave2':
-          cdnFile = `${category}/${soundName.charAt(0).toUpperCase() + soundName.slice(1)}-Wave_eq_loop_1.mp3`;
-          break;
-        case 'nature':
-          if (soundName === 'rain') {
-            cdnFile = `${category}/Rain-Medium_loop_1.mp3`;
-          } else if (soundName === 'rain_thunder') {
-            cdnFile = `${category}/Rain-Thunder_loop_1.mp3`;
-          } else {
-            cdnFile = `${category}/${soundName.charAt(0).toUpperCase() + soundName.slice(1)}_loop_1.mp3`;
-          }
-          break;
-        case 'animals':
-          if (soundName === 'crickets') {
-            cdnFile = `${category}/Crickets-Italy_chorus_loop_1.mp3`;
-          } else if (soundName === 'cat_purr') {
-            cdnFile = `${category}/Stella-Purr_eq_loop_1.mp3`;
-          } else {
-            cdnFile = `${category}/${soundName.charAt(0).toUpperCase() + soundName.slice(1)}_loop_1.mp3`;
-          }
-          break;
-        case 'relaxing':
-          cdnFile = `${category}/${soundName.charAt(0).toUpperCase() + soundName.slice(1).replace('_', '-')}_loop_1.mp3`;
-          break;
-        default:
-          cdnFile = `${category}/${soundName}.mp3`;
-      }
-
-      file = cdnFile;
-      console.log(`Mapped file path: ${file}`);
-    }
-
+    // Simple URL construction - proxy handles the routing
     const url = `${base}/${file}`;
-    console.log(`Fetching audio from: ${url}`);
+    
+    console.log(`🎵 Loading audio [${MIXER_CONFIG.environment}]: ${url}`);
 
     const response = await fetch(url);
 
