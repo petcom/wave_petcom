@@ -1,0 +1,22 @@
+{
+  "videos": [
+    {
+      "filename": "base_salsa_202509.mp4",
+      "title": "Salsa Experience",
+      "description": "Immersive salsa dancing experience",
+      "duration": 8
+    },
+    {
+      "filename": "base_record_202509.mp4", 
+      "title": "Recording Experience",
+      "description": "Music recording experience",
+      "duration": 8
+    }
+  ],
+  "settings": {
+    "autoAdvance": true,
+    "cycleDuration": 8000,
+    "fadeTransition": 1000,
+    "preloadAll": true
+  }
+}
