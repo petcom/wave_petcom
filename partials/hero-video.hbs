@@ -1,0 +1,283 @@
+{{!-- Video Hero Section Partial --}}
+<style>
+.video-hero {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-hero .video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.video-hero video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.video-hero video.active {
+    opacity: 1;
+}
+
+.video-hero .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+.video-hero .hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    max-width: 960px;
+    padding: 0 1rem;
+}
+
+.video-hero .hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.video-hero .hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.video-hero .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.video-hero .btn-hero {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.video-hero .btn-hero:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+}
+
+.video-hero .video-controls {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 4;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.video-hero .video-control-btn {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.video-hero .video-control-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 768px) {
+    .video-hero {
+        height: 400px;
+    }
+    
+    .video-hero .hero-title {
+        font-size: 2rem;
+    }
+    
+    .video-hero .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .video-hero .btn-hero {
+        width: 80%;
+        text-align: center;
+    }
+}
+</style>
+
+<div class="video-hero">
+    <div class="video-container" id="video-container">
+        <video class="hero-video-element active" autoplay muted playsinline>
+            <source src="{{asset "media/herovideos/base_salsa_202509.mp4"}}" type="video/mp4">
+        </video>
+        <video class="hero-video-element" muted playsinline>
+            <source src="{{asset "media/herovideos/base_record_202509.mp4"}}" type="video/mp4">
+        </video>
+    </div>
+    
+    <div class="video-overlay"></div>
+    
+    <div class="hero-content">
+        {{#if @site.logo}}
+            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" style="max-height: 80px; margin-bottom: 1rem;">
+        {{/if}}
+        
+        <h1 class="hero-title">{{@site.title}}</h1>
+        
+        {{#if @site.description}}
+            <p class="hero-description">{{@site.description}}</p>
+        {{/if}}
+        
+        <div class="hero-buttons">
+            <a href="/explore-experiences" class="btn-hero">Explore Experiences</a>
+            <a href="/events" class="btn-hero">Upcoming Events</a>
+            <a href="/contact-us" class="btn-hero">Join the SONAR Circle</a>
+        </div>
+    </div>
+    
+    <div class="video-controls">
+        <button class="video-control-btn" id="video-play-pause" aria-label="Play/Pause video">
+            <span id="play-pause-icon">⏸️</span>
+        </button>
+        <button class="video-control-btn" id="video-mute" aria-label="Mute/Unmute video">
+            <span id="mute-icon">🔇</span>
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const videoContainer = document.getElementById('video-container');
+    const playPauseBtn = document.getElementById('video-play-pause');
+    const playPauseIcon = document.getElementById('play-pause-icon');
+    const muteBtn = document.getElementById('video-mute');
+    const muteIcon = document.getElementById('mute-icon');
+    
+    if (!videoContainer) return;
+    
+    const videos = document.querySelectorAll('.hero-video-element');
+    let currentVideoIndex = 0;
+    let cycleInterval = null;
+    let isPaused = false;
+    let isMuted = true;
+    
+    // Preload all videos
+    videos.forEach((video, index) => {
+        if (index > 0) {
+            video.load();
+        }
+        
+        video.addEventListener('error', (e) => {
+            console.warn(`Video failed to load:`, e);
+        });
+    });
+    
+    // Start cycling after user interaction to avoid autoplay policy violations
+    const enableAutoplay = () => {
+        startCycling(8000); // 8 seconds
+        document.removeEventListener('click', enableAutoplay);
+        document.removeEventListener('touchstart', enableAutoplay);
+    };
+    
+    document.addEventListener('click', enableAutoplay, { once: true });
+    document.addEventListener('touchstart', enableAutoplay, { once: true });
+    
+    function switchToNextVideo() {
+        if (videos.length <= 1) return;
+        
+        // Fade out current video
+        videos[currentVideoIndex].classList.remove('active');
+        videos[currentVideoIndex].pause();
+        
+        // Move to next video
+        currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+        
+        // Fade in new video
+        videos[currentVideoIndex].classList.add('active');
+        videos[currentVideoIndex].currentTime = 0;
+        if (!isPaused) {
+            videos[currentVideoIndex].play().catch(e => {
+                console.warn('Video autoplay failed:', e);
+            });
+        }
+    }
+    
+    function startCycling(duration = 8000) {
+        if (cycleInterval) clearInterval(cycleInterval);
+        cycleInterval = setInterval(switchToNextVideo, duration);
+    }
+    
+    function stopCycling() {
+        if (cycleInterval) {
+            clearInterval(cycleInterval);
+            cycleInterval = null;
+        }
+    }
+    
+    // Play/Pause functionality
+    if (playPauseBtn && playPauseIcon) {
+        playPauseBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                videos[currentVideoIndex].pause();
+                stopCycling();
+                playPauseIcon.textContent = '▶️';
+            } else {
+                videos[currentVideoIndex].play();
+                startCycling();
+                playPauseIcon.textContent = '⏸️';
+            }
+        });
+    }
+    
+    // Mute/Unmute functionality
+    if (muteBtn && muteIcon) {
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            videos.forEach(video => {
+                video.muted = isMuted;
+            });
+            muteIcon.textContent = isMuted ? '🔇' : '🔊';
+        });
+    }
+});
+</script>

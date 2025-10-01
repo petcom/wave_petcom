@@ -1,40 +1,44 @@
-<section class="create-with-us">
-  <div class="inner">
-    <h2 class="section-title">Create With Us</h2>
-    <p class="intro-text">
-      SONAR is your space to create, connect, and evolve. Whether you're building, guiding, or exploring, we invite you to shape something unforgettable with us.
-    </p>
-    <ul class="create-bullets">
-      <li>
-        🎵 <strong>Musician, artist, or storyteller</strong>— You can use SONAR to refine your craft, take creative risks, and immerse yourself in a space designed for the senses.
-      </li>
-      <li>
-        🌀 <strong>Therapist or facilitator</strong>— You can amplify your impact and deepen your clients’ emotional connection using immersive, sensory-forward experiences.
-      </li>
-      <li>
-        🌱 <strong>Individuals seeking growth</strong>— You can participate in workshops or journeys that awaken your creative voice and expand your self-understanding through multi-sensory exploration.
-      </li>
-    </ul>
-    <a href="/contact-us" class="btn-sonar" style="margin-top: 2rem;">Start a Conversation</a>
-  </div>
-</section>
+{{#get "posts" filter="slug:~^'engagement-cta'" order="slug asc"}}
+  {{#foreach posts}}
+    <section class="engagement-cta">
+      <div class="inner">
+        <h2 class="section-title">{{title}}</h2>
+        <div class="intro-text">
+          {{{html}}}
+        </div>
+        <a href="/contact-us" class="btn-sonar" style="margin-top: 2rem;">Start a Conversation</a>
+      </div>
+    </section>
+  {{/foreach}}
+{{else}}
+  {{!-- Fallback if post not found --}}
+  <section class="engagement-cta">
+    <div class="inner">
+      <h2 class="section-title">Create With Us</h2>
+      <p class="intro-text">
+        Create, connect, and evolve. Whether you're building, guiding, or exploring, we invite you to regulate, resonate, and relate with us.
+      </p>
+      <a href="/contact-us" class="btn-sonar" style="margin-top: 2rem;">Start a Conversation</a>
+    </div>
+  </section>
+{{/get}}
 
 <style>
-  .create-with-us {
+  .engagement-cta {
     background-color: var(--background-color);
     padding: 2rem 1rem;
-    text-align: center;
     color: var(--text-color);
   }
 
-  .create-with-us .inner {
+  .engagement-cta .inner {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 2rem auto;
   }
 
   .section-title {
     font-size: 5rem;
     margin-bottom: 1rem;
+    text-align: center;
     color: var(--text-color);
   }
 
