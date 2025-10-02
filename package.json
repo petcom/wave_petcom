@@ -126,6 +126,21 @@
                 "type": "text",
                 "label": "Event Tags Filter (comma separated)",
                 "default": ""
+            },
+            "show_author_carousel": {
+                "type": "boolean",
+                "label": "Show author's strip",
+                "default": true
+            },
+            "contact_sheet_key": {
+                "type": "select",
+                "options": [
+                    "RLC-contact",
+                    "RLA-contact", 
+                    "SONAR-contact"
+                ],
+                "label": "Contact Sheet Key",
+                "default": "RLA-contact"
             }
         }
     },

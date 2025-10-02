@@ -37,14 +37,14 @@
     border-radius: 50%;
     object-fit: cover;
     background: #333;
-    font-size: 1.25rem;
+    font-size: var(--font-size-sm);
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
   .author-name {
-    font-size: 0.65rem;
+    font-size: var(--font-size-xs);
     line-height: 1.2;
     margin-top: 4px;
     max-width: 100%;

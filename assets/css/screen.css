@@ -12,7 +12,7 @@
 @import "blog/feed.css";
 @import "blog/single.css";
 @import "blog/author.css";
-@import "misc/utilities.css";
+@import "misc/utilities.css"; 
 
 /* -- custom css below */
 @import "misc/global.css";
@@ -25,6 +25,39 @@
 @import "component/events.css";
 @import "component/header.css";
 @import "component/responsive-nav.css";
-@import "custom/post-backgrounds.css";
+@import "custom/post-backgrounds.css"; 
+
+/* Section Separators */
+.section-separator {
+    height: 2px;
+    margin: 4rem auto;
+    max-width: 200px;
+    background: linear-gradient(90deg, transparent 0%, var(--link-color, #bb86fc) 20%, var(--link-color, #bb86fc) 80%, transparent 100%);
+    opacity: 0.6;
+}
+
+.section-separator.wide { 
+    max-width: 400px; 
+}
+
+.section-separator.narrow { 
+    max-width: 100px; 
+}
+
+.section-separator.solid {
+    background: var(--link-color, #bb86fc);
+    opacity: 0.4;
+}
+
+@media (max-width: 768px) {
+    .section-separator {
+        margin: 2rem auto;
+        max-width: 150px;
+    }
+    
+    .section-separator.wide {
+        max-width: 200px;
+    }
+}
 
 

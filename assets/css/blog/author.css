@@ -44,7 +44,7 @@
 
 .author-name {
     margin-bottom: 0;
-    font-size: 2rem;
+    font-size: var(--font-size-xl);
 }
 
 .author-social {
@@ -59,7 +59,7 @@
 
 .author-meta {
     margin-top: 4px;
-    font-size: 1.2rem;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     color: var(--secondary-text-color);
     text-transform: uppercase;
@@ -67,7 +67,7 @@
 
 .author-bio {
     margin-top: 12px;
-    font-size: 1.5rem;
+    font-size: var(--font-size-lg);
 }
 
 @media (max-width: 767px) {

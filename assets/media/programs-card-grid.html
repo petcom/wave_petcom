@@ -1,0 +1,165 @@
+<!-- WHAT WE TEACH – 4 CARD GRID (paste in an HTML card) -->
+<section class="programs-band" aria-labelledby="programs-title">
+  <style>
+    /* Scoped styles – only affect this section */
+    .programs-band{
+      background: linear-gradient(180deg,#fff, #fff9f3);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      box-shadow: 0 8px 30px rgba(0,0,0,.06);
+      margin: 1rem 0;
+    }
+
+    .programs-header{
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .programs-kicker{
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+      opacity: .6;
+      margin: 0 0 .25rem;
+      text-align: center;
+    }
+    .programs-title{
+      margin: 0;
+    }
+    .programs-grid{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(1rem, 2.5vw, 1.5rem);
+    }
+    @media (max-width: 960px){
+      .programs-grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px){
+      .programs-grid{ grid-template-columns: 1fr; }
+    }
+    .program-card{
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      padding: 1.1rem 1.1rem 1.2rem;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      height: 100%;
+      /* Add flexbox to push links to bottom */
+      display: flex;
+      flex-direction: column;
+    }
+    .program-card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      border-color: rgba(0,0,0,.12);
+    }
+    .program-icon{
+      font-size: 1.6rem;
+      line-height: 1;
+      display: inline-block;
+      margin-bottom: .35rem;
+    }
+    .program-card h3{
+      margin: 0 0 .35rem;
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+    .program-card p{
+      margin: 0 0 .5rem;
+      color: #555;
+      font-size: .98rem;
+    }
+    .program-card ul{
+      margin: 0 0 .75rem 1.1rem;
+      padding: 0;
+      color: #222;
+      font-size: .95rem;
+      flex-grow: 1; /* This pushes the link to bottom */
+    }
+    .program-card li{ margin: .3rem 0; }
+    .program-card a{
+      font-weight: 700;
+      text-decoration: underline;
+      margin-top: auto; /* This sticks it to bottom */
+    }
+    .program-header {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .program-description {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    /* Bullet text: slightly smaller + tighter spacing */
+    .programs-band .program-card ul {
+      font-size: 0.32rem;   /* was ~0.95rem */
+      line-height: 1.45;
+    }
+    .programs-band .program-card li {
+      margin: 0.25rem 0;    /* a touch tighter */
+      font-size: 1rem;
+    }
+  </style>
+
+  <header class="programs-header">
+    <div class="programs-kicker">Programs</div>
+    <h2 class="programs-title" id="programs-title">What We Teach</h2>
+  </header>
+
+  <div class="programs-grid" role="list">
+    <!-- MUSIC -->
+    <article class="program-card" role="listitem">
+      <div class="program-icon" aria-hidden="true">🎵</div>
+      <div class="program-header">Music</div>
+      <div class="program-description">Play, improvise, and record.</div>
+      <ul>
+        <li>Rhythm labs & ear training</li>
+        <li>Instruments & ensemble skills</li>
+        <li>Recording basics (mics & simple mixes)</li>
+      </ul>
+      <a href="http://localhost:2370/programs#music">See Music Tracks</a>
+    </article>
+
+    <!-- DANCE -->
+    <article class="program-card" role="listitem">
+      <div class="program-icon" aria-hidden="true">💃</div>
+      <div class="program-header">Dance</div>
+      <div class="program-description">Move solo or with a partner.</div>
+      <ul>
+        <li>Social & community exercises</li>
+        <li>Salsa, merengue, swing, jazz & fusion</li>
+        <li>Grounding warm-ups; showcases optional</li>
+      </ul>
+      <a href="http://localhost:2370/programs#dance">See Dance Tracks</a>
+    </article>
+
+    <!-- ART -->
+    <article class="program-card" role="listitem">
+      <div class="program-icon" aria-hidden="true">🎨</div>
+      <div class="program-header">Art</div>
+      <div class="program-description">Make and tell visual stories.</div>
+      <ul>
+        <li>Mixed media & collage</li>
+        <li>Digital art & simple animation</li>
+        <li>Portfolio starters & critiques</li>
+      </ul>
+      <a href="http://localhost:2370/programs#art">See Art Tracks</a>
+    </article>
+
+    <!-- CODING -->
+    <article class="program-card" role="listitem">
+      <div class="program-icon" aria-hidden="true">💻</div>
+      <div class="program-header">Coding</div>
+      <div class="program-description">Build for the web—creatively.</div>
+      <ul>
+        <li>HTML/CSS/JS fundamentals</li>
+        <li>Creative coding & simple games</li>
+        <li>Web projects & version basics</li>
+      </ul>
+      <a href="http://localhost:2370/programs#coding">See Coding Tracks</a>
+    </article>
+  </div>
+</section>
