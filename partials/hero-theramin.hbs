@@ -1,0 +1,289 @@
+{{!-- Theramin Hero Section Partial --}}
+<style>
+    /* Theramin Hero styles */ 
+    .site-cover {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 500px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .cover-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 960px;
+        text-align: center;
+        padding: 0 1rem;
+    }
+
+    #sonar-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .btn-sonar {
+        background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+        border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
+        color: var(--text-color);
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    
+    .btn-sonar:hover {
+        background: color-mix(in srgb, var(--accent-color) 35%, transparent);
+        color: var(--text-color);
+        transform: scale(1.03);
+    }
+
+    #audio-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: var(--font-size-lg);
+        pointer-events: auto;
+    }
+
+    #audio-toggle .muted {
+        color: gray;
+    }
+
+    #audio-toggle .active {
+        color: #4CAF50;
+    }
+
+    @media (max-width: 600px) {
+        .sonar-hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        }
+
+        .btn-sonar {
+        width: 80%;
+        text-align: center;
+        }
+
+        .site-cover {
+            height: 300px;
+        }
+    }
+</style>
+
+<div class="site-cover u-overlay">
+    <canvas id="sonar-bg"></canvas>
+
+    <!-- AUDIO TOGGLE BUTTON -->
+    <button id="audio-toggle" aria-label="Toggle sound">
+        <span id="audio-icon" class="muted">🔇</span>
+    </button>
+
+    {{#if @site.cover_image}}
+    <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
+    {{/if}} 
+
+    <div class="cover-content">
+        {{#if @site.logo}}
+            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+        {{/if}}
+        {{#if @site.description}}
+            <div class="cover-description">{{@site.description}}</div>
+        {{/if}}
+        <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="/explore-experiences" class="btn-sonar">Explore Experiences</a>
+            <a href="/events" class="btn-sonar">Upcoming Events</a>
+            <a href="/contact-us" class="btn-sonar">Join the SONAR Circle</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('sonar-bg');
+  const ctx = canvas?.getContext('2d');
+  const container = document.querySelector('.site-cover');
+
+  if (!canvas || !ctx || !container) return; // Exit if canvas not found
+
+  function resizeCanvas() {
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+  }
+
+  let particles = [];
+
+  function randomColor(hueOffset = 0) {
+    const hue = (performance.now() / 20 + hueOffset) % 360;
+    return `hsl(${hue}, 100%, 50%)`;
+  }
+
+  function drawTrail() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.size *= 0.96;
+      if (p.size < 0.2) particles.splice(i, 1);
+    });
+
+    requestAnimationFrame(drawTrail);
+  }
+
+  function addParticles(x, y) {
+    for (let i = 0; i < 5; i++) {
+      particles.push({
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        size: Math.random() * 5 + 2,
+        color: randomColor(i * 10),
+      });
+    }
+  }
+
+  // 🎶 Audio setup
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
+  let audioStarted = false;
+  let oscillator = null;
+  let gainNode = null;
+  let isMuted = false;
+
+  function ensureAudioContext() {
+    if (!audioStarted) {
+      audioCtx.resume();
+      audioStarted = true;
+    }
+  }
+
+  function startTheremin() {
+    if (oscillator) return;
+    oscillator = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+    oscillator.type = 'sine';
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+  }
+
+  function updateTheremin(x, y, width, height) {
+    if (!oscillator || !gainNode) return;
+    const freq = 200 + (x / width) * 1000;
+    const volume = 1 - (y / height);
+    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.2, audioCtx.currentTime);
+  }
+
+  function stopTheremin() {
+    if (oscillator) {
+      oscillator.stop();
+      oscillator.disconnect();
+      gainNode.disconnect();
+      oscillator = null;
+      gainNode = null;
+    }
+  }
+
+  // ✅ Mute toggle setup
+  const audioToggleBtn = document.getElementById('audio-toggle');
+  const audioIcon = document.getElementById('audio-icon');
+
+  if (audioToggleBtn && audioIcon) {
+    audioToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent bubbling to canvas
+        ensureAudioContext();
+        isMuted = !isMuted;
+
+        if (!isMuted) {
+            startTheremin();
+            if (gainNode) {
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            }
+        } else {
+            stopTheremin();
+        }
+
+        audioIcon.classList.toggle('muted', isMuted);
+        audioIcon.classList.toggle('active', !isMuted);
+        audioIcon.textContent = isMuted ? '🔇' : '🔊';
+    });
+  }
+
+  // 🎯 Interactions
+  container.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    addParticles(x, y);
+
+    if (!isMuted) {
+        updateTheremin(x, y, rect.width, rect.height);
+     }
+  });
+
+  container.addEventListener('mouseleave', stopTheremin);
+
+  container.addEventListener('mouseenter', () => {
+        if (!isMuted) {
+            startTheremin();
+            if (gainNode) {
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            }
+        }
+    });
+
+let touchInside = false;
+
+container.addEventListener('touchmove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  touchInside = false;
+
+  for (let touch of e.touches) {
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+      touchInside = true;
+      addParticles(x, y);
+
+      if (!isMuted) {
+        startTheremin();
+        updateTheremin(x, y, rect.width, rect.height);
+      }
+    }
+  }
+
+  // If touch moved outside the canvas, stop sound
+  if (!touchInside && !isMuted) {
+    stopTheremin();
+  }
+}, { passive: true });
+
+  container.addEventListener('touchend', stopTheremin);
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  drawTrail();
+});
+</script>

@@ -176,3 +176,36 @@
 .has-serif-body:not([class*=" gh-font-body"]):not([class^="gh-font-body"]) .u-text-format > p {
     font-family: var(--gh-font-body, var(--font-serif));
 }
+
+/* Section Separators */
+.section-separator {
+    height: 3px;
+    margin: 4rem auto;
+    max-width: 200px;
+    background: #ff0000; /* Bright red for testing */
+    opacity: 1;
+}
+
+.section-separator.wide { 
+    max-width: 400px; 
+}
+
+.section-separator.narrow { 
+    max-width: 100px; 
+}
+
+.section-separator.solid {
+    background: var(--link-color, #bb86fc);
+    opacity: 0.4;
+}
+
+@media (max-width: 768px) {
+    .section-separator {
+        margin: 2rem auto;
+        max-width: 150px;
+    }
+    
+    .section-separator.wide {
+        max-width: 200px;
+    }
+}

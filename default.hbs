@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{@site.locale}}">
-  <style>
-        :root {
-            --background-color: {{@custom.background_color}};
-            --text-color: {{@custom.text_color}};
-            --accent-color: {{@custom.accent_color}};
-            --link-color: {{@custom.link_color}};
-        }
-
-    </style>
-
 
 <head>
-    {{> config-vars}}
+    {{> "css-vars"}}
+    {{> "js-config"}}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{^is "blog"}}
@@ -80,7 +71,9 @@
         </div>
     </header>
 
-    {{> "authors-strip"}}
+    {{#if @custom.show_author_carousel}}
+        {{> "authors-strip"}}
+    {{/if}}
 
     <div class="site-content">
         {{{body}}}

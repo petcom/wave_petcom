@@ -2,11 +2,11 @@
   {{#foreach posts}}
     <section class="engagement-cta">
       <div class="inner">
-        <h2 class="section-title">{{title}}</h2>
-        <div class="intro-text">
+        
+          <div class="intro-text">
           {{{html}}}
         </div>
-        <a href="/contact-us" class="btn-sonar" style="margin-top: 2rem;">Start a Conversation</a>
+        <a href="/contact-us" class="btn-sonar" style="margin-top: 2rem;">Click to Start</a>
       </div>
     </section>
   {{/foreach}}
@@ -33,19 +33,28 @@
   .engagement-cta .inner {
     max-width: 800px;
     margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
   }
 
   .section-title {
-    font-size: 5rem;
+    font-size: clamp(2.5rem, 6vw, 5rem);
     margin-bottom: 1rem;
     text-align: center;
     color: var(--text-color);
   }
 
   .intro-text {
-    font-size: 1.75rem;
+    font-size: clamp(1.2rem, 3vw, 1.75rem);
     margin-bottom: 1rem;
     color: var(--text-color);
+    flex-grow: 1;
+  }
+
+  .engagement-cta .btn-sonar {
+    margin-top: auto;
+    align-self: center;
   }
 
   .create-bullets {

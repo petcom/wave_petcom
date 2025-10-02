@@ -1,0 +1,36 @@
+{{!-- JavaScript Configuration --}}
+<script>
+// Global Ghost Theme Configuration
+window.GHOST_CONFIG = {
+    // API Configuration
+    proxyApiUrl: "{{@custom.proxy_api_url}}",
+    formsSuffix: "{{@custom.forms_suffix}}",
+    eventsSuffix: "{{@custom.events_suffix}}",
+    eventsApiUrl: "{{@custom.proxy_api_url}}{{@custom.events_suffix}}",
+    formsApiUrl: "{{@custom.proxy_api_url}}{{@custom.forms_suffix}}",
+    
+    // Event Configuration
+    eventsTags: "{{@custom.events_tags}}",
+    
+    // External Links
+    socialLinks: {
+        applePodcasts: "{{@custom.apple_podcasts_link}}",
+        googlePodcasts: "{{@custom.google_podcasts_link}}",
+        spotify: "{{@custom.spotify_link}}",
+        rss: "{{@custom.rss_link}}"
+    },
+    
+    // Theme Settings
+    themeSettings: {
+        showAuthorCarousel: {{@custom.show_author_carousel}},
+        navigationLayout: "{{@custom.navigation_layout}}",
+        titleFont: "{{@custom.title_font}}",
+        bodyFont: "{{@custom.body_font}}",
+        contactSheetKey: "{{@custom.contact_sheet_key}}"
+    },
+    
+    // Site Information
+    siteUrl: "{{@site.url}}",
+    siteName: "{{@site.title}}"
+};
+</script>

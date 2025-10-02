@@ -70,8 +70,8 @@
     margin: 0.5rem 0;
     padding: 0.75rem;
     border: 1px solid #444;
-    background: #1e1e1e;
-    color: #fff;
+    background: var(--background-color, #1e1e1e);
+    color: var(--text-color, #fff);
     border-radius: 5px;
     box-sizing: border-box;
   }
@@ -204,8 +204,7 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     details: form.details?.value || "",
     source: form.source?.value || "Contact-Us",
     "g-recaptcha-response": captchaResponse,
-    spreadsheetId: "1E45f3vjLTwZ8SaL0DnzZDOaqO0OKwVDtQ-KySkM2fUs", // Specify the Google Sheet ID
-    sheetName: "contact1" // Specify the sheet tab name
+    sheetKey: window.GHOST_CONFIG.themeSettings.contactSheetKey // Use human-readable key
   };
 
   try {
