@@ -59,8 +59,8 @@
 #events-container {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
-  padding: 4rem 4rem;
+  gap: 2.8rem;
+  padding: 2.8rem 2.8rem;
 }
 
 .event-card {
@@ -70,8 +70,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
-  padding: 2rem 3rem;
+  gap: 1.05rem;
+  padding: 1.4rem 2.1rem;
 }
 
 .event-left {
@@ -84,8 +84,8 @@
 
 .event-thumbnail {
   border-radius: 8px;
-  flex: 0 0 150px;
-  height: 150px;
+  flex: 0 0 105px;
+  height: 105px;
   overflow: hidden;
 }
 
@@ -115,23 +115,23 @@
 
 .event-content h2 {
   color: var(--accent-color);
-  font-size: var(--font-size-xxl);
-  margin: 0 0 0.3rem;
+  font-size: var(--font-size-xl);
+  margin: 0 0 0.21rem;
 }
 
 
 
 .event-content time {
   color: inherit;
-  font-size: var(--font-size-xxl);
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
   opacity: 0.85;
 }
 
 .event-content p {
-  margin-bottom: 0.5rem;
-  font-size: var(--font-size-md);
+  margin-bottom: 0.35rem;
+  font-size: var(--font-size-s);
 }
 
 .event-content strong {
@@ -155,23 +155,23 @@
 .event-tags-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
 }
 
 .event-tag {
   background-color: var(--accent-color);
   color: white;
-  padding: 0.25rem 0.75rem;
+  padding: 0.175rem 0.525rem;
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.595rem;
   font-weight: 500;
 }
 
 /* Event Click Hint */
 .event-click-hint {
   color: var(--accent-color);
-  font-size: 0.9rem;
+  font-size: 0.63rem;
   font-style: italic;
   opacity: 0.8;
   transition: opacity 0.2s ease;
@@ -192,16 +192,16 @@
 
 /* Ticket Link Section */
 .event-ticket-info {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
+  margin-top: 1.05rem;
+  padding: 1.05rem;
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--accent-color);
-  border-radius: 9px;
+  border-radius: 6.3px;
 }
 
 .event-ticket-info p {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.4rem;
+  margin: 0 0 0.525rem 0;
+  font-size: 0.98rem;
   font-weight: 600;
   color: var(--text-color);
 }
@@ -211,7 +211,7 @@
   color: var(--accent-color);
   text-decoration: none;
   font-weight: 500;
-  font-size: 1.35rem;
+  font-size: 0.945rem;
   word-break: break-all;
   transition: color 0.2s ease;
 }
@@ -244,7 +244,7 @@
     flex-direction: column;
     align-items: stretch;
     text-align: left;
-    padding: 1.5rem 2rem;
+    padding: 1.05rem 1.4rem;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;

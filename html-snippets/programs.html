@@ -1,0 +1,225 @@
+<section class="rla-section rla-theme" id="classes">
+  <style>
+    /* Uses your :root vars from css-vars.hbs */
+    .rla-theme{
+      --surface: color-mix(in oklab, var(--background-color) 92%, var(--text-color) 8%);
+      --border:  color-mix(in oklab, var(--background-color) 85%, var(--text-color) 15%);
+      --midtext: color-mix(in oklab, var(--text-color) 75%, var(--background-color) 25%);
+      --sticky-offset: 96px; /* adjust if your sticky header is taller/shorter */
+    }
+    .rla-section{margin:2rem 0;color:var(--text-color);font-family:var(--theme-body-font,inherit)}
+    .rla-header{margin-bottom:1rem}
+    .rla-eyebrow{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+    .rla-title{font-size:clamp(1.5rem,2vw,2rem);margin:.25rem 0 .25rem;font-family:var(--theme-heading-font,inherit)}
+    .rla-sub{color:var(--midtext);max-width:65ch;margin:.35rem 0}
+    .rla-grid{display:grid;justify-content:center;grid-template-columns:repeat(12,1fr);gap:1rem;margin:1.25rem 0 2rem}
+    .rla-card{grid-column:span 12;background:var(--post-background-color,var(--surface));border:1px solid var(--border);border-radius:16px;padding:1rem;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+    .rla-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px color-mix(in oklab,var(--background-color) 10%, black 90%);border-color:var(--accent-color)}
+    .rla-card h3{margin:0 0 .35rem;font-size:1.15rem;font-family:var(--theme-heading-font,inherit)}
+    .rla-meta{font-size:.95rem;margin-bottom:.5rem;color:var(--midtext)}
+    .rla-list{margin:.25rem 0 .75rem;padding-left:1rem}
+    .rla-kicker{font-weight:600;color:var(--text-color)}
+    .rla-tag{display:inline-block;font-size:.8rem;line-height:1;padding:.4rem .6rem;border-radius:999px;margin-bottom:.75rem;background:color-mix(in oklab,var(--accent-color) 18%, transparent);color:var(--accent-color);border:1px solid var(--accent-color)}
+    .rla-cta-row{
+      display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;
+      justify-content:center; /* centered CTAs + link */
+      text-align:center;
+    }
+    .rla-btn{display:inline-block;padding:.6rem .9rem;border-radius:10px;text-decoration:none;font-weight:600;background:var(--accent-color);color:var(--background-color);border:1px solid var(--accent-color)}
+    .rla-btn.secondary{background:transparent;color:var(--text-color);border-color:var(--border)}
+    .rla-btn:hover{filter:brightness(1.05)}
+    .rla-btn.secondary:hover{border-color:var(--accent-color);color:var(--accent-color)}
+    .rla-link{font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;color:var(--link-color, var(--accent-color));padding-bottom:2px}
+    .rla-link:hover{opacity:.9}
+    @media (min-width:640px){.rla-card{grid-column:span 6}}
+    @media (min-width:1024px){.rla-card{grid-column:span 4}}
+
+    /* Anchor targets: clear sticky header when jumping to #hash */
+    .anchor-target{scroll-margin-top:var(--sticky-offset); outline:none}
+    html { scroll-behavior: smooth; } /* optional: nice scrolling */
+  </style>
+
+  <!-- ===== SOUND (anchor target + section) ===== -->
+  <div id="sound" class="anchor-target" tabindex="-1"></div>
+  <header class="rla-header" aria-labelledby="sound-title">
+    <div class="rla-eyebrow">Classes</div>
+    <h2 class="rla-title" id="sound-title">Sound</h2>
+    <p class="rla-sub">Guided sound baths and meditations for regulation, presence, and deep rest.</p>
+    <p class="rla-sub"><strong>Format:</strong> <strong>3×75-min</strong> classes. Pick from the offerings below.</p>
+  </header>
+
+  <div class="rla-grid anchor-target" id="sound-cards" aria-label="Sound classes">
+    <article class="rla-card">
+      <span class="rla-tag">Series</span>
+      <h3>Sound Meditation: Foundations</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> breath-led settling, gentle vocal toning, receptive listening</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> calmer baseline, better sleep, simple home routine</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,sound,foundations">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Sound&class=Sound Meditation: Foundations">Join Interest List</a>
+        <a class="rla-link" href="#sound-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Series</span>
+      <h3>Sound Meditation: Deep Rest</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> sustained tones, low-frequency instruments, body scanning</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> nervous-system reset and deeper relaxation</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,sound,deep-rest">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Sound&class=Sound Meditation: Deep Rest">Join Interest List</a>
+        <a class="rla-link" href="#sound-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Series</span>
+      <h3>Voice &amp; Bowl Sound Bath</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> simple toning with crystal bowls, humming for vagal tone</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> a self-led mini sound bath you can repeat at home</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,sound,sound-bath">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Sound&class=Voice &amp; Bowl Sound Bath">Join Interest List</a>
+        <a class="rla-link" href="#sound-details">What to Expect</a>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===== DANCE (anchor target + section) ===== -->
+  <div id="dance" class="anchor-target" tabindex="-1"></div>
+  <header class="rla-header" aria-labelledby="dance-title">
+    <h2 class="rla-title" id="dance-title">Dance</h2>
+    <p class="rla-sub">Accessible movement for regulation, expression, and joy—no choreography ego.</p>
+    <p class="rla-sub"><strong>Format:</strong> <strong>3–5×90-min</strong> classes. Pick from the offerings below.</p>
+  </header>
+
+  <div class="rla-grid anchor-target" id="dance-cards" aria-label="Dance classes">
+    <article class="rla-card">
+      <span class="rla-tag">Foundations</span>
+      <h3>Dance Foundations</h3>
+      <p class="rla-meta">Accessible movement for individuals and partners.</p>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> groove cycles, weight shifts, traveling steps, breath pacing, connection cues</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> a personal 3-minute flow and starter partner skills (lead/follow options)</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,dance,foundations">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Dance&class=Dance Foundations">Join Interest List</a>
+        <a class="rla-link" href="#dance-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Social</span>
+      <h3>Social Classes</h3>
+      <p class="rla-meta">Friendly, low-pressure social dance for real-world floors.</p>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> music feel, frame, simple patterns, timing, floorcraft</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> confidence on a social floor; adaptable basics for common styles</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,dance,social">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Dance&class=Social Classes">Join Interest List</a>
+        <a class="rla-link" href="#dance-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Lab</span>
+      <h3>Partner Dance Lab</h3>
+      <p class="rla-meta">Focused practice for pairs—consent, connection, and clean technique.</p>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> lead/follow communication, timing, weight sharing, turns, resets</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> clearer connection, smoother transitions, and playful improvisation</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,dance,partner-lab">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Dance&class=Partner Dance Lab">Join Interest List</a>
+        <a class="rla-link" href="#dance-details">What to Expect</a>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===== ART (anchor target + section) ===== -->
+  <div id="art" class="anchor-target" tabindex="-1"></div>
+  <header class="rla-header" aria-labelledby="art-title">
+    <h2 class="rla-title" id="art-title">Art</h2>
+    <p class="rla-sub">Hands, eyes, heart—practice states, not perfection.</p>
+    <p class="rla-sub"><strong>Format:</strong> 4–6×60-min classes (varies by course). Pick from the offerings below.</p>
+  </header>
+
+  <div class="rla-grid anchor-target" id="art-cards" aria-label="Art classes">
+    <article class="rla-card">
+      <span class="rla-tag">Foundations</span>
+      <h3>Sketch &amp; Sense</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> gesture lines, value studies, “see-more” exercises</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> faster, clearer sketches and a calm focus state</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,art,sketch">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Art&class=Sketch &amp; Sense">Join Interest List</a>
+        <a class="rla-link" href="#art-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Habit-Builder</span>
+      <h3>Creative Journaling</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> collage, color studies, text-image prompts</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> a sustainable 10-minute daily art habit</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,art,journaling">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Art&class=Creative Journaling">Join Interest List</a>
+        <a class="rla-link" href="#art-details">What to Expect</a>
+      </div>
+    </article>
+  </div>
+
+  <!-- ===== CODING (anchor target + section) ===== -->
+  <div id="coding" class="anchor-target" tabindex="-1"></div>
+  <header class="rla-header" aria-labelledby="coding-title">
+    <h2 class="rla-title" id="coding-title">Coding</h2>
+    <p class="rla-sub">Creative code for artists, therapists, and curious humans—no prior experience required.</p>
+    <p class="rla-sub"><strong>Format:</strong> 4×90–6×75-min classes (varies by course). Pick from the offerings below.</p>
+  </header>
+
+  <div class="rla-grid anchor-target" id="coding-cards" aria-label="Coding classes">
+    <article class="rla-card">
+      <span class="rla-tag">Foundations</span>
+      <h3>Coding Foundations (Creative)</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> variables, loops, drawing to screen (p5.js)</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> publish a simple interactive sketch online</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,coding,foundations">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Code&class=Coding Foundations (Creative)">Join Interest List</a>
+        <a class="rla-link" href="#coding-details">What to Expect</a>
+      </div>
+    </article>
+
+    <article class="rla-card">
+      <span class="rla-tag">Project</span>
+      <h3>Creative Coding: Reactive Visuals</h3>
+      <p class="rla-meta"><span class="rla-kicker">You’ll practice:</span> mapping inputs to visuals, simple interactions, basic controllers</p>
+      <ul class="rla-list">
+        <li><strong>Outcome:</strong> a small interactive visual piece</li>
+      </ul>
+      <div class="rla-cta-row">
+        <a class="rla-btn" href="/events?tags=academy,coding,reactive">View Calendar</a>
+        <a class="rla-btn secondary" href="/program-interest?category=Code&class=Creative Coding: Reactive Visuals">Join Interest List</a>
+        <a class="rla-link" href="#coding-details">What to Expect</a>
+      </div>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,326 @@
+{{!< default}}
+
+<section class="collab-section gh-container">
+  <div class="collab-card gh-card">
+    <h2 class="gh-card-title">Program Interest Request</h2>
+    <p class="gh-card-excerpt">
+      Tell us which program you want and when you’re free. Our team will follow up within 24–48 hours with start date options and next steps.
+    </p>
+  </div>
+</section>
+
+<section class="contact-section">
+  <h2 class="section-title">Request Your Class</h2>
+  <form id="contactForm" class="contact-form">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <input type="tel" name="phone" placeholder="Contact Phone (Optional)" />
+    
+    <select name="interest_category" required>
+      <option value="" disabled selected>Select Interest Category</option>
+      <option value="Sound">Sound</option>
+      <option value="Dance">Dance</option>
+      <option value="Art">Art</option>
+      <option value="Code">Code</option>
+    </select>
+    
+    <input type="text" name="specific_class" placeholder="Specific Class (e.g., Guitar Basics, Hip Hop Dance)" required />
+    
+    <label for="preferred_dates" class="field-label">Preferred Start Date (Optional)</label>
+    <input type="date" name="preferred_dates" id="preferred_dates" placeholder="Preferred Start Date mm/dd/yyyy" />
+    
+    <textarea name="details" placeholder="Specific Request or Additional Details (Optional)"></textarea>
+    
+    <input type="hidden" name="source" value="Program Interest" />
+
+    <div class="g-recaptcha" data-sitekey="6Ld0NzYrAAAAAO9p29r0lAI__ztISnOaJ6UEocLH"></div>
+
+    <button type="submit">Submit Request</button>
+    <p id="form-status" class="status-message"></p>
+  </form>
+</section>
+
+<style>
+  /* Collaboration section styling */
+  .collab-section {
+    max-width: 800px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .collab-card {
+    /* Padding is now handled by post-backgrounds.css */
+    text-align: center;
+  }
+
+  /* Contact section styling */
+  .contact-section {
+    max-width: 600px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 2rem;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .contact-form {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+    border: 1px solid #444;
+    background: var(--background-color, #1e1e1e);
+    color: var(--text-color, #fff);
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .contact-form select {
+    cursor: pointer;
+  }
+
+  .contact-form select option {
+    background: var(--background-color, #1e1e1e);
+    color: var(--text-color, #fff);
+  }
+
+  .contact-form .field-label {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 0.75rem 0 0.25rem 0;
+    font-size: 1.4rem;
+    color: var(--text-color, #fff);
+    opacity: 0.9;
+  }
+
+  .contact-form button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    margin: 1rem auto;
+    display: block;
+  }
+
+  .contact-form button:hover {
+    opacity: 0.9;
+  }
+
+  .status-message {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .g-recaptcha {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  .section-title {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+  }
+
+  /* Override any positioning from post-backgrounds.css */
+  .page-program-interest .contact-section {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .page-program-interest .collab-section {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .collab-section {
+      margin: 2rem auto;
+      padding: 0 1rem;
+      max-width: 90%;
+    }
+    
+    .collab-card {
+      /* Padding is now handled by post-backgrounds.css */
+    }
+    
+    .contact-section {
+      margin: 2rem auto;
+      padding: 1rem;
+      max-width: 90%;
+    }
+    
+    .contact-form {
+      max-width: 100%;
+    }
+    
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      padding: 0.6rem;
+    }
+    
+    .contact-form button {
+      padding: 0.6rem 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collab-section {
+      margin: 1rem auto;
+      padding: 0 0.5rem;
+      max-width: 95%;
+    }
+    
+    .collab-card {
+      /* Padding is now handled by post-backgrounds.css */
+    }
+    
+    .contact-section {
+      margin: 1rem auto;
+      padding: 0.5rem;
+      max-width: 95%;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+// Pre-fill form from URL parameters
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const category = urlParams.get('category');
+  const className = urlParams.get('class');
+  
+  const form = document.getElementById("contactForm");
+  
+  // Pre-select the category if provided
+  if (category && form.interest_category) {
+    const categorySelect = form.interest_category;
+    for (let i = 0; i < categorySelect.options.length; i++) {
+      if (categorySelect.options[i].value === category) {
+        categorySelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+  
+  // Pre-fill the specific class if provided
+  if (className && form.specific_class) {
+    form.specific_class.value = className;
+  }
+});
+
+document.getElementById("contactForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const status = document.getElementById("form-status");
+
+  const captchaResponse = grecaptcha.getResponse();
+  if (!captchaResponse) {
+    status.textContent = "Please complete the CAPTCHA.";
+    return;
+  }
+
+  // Concatenate Interest Category and Specific Class for the interest field
+  const interestCategory = form.interest_category.value;
+  const specificClass = form.specific_class.value;
+  const concatenatedInterest = `${interestCategory}: ${specificClass}`;
+
+  const payload = {
+    name: form.name.value,
+    email: form.email.value,
+    phone: form.phone.value || "",
+    interest: concatenatedInterest,
+    preferred_dates: form.preferred_dates.value || "",
+    details: form.details.value || "",
+    message: form.details.value || "", // Include as message for compatibility
+    source: form.source.value,
+    "g-recaptcha-response": captchaResponse,
+    sheetKey: window.GHOST_CONFIG.themeSettings.contactSheetKey // Use human-readable key
+  };
+
+  try {
+    // Use the proxy API URL (Google Script URL is now handled in the proxy's .env file)
+    const FORMS_API_URL = "{{@custom.proxy_api_url}}{{@custom.forms_suffix}}";
+    
+    // Use the proxy URL directly
+    const proxyUrl = FORMS_API_URL;
+    
+    // Debug: Log the URL being used
+    console.log("Form submission URL:", proxyUrl);
+    console.log("Payload:", payload);
+    
+    const response = await fetch(proxyUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    // Check if response is ok
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Response not ok:", response.status, response.statusText, errorText);
+      status.textContent = `Server error: ${response.status} ${response.statusText}. Please contact "contact@sonaraz.com" directly and let them know of this error. Data not received.`;
+      status.style.color = "#dc3545"; // Red color for error
+      return;
+    }
+
+    // Handle successful response
+    const responseText = await response.text();
+    console.log("Server response:", responseText);
+    
+    // Show success message
+    status.textContent = "Request submitted successfully! Someone will contact you within 24-48 hours about your class inquiry.";
+    status.style.color = "#28a745"; // Green color for success
+    
+    // Reset the form
+    form.reset();
+    
+    // Reset reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.reset();
+    }
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Failed to connect. Try again later. Please contact \"contact@sonaraz.com\" directly and let them know of this error. Data not received.";
+    status.style.color = "#dc3545"; // Red color for error
+  }
+});
+</script>

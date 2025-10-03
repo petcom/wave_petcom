@@ -144,9 +144,25 @@
     background: rgba(122, 113, 113, 0.7);
 }
 
+.video-hero .cover-logo {
+    max-height: 80px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.video-hero .cover-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.9));
+}
+
 @media (max-width: 768px) {
     .video-hero {
         height: 50vh;
+    }
+    
+    .video-hero .cover-logo {
+        max-height: 60px;
     }
     
     .video-hero .hero-buttons {
@@ -175,8 +191,18 @@
     <div class="video-overlay"></div>
     
     <div class="hero-content">
-        {{#if @site.logo}}
-            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" style="max-height: 80px; margin-bottom: 1rem;">
+        {{#if @custom.use_light_logo_hero}}
+            {{#if @custom.hero_light_logo}}
+                <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}" loading="eager">
+            {{else}}
+                {{#if @site.logo}}
+                    <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
+                {{/if}}
+            {{/if}}
+        {{else}}
+            {{#if @site.logo}}
+                <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
+            {{/if}}
         {{/if}}
          {{!-- Video Hero Section Partial
                  <h1 class="hero-title">{{@site.title}}</h1>
