@@ -1,21 +1,16 @@
 {{!-- partials/author-box.hbs (v5/6-safe) --}}
 {{#if authorData}}
-  {{#with authorData as |person|}}
-    {{> "partials/author-box-core" person=person}}
-  {{/with}}
-{{else if primary_author}}
-  {{#with primary_author as |person|}}
-    {{> "partials/author-box-core" person=person}}
-  {{/with}}
-{{else if authors}}
-  {{#foreach authors limit="1"}}
-    {{#with this as |person|}}
-      {{> "partials/author-box-core" person=person}}
-    {{/with}}
-  {{/foreach}}
-{{else if author}}
-  {{!-- author.hbs context --}}
-  {{#with author as |person|}}
-    {{> "partials/author-box-core" person=person}}
-  {{/with}}
+  {{> "author-box-core" person=authorData}}
+{{else}}
+  {{#if primary_author}}
+    {{> "author-box-core" person=primary_author}}
+  {{else}}
+    {{#if authors}}
+      {{#foreach authors limit="1"}}
+        {{> "author-box-core" person=this}}
+      {{/foreach}}
+    {{else}}
+      {{!-- no author available: render nothing --}}
+    {{/if}}
+  {{/if}}
 {{/if}}
