@@ -1,0 +1,39 @@
+<section class="author">
+  <div class="author-image-placeholder u-placeholder">
+    {{#if person.profile_image}}
+      <img class="author-image u-object-fit"
+           src="{{img_url person.profile_image size="xs"}}"
+           alt="{{person.name}}" loading="lazy">
+    {{/if}}
+  </div>
+
+  <div class="author-wrapper">
+    <header class="author-header">
+      <h4 class="author-name">
+        {{#if person.url}}<a href="{{person.url}}">{{person.name}}</a>{{else}}{{person.name}}{{/if}}
+      </h4>
+      <div class="author-social">
+        {{#if person.twitter}}
+          <a class="author-social-item author-twitter"
+             href="{{social_url person.twitter type="twitter"}}" target="_blank" rel="noopener noreferrer">
+            {{> "icons/twitter"}}
+          </a>
+        {{/if}}
+        {{#if person.facebook}}
+          <a class="author-social-item author-facebook"
+             href="{{social_url person.facebook type="facebook"}}" target="_blank" rel="noopener noreferrer">
+            {{> "icons/facebook"}}
+          </a>
+        {{/if}}
+        {{#if person.website}}
+          <a class="author-social-item author-website"
+             href="{{person.website}}" target="_blank" rel="noopener noreferrer">
+            {{> "icons/link"}}
+          </a>
+        {{/if}}
+      </div>
+    </header>
+    {{#if person.location}}<span class="author-meta">{{person.location}}</span>{{/if}}
+    {{#if person.bio}}<div class="author-bio">{{person.bio}}</div>{{/if}}
+  </div>
+</section>

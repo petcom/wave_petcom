@@ -1,61 +1,21 @@
-<section class="author">
-    <div class="author-image-placeholder u-placeholder">
-        <img class="author-image u-object-fit" src="{{img_url authorData.profile_image size="xs"}}" alt="{{authorData.name}}" loading="lazy">
-    </div>
-    <div class="author-wrapper">
-        <header class="author-header">
-            <h4 class="author-name"><a href="{{authorData.url}}">{{authorData.name}}</a></h4>
-            <div class="author-social">
-                {{#if authorData.twitter}}
-                    <a class="author-social-item author-twitter" href="{{social_url authorData.twitter type="twitter"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/twitter"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.facebook}}
-                    <a class="author-social-item author-facebook" href="{{social_url authorData.facebook type="facebook"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/facebook"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.linkedin}}
-                    <a class="author-social-item author-linkedin" href="{{social_url authorData.linkedin type="linkedin"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/linkedin"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.bluesky}}
-                    <a class="author-social-item author-bluesky" href="{{social_url authorData.bluesky type="bluesky"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/bluesky"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.threads}}
-                    <a class="author-social-item author-threads" href="{{social_url authorData.threads type="threads"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/threads"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.mastodon}}
-                    <a class="author-social-item author-mastodon" href="{{social_url authorData.mastodon type="mastodon"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/mastodon"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.tiktok}}
-                    <a class="author-social-item author-tiktok" href="{{social_url authorData.tiktok type="tiktok"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/tiktok"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.youtube}}
-                    <a class="author-social-item author-youtube" href="{{social_url authorData.youtube type="youtube"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/youtube"}}
-                    </a>
-                {{/if}}
-                {{#if authorData.instagram}}
-                    <a class="author-social-item author-instagram" href="{{social_url authorData.instagram type="instagram"}}" target="_blank" rel="noopener noreferrer">
-                        {{> "icons/instagram"}}
-                    </a>
-                {{/if}}
-            </div>
-        </header>
-        {{#if authorData.location}}
-            <span class="author-meta">{{authorData.location}}</span>
-        {{/if}}
-        <div class="author-bio">{{authorData.bio}}</div>
-    </div>
-</section>
+{{!-- partials/author-box.hbs (v5/6-safe) --}}
+{{#if authorData}}
+  {{#with authorData as |person|}}
+    {{> "partials/author-box-core" person=person}}
+  {{/with}}
+{{else if primary_author}}
+  {{#with primary_author as |person|}}
+    {{> "partials/author-box-core" person=person}}
+  {{/with}}
+{{else if authors}}
+  {{#foreach authors limit="1"}}
+    {{#with this as |person|}}
+      {{> "partials/author-box-core" person=person}}
+    {{/with}}
+  {{/foreach}}
+{{else if author}}
+  {{!-- author.hbs context --}}
+  {{#with author as |person|}}
+    {{> "partials/author-box-core" person=person}}
+  {{/with}}
+{{/if}}
