@@ -96,19 +96,79 @@
     <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
     {{/if}} 
 
-    <div class="cover-content">
-        {{#if @site.logo}}
-            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-        {{/if}}
-        {{#if @site.description}}
-            <div class="cover-description">{{@site.description}}</div>
-        {{/if}}
-        <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-            <a href="/explore-experiences" class="btn-sonar">Explore Experiences</a>
-            <a href="/events" class="btn-sonar">Upcoming Events</a>
-            <a href="/contact-us" class="btn-sonar">Join the SONAR Circle</a>
-        </div>
-    </div>
+  <div class="cover-content">
+    {{#get "posts" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+      {{#if posts}}
+        {{#foreach posts}}
+            {{#if feature_image}}
+              <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
+            {{else}}
+              {{#if @custom.hero_light_logo}}
+                <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}">
+              {{else}}
+                {{#if @site.logo}}
+                  <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+                {{/if}}
+              {{/if}}
+            {{/if}}
+
+            <h1 class="hero-title">{{title}}</h1>
+
+            {{#if custom_excerpt}}
+              <div class="cover-description">{{custom_excerpt}}</div>
+            {{/if}}
+
+            {{#if html}}
+              <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                {{{html}}}
+              </div>
+            {{/if}}
+          {{/foreach}}
+      {{else}}
+        {{#get "pages" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+          {{#if pages}}
+            {{#foreach pages}}
+                {{#if feature_image}}
+                  <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
+                {{else}}
+                  {{#if @custom.hero_light_logo}}
+                    <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}">
+                  {{else}}
+                    {{#if @site.logo}}
+                      <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+                    {{/if}}
+                  {{/if}}
+                {{/if}}
+
+                <h1 class="hero-title">{{title}}</h1>
+
+                {{#if custom_excerpt}}
+                  <div class="cover-description">{{custom_excerpt}}</div>
+                {{/if}}
+
+                {{#if html}}
+                  <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    {{{html}}}
+                  </div>
+                {{/if}}
+            {{/foreach}}
+          {{else}}
+            {{#if @site.logo}}
+              <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+            {{/if}}
+            {{#if @site.description}}
+              <div class="cover-description">{{@site.description}}</div>
+            {{/if}}
+            <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+              <a href="/explore-experiences" class="btn-sonar">Explore Experiences</a>
+              <a href="/events" class="btn-sonar">Upcoming Events</a>
+              <a href="/contact-us" class="btn-sonar">Join the SONAR Circle</a>
+            </div>
+          {{/if}}
+        {{/get}}
+      {{/if}}
+    {{/get}}
+  </div>
 </div>
 
 <script>

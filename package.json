@@ -142,17 +142,17 @@
                 "label": "Contact Sheet Key",
                 "default": "RLA-contact"
             },
-            "hero_light_logo": {
-                "type": "image",
-                "label": "Hero Light Logo",
-                "description": "Light version of logo for video hero overlay",
-                "group": "homepage"
-            },
-            "use_light_logo_hero": {
-                "type": "boolean",
-                "label": "Use Light Logo on Hero",
-                "description": "Use light logo on video hero instead of default site logo",
-                "default": false,
+
+            "hero_layout": {
+                "type": "select",
+                "label": "Hero Layout",
+                "description": "Choose which hero section to display on the home page.",
+                "default": "video",
+                "options": [
+                    "video",
+                    "theramin",
+                    "none"
+                ],
                 "group": "homepage"
             }
         }

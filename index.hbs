@@ -90,14 +90,19 @@
 </style>
 
     {{#is "home"}}
-    
-        {{!-- Video Hero Section for Testing --}}
-        {{> "hero-video"}}
-        
-        {{!-- Theramin Hero Section --- removed ----
-        {{> "hero-theramin"}}
-        --}}
-    
+        {{#if @custom.hero_layout}}
+            {{#match @custom.hero_layout "=" "none"}}
+                {{!-- No hero selected --}}
+            {{else}}
+                {{#match @custom.hero_layout "=" "theramin"}}
+                    {{> "hero-theramin"}}
+                {{else}}
+                    {{> "hero-video"}}
+                {{/match}}
+            {{/match}}
+        {{else}}
+            {{> "hero-video"}}
+        {{/if}}
     {{/is}}
 
 

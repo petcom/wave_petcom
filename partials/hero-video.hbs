@@ -191,35 +191,85 @@
     <div class="video-overlay"></div>
     
     <div class="hero-content">
-        {{#if @custom.use_light_logo_hero}}
-            {{#if @custom.hero_light_logo}}
-                <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}" loading="eager">
-            {{else}}
-                {{#if @site.logo}}
-                    <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
-                {{/if}}
-            {{/if}}
-        {{else}}
-            {{#if @site.logo}}
-                <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
-            {{/if}}
-        {{/if}}
-         {{!-- Video Hero Section Partial
-                 <h1 class="hero-title">{{@site.title}}</h1>
+        {{#get "posts" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+            {{#if posts}}
+                {{#foreach posts}}
+                        {{#if feature_image}}
+                            <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}" loading="eager">
+                        {{else}}
+                            {{#if @custom.hero_light_logo}}
+                                <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}" loading="eager">
+                            {{else}}
+                                {{#if @site.logo}}
+                                    <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
 
-        --}}
-      
-        <h1 class="hero-title">Make, Move, Create and Code </h1>
-        
-        {{#if @site.description}}
-            <p class="hero-description">{{@site.description}}</p>
-        {{/if}}
-        
-        <div class="hero-buttons">
-            <a href="/contact-us" class="btn-hero">Try a Free Intro</a>
-            <a href="/events" class="btn-hero primary">See Schedule</a>
-            <a href="/contact-us" class="btn-hero">Send a Message</a>
-        </div>
+                        <h1 class="hero-title">{{title}}</h1>
+
+                        {{#if custom_excerpt}}
+                            <p class="hero-description">{{custom_excerpt}}</p>
+                        {{/if}}
+
+                        {{#if html}}
+                            <div class="hero-buttons">
+                                {{{html}}}
+                            </div>
+                        {{/if}}
+                    {{/foreach}}
+            {{else}}
+                {{#get "pages" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+                    {{#if pages}}
+                        {{#foreach pages}}
+                                {{#if feature_image}}
+                                    <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}" loading="eager">
+                                {{else}}
+                                    {{#if @custom.hero_light_logo}}
+                                        <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}" loading="eager">
+                                    {{else}}
+                                        {{#if @site.logo}}
+                                            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
+
+                                <h1 class="hero-title">{{title}}</h1>
+
+                                {{#if custom_excerpt}}
+                                    <p class="hero-description">{{custom_excerpt}}</p>
+                                {{/if}}
+
+                                {{#if html}}
+                                    <div class="hero-buttons">
+                                        {{{html}}}
+                                    </div>
+                                {{/if}}
+                        {{/foreach}}
+                    {{else}}
+                        {{#if @custom.hero_light_logo}}
+                            <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}" loading="eager">
+                        {{else}}
+                            {{#if @site.logo}}
+                                <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}" loading="eager">
+                            {{/if}}
+                        {{/if}}
+
+                        <h1 class="hero-title">Make, Move, Create and Code </h1>
+
+                        {{#if @site.description}}
+                            <p class="hero-description">{{@site.description}}</p>
+                        {{/if}}
+
+                        <div class="hero-buttons">
+                            <a href="/contact-us" class="btn-hero">Try a Free Intro</a>
+                            <a href="/events" class="btn-hero primary">See Schedule</a>
+                            <a href="/contact-us" class="btn-hero">Send a Message</a>
+                        </div>
+                    {{/if}}
+                {{/get}}
+            {{/if}}
+        {{/get}}
     </div>
     
     <div class="video-controls">
