@@ -10,6 +10,7 @@ const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const beeper = require('beeper');
 const zip = require('gulp-zip');
+const { execSync } = require('child_process'); // <— new
 
 // postcss plugins
 const easyimport = require('postcss-easy-import');
@@ -23,9 +24,7 @@ function serve(done) {
 
 function handleError(done) {
     return function (err) {
-        if (err) {
-            beeper();
-        }
+        if (err) beeper();
         return done(err);
     };
 };
@@ -75,16 +74,51 @@ function js(done) {
     ], handleError(done));
 }
 
+// Optional: run gscan and fail on errors
+function scan(done) {
+    try {
+        execSync('npx --yes gscan@latest .', { stdio: 'inherit' });
+        done();
+    } catch (e) {
+        done(new Error('gscan reported errors — fix before zipping.'));
+    }
+}
+
 function zipper(done) {
-    const filename = require('./package.json').name + '.zip';
+    const pkg = require('./package.json');
+    const filename = `${pkg.name}${pkg.version ? `-${pkg.version}` : ''}.zip`;
 
     pump([
         src([
-            '**',
-            '!node_modules', '!node_modules/**',
-            '!dist', '!dist/**',
-            '!yarn-error.log'
-        ]),
+            '**/*',
+
+            // exclude clutter & build artifacts
+            '!node_modules/**',
+            '!dist/**',
+            '!.git/**',
+            '!.github/**',
+            '!.vscode/**',
+
+            // exclude misc junk
+            '!**/.DS_Store',
+            '!**/*.log',
+            '!**/*.zip',
+
+            // exclude source maps from the final theme zip
+            '!**/*.map',
+
+            // exclude lockfiles & local metadata
+            '!**/yarn.lock',
+            '!**/pnpm-lock.yaml',
+            '!**/package-lock.json',
+
+            // if you keep helper scripts locally, exclude them:
+            '!scripts/**'
+        ], {
+            dot: true,
+            encoding: false
+        }),
+
         zip(filename),
         dest('dist/')
     ], handleError(done));
@@ -96,6 +130,10 @@ const jsWatcher = () => watch('assets/js/**/*.js', js);
 const watcher = parallel(hbsWatcher, cssWatcher, jsWatcher);
 const build = series(css, js);
 
+// Keep your existing exports, but now you have an optional scan step:
 exports.build = build;
+// Run scan before zip if you want it to block on gscan:
+// exports.zip = series(build, scan, zipper);
 exports.zip = series(build, zipper);
+exports.scan = scan;
 exports.default = series(build, serve, watcher);

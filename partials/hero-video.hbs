@@ -181,10 +181,10 @@
 <div class="video-hero">
     <div class="video-container" id="video-container">
         <video class="hero-video-element active" autoplay muted playsinline>
-            <source src="{{asset "media/herovideos/base_salsa_202509.mp4"}}" type="video/mp4">
+            <source src="{{asset 'media/herovideos/base_salsa_202509.mp4'}}" type="video/mp4">
         </video>
         <video class="hero-video-element" muted playsinline>
-            <source src="{{asset "media/herovideos/base_record_202509.mp4"}}" type="video/mp4">
+            <source src="{{asset 'media/herovideos/base_record_202509.mp4'}}" type="video/mp4">
         </video>
     </div>
     
@@ -243,13 +243,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!videoContainer) return;
     
     const videos = document.querySelectorAll('.hero-video-element');
+    const SWITCH_DELAY = 8000;
     let currentVideoIndex = 0;
-    let cycleInterval = null;
+    let cycleTimeout = null;
     let isPaused = false;
     let isMuted = true;
     
     // Preload all videos
     videos.forEach((video, index) => {
+        video.loop = true;
+        video.muted = isMuted;
         if (index > 0) {
             video.load();
         }
@@ -258,46 +261,101 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn(`Video failed to load:`, e);
         });
     });
-    
-    // Start cycling after user interaction to avoid autoplay policy violations
-    const enableAutoplay = () => {
-        startCycling(8000); // 8 seconds
-        document.removeEventListener('click', enableAutoplay);
-        document.removeEventListener('touchstart', enableAutoplay);
-    };
-    
-    document.addEventListener('click', enableAutoplay, { once: true });
-    document.addEventListener('touchstart', enableAutoplay, { once: true });
-    
-    function switchToNextVideo() {
-        if (videos.length <= 1) return;
-        
-        // Fade out current video
-        videos[currentVideoIndex].classList.remove('active');
-        videos[currentVideoIndex].pause();
-        
-        // Move to next video
-        currentVideoIndex = (currentVideoIndex + 1) % videos.length;
-        
-        // Fade in new video
-        videos[currentVideoIndex].classList.add('active');
-        videos[currentVideoIndex].currentTime = 0;
-        if (!isPaused) {
-            videos[currentVideoIndex].play().catch(e => {
-                console.warn('Video autoplay failed:', e);
-            });
+
+    function clearScheduledSwitch() {
+        if (cycleTimeout) {
+            clearTimeout(cycleTimeout);
+            cycleTimeout = null;
         }
     }
-    
-    function startCycling(duration = 8000) {
-        if (cycleInterval) clearInterval(cycleInterval);
-        cycleInterval = setInterval(switchToNextVideo, duration);
+
+    function scheduleNextSwitch(delay = SWITCH_DELAY) {
+        if (videos.length <= 1) {
+            clearScheduledSwitch();
+            return;
+        }
+        clearScheduledSwitch();
+        if (isPaused) return;
+        cycleTimeout = setTimeout(() => {
+            const nextIndex = (currentVideoIndex + 1) % videos.length;
+            switchToVideo(nextIndex);
+        }, delay);
     }
     
-    function stopCycling() {
-        if (cycleInterval) {
-            clearInterval(cycleInterval);
-            cycleInterval = null;
+    function beginPlayback() {
+        const currentVideo = videos[currentVideoIndex];
+        if (!currentVideo) return;
+
+        currentVideo.muted = isMuted;
+        currentVideo.loop = true;
+
+        const attemptPlay = () => {
+            currentVideo.play().then(() => {
+                scheduleNextSwitch();
+            }).catch(err => {
+                console.warn('Autoplay prevented, waiting for user interaction:', err);
+                const resumeOnInteraction = () => {
+                    currentVideo.play().then(() => {
+                        scheduleNextSwitch();
+                    }).catch(e => {
+                        console.warn('Playback failed after interaction:', e);
+                    });
+                document.removeEventListener('click', resumeOnInteraction);
+                document.removeEventListener('touchstart', resumeOnInteraction);
+                };
+                document.addEventListener('click', resumeOnInteraction, { once: true });
+                document.addEventListener('touchstart', resumeOnInteraction, { once: true });
+            });
+        };
+
+        attemptPlay();
+    }
+
+    beginPlayback();
+    
+    function switchToVideo(targetIndex) {
+        if (videos.length <= 1) return;
+
+        const currentVideo = videos[currentVideoIndex];
+        const nextVideo = videos[targetIndex];
+
+        const performSwitch = () => {
+            currentVideo.classList.remove('active');
+            currentVideo.pause();
+
+            nextVideo.classList.add('active');
+            nextVideo.currentTime = 0;
+            nextVideo.muted = isMuted;
+
+            if (!isPaused) {
+                nextVideo.play().catch(e => {
+                    console.warn('Video autoplay failed:', e);
+                });
+            }
+
+            currentVideoIndex = targetIndex;
+            scheduleNextSwitch();
+        };
+
+        if (nextVideo.readyState >= 3) {
+            performSwitch();
+            return;
+        }
+
+        clearScheduledSwitch();
+        const onReady = () => {
+            nextVideo.removeEventListener('canplaythrough', onReady);
+            performSwitch();
+        };
+
+        nextVideo.addEventListener('canplaythrough', onReady, { once: true });
+        nextVideo.load();
+
+        if (!isPaused) {
+            currentVideo.loop = true;
+            currentVideo.play().catch(e => {
+                console.warn('Video kept playing while buffering next clip failed:', e);
+            });
         }
     }
     
@@ -308,11 +366,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (isPaused) {
                 videos[currentVideoIndex].pause();
-                stopCycling();
+                clearScheduledSwitch();
                 playPauseIcon.textContent = '▶️';
             } else {
                 videos[currentVideoIndex].play();
-                startCycling();
+                scheduleNextSwitch();
                 playPauseIcon.textContent = '⏸️';
             }
         });
