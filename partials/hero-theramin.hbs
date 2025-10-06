@@ -11,14 +11,14 @@
         overflow: hidden;
     }
 
-    .cover-content {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        max-width: 960px;
-        text-align: center;
-        padding: 0 1rem;
-    }
+  .cover-content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 960px;
+    text-align: center;
+    padding: 0 1rem;
+  }
 
     #sonar-bg {
         position: absolute;
@@ -30,22 +30,20 @@
         z-index: 0;
     }
     
-    .btn-sonar {
-        background: color-mix(in srgb, var(--accent-color) 20%, transparent);
-        border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-        color: var(--text-color);
-        padding: 0.75rem 1.5rem;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 600;
-        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    }
+  .sonar-hero-buttons {
+    margin-top: 2rem;
+  }
+
+  .btn-sonar {
+    background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
+    color: var(--text-color);
+  }
     
-    .btn-sonar:hover {
-        background: color-mix(in srgb, var(--accent-color) 35%, transparent);
-        color: var(--text-color);
-        transform: scale(1.03);
-    }
+  .btn-sonar:hover {
+    background: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    color: var(--text-color);
+  }
 
     #audio-toggle {
         position: absolute;
@@ -67,20 +65,10 @@
         color: #4CAF50;
     }
 
-    @media (max-width: 600px) {
-        .sonar-hero-buttons {
-        flex-direction: column;
-        align-items: center;
-        }
-
-        .btn-sonar {
-        width: 80%;
-        text-align: center;
-        }
-
-        .site-cover {
-            height: 300px;
-        }
+  @media (max-width: 600px) {
+    .site-cover {
+      height: 300px;
+    }
     }
 </style>
 
@@ -96,30 +84,26 @@
     <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
     {{/if}} 
 
-  <div class="cover-content">
+  <div class="cover-content hero-overlay"{{#if @custom.hero_text_color}} style="--hero-text-color: {{@custom.hero_text_color}};"{{/if}}>
     {{#get "posts" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
       {{#if posts}}
         {{#foreach posts}}
             {{#if feature_image}}
-              <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
+              <img class="cover-logo hero-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
             {{else}}
-              {{#if @custom.hero_light_logo}}
-                <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}">
-              {{else}}
-                {{#if @site.logo}}
-                  <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-                {{/if}}
+              {{#if @site.logo}}
+                <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
               {{/if}}
             {{/if}}
 
             <h1 class="hero-title">{{title}}</h1>
 
             {{#if custom_excerpt}}
-              <div class="cover-description">{{custom_excerpt}}</div>
+              <div class="cover-description hero-subtitle">{{custom_excerpt}}</div>
             {{/if}}
 
             {{#if html}}
-              <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+              <div class="hero-actions sonar-hero-buttons">
                 {{{html}}}
               </div>
             {{/if}}
@@ -129,40 +113,36 @@
           {{#if pages}}
             {{#foreach pages}}
                 {{#if feature_image}}
-                  <img class="cover-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
+                  <img class="cover-logo hero-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
                 {{else}}
-                  {{#if @custom.hero_light_logo}}
-                    <img class="cover-logo" src="{{@custom.hero_light_logo}}" alt="{{@site.title}}">
-                  {{else}}
-                    {{#if @site.logo}}
-                      <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-                    {{/if}}
+                  {{#if @site.logo}}
+                    <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
                   {{/if}}
                 {{/if}}
 
                 <h1 class="hero-title">{{title}}</h1>
 
                 {{#if custom_excerpt}}
-                  <div class="cover-description">{{custom_excerpt}}</div>
+                  <div class="cover-description hero-subtitle">{{custom_excerpt}}</div>
                 {{/if}}
 
                 {{#if html}}
-                  <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                  <div class="hero-actions sonar-hero-buttons">
                     {{{html}}}
                   </div>
                 {{/if}}
             {{/foreach}}
           {{else}}
             {{#if @site.logo}}
-              <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+              <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
             {{/if}}
             {{#if @site.description}}
-              <div class="cover-description">{{@site.description}}</div>
+              <div class="cover-description hero-subtitle">{{@site.description}}</div>
             {{/if}}
-            <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-              <a href="/explore-experiences" class="btn-sonar">Explore Experiences</a>
-              <a href="/events" class="btn-sonar">Upcoming Events</a>
-              <a href="/contact-us" class="btn-sonar">Join the SONAR Circle</a>
+            <div class="hero-actions sonar-hero-buttons">
+              <a href="/explore-experiences" class="btn-hero btn-sonar">Explore Experiences</a>
+              <a href="/events" class="btn-hero btn-sonar primary">Upcoming Events</a>
+              <a href="/contact-us" class="btn-hero btn-sonar">Join the SONAR Circle</a>
             </div>
           {{/if}}
         {{/get}}

@@ -26,6 +26,7 @@
 @import "component/header.css";
 @import "component/responsive-nav.css";
 @import "custom/post-backgrounds.css"; 
+@import "custom/hero-title.css";
 
 /* Section Separators */
 .section-separator {

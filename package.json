@@ -92,6 +92,12 @@
                 "label": "Text Color",
                 "default": "#f0f0f0"
             },
+            "hero_text_color": {
+                "type": "color",
+                "label": "Hero Text Color",
+                "description": "Text color used within hero overlays",
+                "default": "#ffffff"
+            },
             "accent_color": {
                 "type": "color",
                 "label": "Accent Color",

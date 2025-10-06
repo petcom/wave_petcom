@@ -1,0 +1,110 @@
+:root {
+    --hero-text-color: #ffffff;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: var(--hero-text-color);
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.hero-overlay .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-overlay .hero-logo,
+.hero-overlay .cover-logo {
+    max-height: 80px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hero-overlay .hero-logo:hover,
+.hero-overlay .cover-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.9));
+}
+
+.hero-overlay .hero-title {
+    color: var(--hero-text-color);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-overlay .hero-subtitle,
+.hero-overlay .cover-description {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin-bottom: 2rem;
+    color: var(--hero-text-color);
+    color: color-mix(in srgb, var(--hero-text-color) 85%, transparent);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.hero-overlay .hero-actions,
+.hero-overlay .hero-buttons,
+.hero-overlay .sonar-hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hero-overlay :is(.btn-hero, .hero-actions a, .hero-buttons a, .sonar-hero-buttons a) {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: var(--hero-text-color);
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.hero-overlay :is(.btn-hero, .hero-actions a, .hero-buttons a, .sonar-hero-buttons a):hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
+
+.hero-overlay :is(.btn-hero.primary, .hero-actions a.primary, .hero-buttons a.primary, .sonar-hero-buttons a.primary) {
+    background: var(--link-color);
+    border: 2px solid var(--link-color);
+    color: #ffffff;
+}
+
+.hero-overlay :is(.btn-hero.primary, .hero-actions a.primary, .hero-buttons a.primary, .sonar-hero-buttons a.primary):hover {
+    background: var(--link-color);
+    border-color: var(--link-color);
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
+
+@media (max-width: 768px) {
+    .hero-overlay .hero-logo,
+    .hero-overlay .cover-logo {
+        max-height: 60px;
+    }
+
+    .hero-overlay .hero-actions,
+    .hero-overlay .hero-buttons,
+    .hero-overlay .sonar-hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-overlay :is(.btn-hero, .hero-actions a, .hero-buttons a, .sonar-hero-buttons a) {
+        width: 80%;
+        text-align: center;
+    }
+}
