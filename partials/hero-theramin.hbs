@@ -9,6 +9,11 @@
         height: 500px;
         width: 100%;
         overflow: hidden;
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    --hero-background-image: none;
     }
 
   .cover-content {
@@ -20,15 +25,23 @@
     padding: 0 1rem;
   }
 
-    #sonar-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-    }
+  #sonar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .site-cover.has-hero-background {
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%), var(--hero-background-image);
+  }
+
+  .hero-bg-source {
+    display: none;
+  }
     
   .sonar-hero-buttons {
     margin-top: 2rem;
@@ -72,7 +85,7 @@
     }
 </style>
 
-<div class="site-cover u-overlay">
+<div class="site-cover u-overlay" data-site-cover="{{#if @site.cover_image}}{{img_url @site.cover_image size="xl"}}{{/if}}">
     <canvas id="sonar-bg"></canvas>
 
     <!-- AUDIO TOGGLE BUTTON -->
@@ -80,20 +93,16 @@
         <span id="audio-icon" class="muted">🔇</span>
     </button>
 
-    {{#if @site.cover_image}}
-    <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
-    {{/if}} 
-
   <div class="cover-content hero-overlay"{{#if @custom.hero_text_color}} style="--hero-text-color: {{@custom.hero_text_color}};"{{/if}}>
     {{#get "posts" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
       {{#if posts}}
         {{#foreach posts}}
             {{#if feature_image}}
-              <img class="cover-logo hero-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
-            {{else}}
-              {{#if @site.logo}}
-                <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-              {{/if}}
+              <span class="hero-bg-source" data-hero-bg="{{img_url feature_image size="xl"}}" aria-hidden="true"></span>
+            {{/if}}
+
+            {{#if @site.logo}}
+              <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
             {{/if}}
 
             <h1 class="hero-title">{{title}}</h1>
@@ -113,11 +122,11 @@
           {{#if pages}}
             {{#foreach pages}}
                 {{#if feature_image}}
-                  <img class="cover-logo hero-logo" src="{{img_url feature_image size="xs"}}" alt="{{title}}">
-                {{else}}
-                  {{#if @site.logo}}
-                    <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-                  {{/if}}
+                  <span class="hero-bg-source" data-hero-bg="{{img_url feature_image size="xl"}}" aria-hidden="true"></span>
+                {{/if}}
+
+                {{#if @site.logo}}
+                  <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
                 {{/if}}
 
                 <h1 class="hero-title">{{title}}</h1>
@@ -158,6 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('.site-cover');
 
   if (!canvas || !ctx || !container) return; // Exit if canvas not found
+
+  const heroBgSource = container.querySelector('.hero-bg-source[data-hero-bg]');
+  const heroBgImage = heroBgSource?.dataset.heroBg || container.dataset.siteCover;
+  if (heroBgImage) {
+    container.classList.add('has-hero-background');
+    container.style.setProperty('--hero-background-image', `url('${heroBgImage}')`);
+  } else {
+    container.classList.remove('has-hero-background');
+    container.style.removeProperty('--hero-background-image');
+  }
 
   function resizeCanvas() {
     canvas.width = container.offsetWidth;
@@ -218,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startTheremin() {
+    ensureAudioContext();
     if (oscillator) return;
     oscillator = audioCtx.createOscillator();
     gainNode = audioCtx.createGain();
@@ -275,9 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    ensureAudioContext();
     addParticles(x, y);
 
     if (!isMuted) {
+        startTheremin();
         updateTheremin(x, y, rect.width, rect.height);
      }
   });
@@ -285,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   container.addEventListener('mouseleave', stopTheremin);
 
   container.addEventListener('mouseenter', () => {
+        ensureAudioContext();
         if (!isMuted) {
             startTheremin();
             if (gainNode) {
@@ -298,6 +321,7 @@ let touchInside = false;
 container.addEventListener('touchmove', (e) => {
   const rect = canvas.getBoundingClientRect();
   touchInside = false;
+  ensureAudioContext();
 
   for (let touch of e.touches) {
     const x = touch.clientX - rect.left;
@@ -319,6 +343,13 @@ container.addEventListener('touchmove', (e) => {
     stopTheremin();
   }
 }, { passive: true });
+
+  container.addEventListener('touchstart', () => {
+    ensureAudioContext();
+    if (!isMuted) {
+      startTheremin();
+    }
+  }, { passive: true });
 
   container.addEventListener('touchend', stopTheremin);
 
