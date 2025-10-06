@@ -1,0 +1,20 @@
+{{!-- Background Carousel Partial (Image-first) --}}
+{{!-- Usage: {{> "image-carousel" manifest_slug="hero-image-manifest"}} --}}
+{{#let (or manifest_slug "hero-image-manifest") as |slug|}}
+<div class="hero-bg-carousel" data-manifest-slug="{{slug}}" data-default-duration="8" data-default-fade="1.2">
+    {{#get "pages" filter=(concat "slug:" slug) limit="1" formats="html" include="authors"}}
+        {{#if pages}}
+            {{#foreach pages}}
+                <div class="hero-bg-carousel__manifest" hidden>
+                    {{{html}}}
+                </div>
+            {{/foreach}}
+        {{else}}
+            <div class="hero-bg-carousel__manifest" hidden>
+                {{{!-- No manifest found for slug: {{slug}} --}}}
+            </div>
+        {{/if}}
+    {{/get}}
+    <div class="hero-bg-carousel__slides" aria-hidden="true"></div>
+</div>
+{{/let}}

@@ -1,0 +1,36 @@
+<!--
+  Hero Image Carousel Manifest Template
+  -------------------------------------
+  1. Create (or edit) a Page in Ghost (e.g., slug "hero-image-manifest").
+  2. Add an HTML card and paste this entire snippet.
+  3. Replace the sample image entries with your own URLs/metadata.
+  4. Reference the manifest from a template via {{> "image-carousel" manifest_slug="hero-image-manifest"}}.
+-->
+<script type="application/json" id="hero-carousel-manifest">
+{
+  "durationSeconds": 8,
+  "fadeSeconds": 1.2,
+  "media": [
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-01.jpg",
+      "alt": "Students collaborating in the studio",
+      "focalPoint": "center center",
+      "href": "https://example.com/programs/music"
+    },
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-02.jpg",
+      "alt": "Performer on stage under purple lights",
+      "focalPoint": "center center"
+    },
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-03.jpg",
+      "alt": "Kids exploring instruments in maker space",
+      "focalPoint": "center center",
+      "href": "https://example.com/explore"
+    }
+  ]
+}
+</script>

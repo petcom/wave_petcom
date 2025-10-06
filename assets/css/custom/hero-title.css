@@ -18,6 +18,43 @@
     align-items: center;
 }
 
+.hero-bg-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: auto;
+    --hero-carousel-fade: 1.2s;
+}
+
+.hero-bg-carousel__slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hero-bg-carousel__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--hero-carousel-fade) ease-in-out;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.hero-bg-carousel__slide.is-active {
+    opacity: 1;
+}
+
+.hero-bg-carousel__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .hero-overlay .hero-logo,
 .hero-overlay .cover-logo {
     max-height: 80px;

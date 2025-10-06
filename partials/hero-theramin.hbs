@@ -85,7 +85,7 @@
     }
 </style>
 
-<div class="site-cover u-overlay" data-site-cover="{{#if @site.cover_image}}{{img_url @site.cover_image size="xl"}}{{/if}}">
+<div id="theremin-hero" class="site-cover u-overlay" data-site-cover="{{#if @site.cover_image}}{{img_url @site.cover_image size="xl"}}{{/if}}">
     <canvas id="sonar-bg"></canvas>
 
     <!-- AUDIO TOGGLE BUTTON -->
@@ -162,11 +162,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('sonar-bg');
+  const container = document.getElementById('theremin-hero');
+  const canvas = container?.querySelector('#sonar-bg');
   const ctx = canvas?.getContext('2d');
-  const container = document.querySelector('.site-cover');
 
   if (!canvas || !ctx || !container) return; // Exit if canvas not found
+
+  container.classList.add('initialized');
 
   const heroBgSource = container.querySelector('.hero-bg-source[data-hero-bg]');
   const heroBgImage = heroBgSource?.dataset.heroBg || container.dataset.siteCover;
