@@ -1,0 +1,343 @@
+{{!< default}}
+
+{{#post}}
+
+<main class="site-main page-programs">
+    <article class="{{post_class}} single">
+
+        {{#match @page.show_title_and_feature_image}}
+            <header class="post-header gh-canvas">
+                <h1 class="post-title">{{title}}</h1>
+                {{> "feature-image"}}
+            </header>
+        {{/match}}
+
+        {{#if content}}
+            <div class="post-content gh-content gh-canvas">
+                {{content}}
+            </div>
+        {{/if}}
+
+        <section class="rla-section rla-theme" id="programs-catalog">
+            <style>
+                .rla-theme {
+                    --surface: color-mix(in oklab, var(--background-color) 92%, var(--text-color) 8%);
+                    --border: color-mix(in oklab, var(--background-color) 85%, var(--text-color) 15%);
+                    --midtext: color-mix(in oklab, var(--text-color) 75%, var(--background-color) 25%);
+                    --sticky-offset: 96px;
+                }
+                .rla-section {
+                    margin: 2rem 0;
+                    color: var(--text-color);
+                    font-family: var(--theme-body-font, inherit);
+                }
+                .rla-header {
+                    margin-bottom: 1rem;
+                }
+                .rla-eyebrow {
+                    font-size: 0.9rem;
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                    opacity: 0.8;
+                }
+                .rla-title {
+                    font-size: clamp(1.5rem, 2vw, 2rem);
+                    margin: 0.25rem 0 0.25rem;
+                    font-family: var(--theme-heading-font, inherit);
+                }
+                .rla-sub {
+                    color: var(--midtext);
+                    max-width: 65ch;
+                    margin: 0.35rem 0;
+                }
+                .rla-group-copy {
+                    color: var(--midtext);
+                    max-width: 65ch;
+                    margin: 0.5rem 0 2rem;
+                }
+                .rla-group-copy :where(p, ul, ol) {
+                    margin-bottom: 0.75rem;
+                }
+                .rla-grid {
+                    display: grid;
+                    justify-content: center;
+                    grid-template-columns: repeat(12, 1fr);
+                    gap: 1rem;
+                    margin: 1.25rem 0 2rem;
+                }
+                .rla-card {
+                    grid-column: span 12;
+                    background: var(--post-background-color, var(--surface));
+                    border: 1px solid var(--border);
+                    border-radius: 16px;
+                    padding: 1rem;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+                }
+                .rla-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 24px color-mix(in oklab, var(--background-color) 10%, black 90%);
+                    border-color: var(--accent-color);
+                }
+                .rla-card h3 {
+                    margin: 0 0 0.35rem;
+                    font-size: 1.15rem;
+                    font-family: var(--theme-heading-font, inherit);
+                }
+                .rla-meta {
+                    font-size: 0.95rem;
+                    margin-bottom: 0.5rem;
+                    color: var(--midtext);
+                }
+                .rla-list {
+                    margin: 0.25rem 0 0.75rem;
+                    padding-left: 1rem;
+                }
+                .rla-kicker {
+                    font-weight: 600;
+                    color: var(--text-color);
+                }
+                .rla-tag {
+                    display: inline-block;
+                    font-size: 0.8rem;
+                    line-height: 1;
+                    padding: 0.4rem 0.6rem;
+                    border-radius: 999px;
+                    margin-bottom: 0.75rem;
+                    background: color-mix(in oklab, var(--accent-color) 18%, transparent);
+                    color: var(--accent-color);
+                    border: 1px solid var(--accent-color);
+                }
+                .rla-cta-row {
+                    display: flex;
+                    gap: 0.5rem;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                }
+                .rla-btn {
+                    display: inline-block;
+                    padding: 0.6rem 0.9rem;
+                    border-radius: 10px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    background: var(--accent-color);
+                    color: var(--background-color);
+                    border: 1px solid var(--accent-color);
+                }
+                .rla-btn.secondary {
+                    background: transparent;
+                    color: var(--text-color);
+                    border-color: var(--border);
+                }
+                .rla-btn:hover {
+                    filter: brightness(1.05);
+                }
+                .rla-btn.secondary:hover {
+                    border-color: var(--accent-color);
+                    color: var(--accent-color);
+                }
+                .rla-link {
+                    font-weight: 600;
+                    text-decoration: none;
+                    border-bottom: 1px solid currentColor;
+                    color: var(--link-color, var(--accent-color));
+                    padding-bottom: 2px;
+                }
+                .rla-link:hover {
+                    opacity: 0.9;
+                }
+                .rla-empty {
+                    grid-column: span 12;
+                    text-align: center;
+                    color: var(--midtext);
+                    font-style: italic;
+                }
+                .rla-details {
+                    margin: 3rem auto 4rem;
+                    max-width: 65ch;
+                    color: var(--midtext);
+                }
+                .rla-details h3 {
+                    font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+                    margin-bottom: 0.75rem;
+                    color: var(--text-color);
+                    font-family: var(--theme-heading-font, inherit);
+                }
+                .rla-details :where(p, ul, ol) {
+                    margin-bottom: 0.75rem;
+                }
+                .anchor-target {
+                    scroll-margin-top: var(--sticky-offset);
+                    outline: none;
+                }
+                @media (min-width: 640px) {
+                    .rla-card {
+                        grid-column: span 6;
+                    }
+                }
+                @media (min-width: 1024px) {
+                    .rla-card {
+                        grid-column: span 4;
+                    }
+                }
+            </style>
+
+{{#get "posts" filter="tag:hash-program-group+visibility:public" include="tags" limit="all"}}
+  <pre>Groups found: {{posts.length}}</pre>
+  {{#foreach posts}}
+    <pre>{{title}} → {{tags visibility="all"}}</pre>
+
+        {{#get "posts" filter="tag:hash-program-group-1+tag:-hash-program-group+visibility:public" include="tags"}}
+        <pre>Children tagged #program-group-1: {{posts.length}}</pre>
+            {{#foreach posts}}
+                <pre>{{title}} → {{tags visibility="all"}}</pre>
+            {{/foreach}}
+        {{/get}}
+  {{/foreach}}
+{{/get}}
+<h2> Second Test</h2>
+        {{#get "posts" filter="tag:hash-program-group+visibility:public" include="tags" limit="all" order="published_at asc"}}
+        {{#foreach posts}}
+            <h3>Group: {{title}}</h3>
+            <div id="{{slug}}" class="anchor-target" tabindex="-1"></div>
+            <header class="rla-header" aria-labelledby="{{slug}}-title">
+            ...
+            </header>
+
+            <div class="rla-grid anchor-target" id="{{slug}}-cards">
+            {{#get "posts" filter=(concat "tag:hash-" slug "+tag:-hash-program-group+visibility:public") include="tags,authors" limit="all" order="published_at asc"}}
+            ...
+                    {{#if posts}}
+                        {{#foreach posts}}
+                            <h4>Child: {{title}}</h4>
+                            {{{html}}}
+                        {{/foreach}}
+                    {{else}}
+                        <p class="rla-empty">No offerings published yet.</p>
+                    {{/if}}
+            {{/get}}
+            </div>
+        {{/foreach}}
+        {{/get}}
+        <h3>Details Test</h2>
+{{#get "posts" filter="tag:hash-program-details+visibility:public" include="tags" limit="all" order="published_at asc"}}
+    {{#if posts}}
+        {{#foreach posts}}
+            <h4>Details: {{title}}</h4>
+            {{{html}}}
+        {{/foreach}}
+    {{else}}
+        <p class="rla-empty">No detail sections yet.</p>
+    {{/if}}
+{{/get}}
+<h2>Third Test</h2>
+{{#get "posts" filter="tag:hash-program-child+tag:-hash-program-group+visibility:public" include="tags" limit="all" order="published_at asc"}}
+  {{#if posts}}
+    {{#foreach posts}}
+      {{{html}}}
+    {{/foreach}}
+  {{else}}
+    <p class="rla-empty">No offerings published yet.</p>
+  {{/if}}
+{{/get}}
+<h2>Fourth Test</h2>
+{{#get "posts" filter="tag:hash-program-group+visibility:public" include="tags" limit="all" order="published_at asc"}}
+    {{#foreach posts}}
+        <section class="rla-group anchor-target" id="{{slug}}">
+            <header class="rla-header" aria-labelledby="{{slug}}-title">
+                {{#if meta_title}}<div class="rla-eyebrow">{{meta_title}}</div>{{/if}}
+                <h2 class="rla-title" id="{{slug}}-title">{{title}}</h2>
+                {{#if custom_excerpt}}<p class="rla-sub">{{custom_excerpt}}</p>{{/if}}
+            </header>
+
+            {{#if html}}
+                <div class="rla-group-copy gh-content">
+                    {{{html}}}
+                </div>
+            {{/if}}
+
+            <div class="rla-grid" aria-label="{{title}} offerings">
+                {{#get "posts" filter=(concat "tag:hash-" slug "+tag:-hash-program-group+visibility:public") include="tags,authors" limit="all" order="published_at asc"}}
+                    {{#if posts}}
+                        {{#foreach posts}}
+                            {{{html}}}
+                        {{/foreach}}
+                    {{else}}
+                        <p class="rla-empty">No offerings published yet. Check back soon.</p>
+                    {{/if}}
+                {{/get}}
+            </div>
+        </section>
+    {{/foreach}}
+{{/get}}
+
+<h2>Program details</h2>
+{{#get "posts" filter="tag:hash-program-details+visibility:public" include="tags" limit="all" order="published_at asc"}}
+    {{#if posts}}
+        {{#foreach posts}}
+            <section class="rla-details anchor-target" id="{{slug}}">
+                {{{html}}}
+            </section>
+        {{/foreach}}
+    {{else}}
+        <p class="rla-empty">No detail sections yet.</p>
+    {{/if}}
+{{/get}}
+
+<h2> Final test - full code</h2>
+
+            {{#get "posts" filter="tag:hash-program-group+visibility:public" include="tags" limit="all" order="published_at asc"}}
+                {{#foreach posts}}
+                    {{#foreach tags }}
+                        {{#if (eq visibility "internal")}}
+                        {{#match slug "^hash-program-group-[0-9]+$" }}
+                            <div id="{{../slug}}" class="anchor-target" tabindex="-1"></div>
+                            <header class="rla-header" aria-labelledby="{{../slug}}-title">
+                                {{#if ../meta_title}}
+                                    <div class="rla-eyebrow">{{../meta_title}}</div>
+                                {{/if}}
+                                <h2 class="rla-title" id="{{../slug}}-title">{{../title}}</h2>
+                                {{#if ../custom_excerpt}}
+                                    <p class="rla-sub">{{../custom_excerpt}}</p>
+                                {{/if}}
+                            </header>
+
+                            {{#if ../html}}
+                                <div class="rla-group-copy gh-content">
+                                    {{{../html}}}
+                                </div>
+                            {{/if}}
+
+                            <div class="rla-grid anchor-target" id="{{../slug}}-cards" aria-label="{{../title}} offerings">
+                                {{#get "posts" filter=(concat "tag:" slug "+tag:-hash-program-group+visibility:public") include="tags,authors" limit="all" order="published_at asc"}}
+                                    {{#if posts}}
+                                        {{#foreach posts}}
+                                            {{{html}}}
+                                        {{/foreach}}
+                                    {{else}}
+                                        <p class="rla-empty">No offerings published yet. Check back soon.</p>
+                                    {{/if}}
+                                {{/get}}
+                            </div>
+                        {{/match}}
+
+                        {{/if}}
+
+                    {{/foreach}}
+                {{/foreach}}
+            {{/get}}
+
+            {{#get "posts" filter="tag:hash-program-group-details-1,hash-program-group-details-2,hash-program-group-details-3,hash-program-group-details-4,hash-program-group-details-5,hash-program-group-details-6+visibility:public" include="tags" limit="all" order="published_at asc"}}
+                {{#foreach posts}}
+                    <section class="rla-details anchor-target" id="{{slug}}">
+                        {{{html}}}
+                    </section>
+                {{/foreach}}
+            {{/get}}
+        </section>
+
+    </article>
+</main>
+
+{{/post}}
