@@ -1,4 +1,5 @@
 :root {
+     --content-width: 1200px;  
     --brand-color: var(--ghost-accent-color, #fc7e0f);
     --primary-text-color:  var(--text-color); /*#5a656b;*/
     --secondary-text-color: #aaa;
