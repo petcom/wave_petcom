@@ -96,7 +96,7 @@
                     
                     .rla-sub {
                         color: var(--midtext);
-                        max-width: 65ch;
+                        max-width: min(90vw, 1040px);
                         margin: 0.35rem 0;
                     }
                     
@@ -130,6 +130,7 @@
                             /* Add flexbox */
                         display: flex;
                         flex-direction: column;
+                        justify-self: center;
                     }
                     
                     .rla-card:hover {
@@ -249,14 +250,14 @@
                         font-size: 1.2rem;
                         text-align: center;
                         background: var(--accent-color);
-                        color: var(--background-color);
+                        color: var(--background-color) !important;
                         border: 1px solid var(--accent-color);
                         min-width: 0;  /* Allow buttons to shrink */
                     }
 
                     .rla-btn.secondary {
                         background: transparent;
-                        color: var(--text-color);
+                        color: var(--text-color) !important;
                         border-color: rgba(0, 0, 0, 0.15);
                     }
 
@@ -303,7 +304,7 @@
                     
                     .rla-details {
                         margin: 3rem auto 4rem;
-                        max-width: 65ch;
+                        max-width: min(90vw, 1040px);
                         color: var(--midtext);
                     }
                     
@@ -324,6 +325,12 @@
                         outline: none;
                     }
                     
+                    .rla-details .rla-card {
+                        margin-left: auto;
+                        margin-right: auto;
+                        max-width: 800px;  /* Control how wide the detail cards get */
+                        width: 100%;
+                    }
                     /* Responsive grid */
                     @media (min-width: 640px) {
                         .rla-card {
@@ -377,7 +384,7 @@
     {{/foreach}}
 {{/get}}
 
-<h2>Program details</h2>
+<!-- Program detailsv -->
 {{#get "posts" filter="tag:hash-program-details+visibility:public" include="tags" limit="all" order="published_at asc"}}
     {{#if posts}}
         {{#foreach posts}}

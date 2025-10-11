@@ -5,6 +5,8 @@
 @media (max-width: 1019px) {
   #gh-head {
     height: 64px;
+    transition: background-color 0.3s ease; /* Add smooth background transition */
+  
   }
   
   #gh-head .gh-head-inner {
@@ -81,7 +83,35 @@
   #gh-main {
     transition: opacity 0.4s;
   }
+
+      /* Lighter buttons in mobile menu */
+    .gh-head-menu .gh-head-btn,
+    .gh-head-menu .gh-btn {
+        background: var(--background-color) !important;
+        color: var(--text-color) !important;
+        border: 2px solid var(--accent-color) !important;
+        border-radius: 8px;
+    }
+    
+    .gh-head-menu .gh-head-btn:hover,
+    .gh-head-menu .gh-btn:hover {
+        background: var(--accent-color) !important;
+        color: var(--background-color) !important;
+    }
+    
+    /* Make the "Sign in" link more visible */
+    .gh-head-menu .gh-head-link {
+        color: var(--accent-color) !important;
+        font-weight: 600;
+    }
+    
+    /* Lighten the mobile menu background if needed */
+    .gh-head-menu {
+        background: rgba(255, 255, 255, 0.98) !important;
+        transition: background-color 0.3s ease; /* Add smooth background transition */
   
+    }
+
   .is-head-open #gh-head {
     height: 100%;
     inset: 0;
@@ -89,6 +119,7 @@
     position: fixed;
     z-index: 3999999;
     -webkit-overflow-scrolling: touch;
+    
   }
   
   .is-head-open:not(.is-head-brand):not(.is-head-dark):not(.is-head-transparent) #gh-head {
@@ -110,12 +141,13 @@
     opacity: 1;
     position: static;
     visibility: visible;
+     
   }
   
   .is-head-open #gh-head .nav {
     display: flex;
     flex-direction: column;
-  }
+     }
   
   .is-head-open #gh-head .nav li {
     opacity: 1;
@@ -134,6 +166,8 @@
     padding: var(--gap) 0 calc(var(--gap) + 8px);
     position: sticky;
     right: 0;
+    transition: background-color 0.3s ease; /* Add smooth background transition */
+  
   }
   
   .is-head-open #gh-head :is(.gh-head-btn, .gh-head-link) {
