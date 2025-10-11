@@ -1,0 +1,50 @@
+<!--
+  Hero Video Carousel Manifest Template
+  -------------------------------------
+  1. Create (or edit) a Page in Ghost (e.g., slug "hero-video-manifest").
+  2. Add an HTML card and paste this entire snippet.
+  3. Swap the sample videos/posters with your own optimized assets (short, muted background clips work best).
+  4. Reference the manifest from a template via {{> "video-carousel" manifest_slug="hero-video-manifest"}}.
+-->
+<script type="application/json" id="hero-carousel-manifest">
+{
+  "durationSeconds": 8,
+  "fadeSeconds": 1.5,
+  "media": [
+    {
+      "type": "video",
+      "poster": "https://example.com/content/videos/hero/video-01.jpg",
+      "href": "https://example.com/events/masterclass",
+      "sources": [
+        {
+          "src": "https://example.com/content/videos/hero/video-01.webm",
+          "type": "video/webm"
+        },
+        {
+          "src": "https://example.com/content/videos/hero/video-01.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-04.jpg",
+      "alt": "Students coding with synth modules"
+    },
+    {
+      "type": "video",
+      "poster": "https://example.com/content/videos/hero/video-02.jpg",
+      "sources": [
+        {
+          "src": "https://example.com/content/videos/hero/video-02.webm",
+          "type": "video/webm"
+        },
+        {
+          "src": "https://example.com/content/videos/hero/video-02.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    }
+  ]
+}
+</script>

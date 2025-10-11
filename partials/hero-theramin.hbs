@@ -9,43 +9,54 @@
         height: 500px;
         width: 100%;
         overflow: hidden;
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    --hero-background-image: none;
     }
 
-    .cover-content {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        max-width: 960px;
-        text-align: center;
-        padding: 0 1rem;
-    }
+  .cover-content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 960px;
+    text-align: center;
+    padding: 0 1rem;
+  }
 
-    #sonar-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-    }
+  #sonar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .site-cover.has-hero-background {
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%), var(--hero-background-image);
+  }
+
+  .hero-bg-source {
+    display: none;
+  }
     
-    .btn-sonar {
-        background: color-mix(in srgb, var(--accent-color) 20%, transparent);
-        border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-        color: var(--text-color);
-        padding: 0.75rem 1.5rem;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 600;
-        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    }
+  .sonar-hero-buttons {
+    margin-top: 2rem;
+  }
+
+  .btn-sonar {
+    background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
+    color: var(--text-color);
+  }
     
-    .btn-sonar:hover {
-        background: color-mix(in srgb, var(--accent-color) 35%, transparent);
-        color: var(--text-color);
-        transform: scale(1.03);
-    }
+  .btn-sonar:hover {
+    background: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    color: var(--text-color);
+  }
 
     #audio-toggle {
         position: absolute;
@@ -67,24 +78,14 @@
         color: #4CAF50;
     }
 
-    @media (max-width: 600px) {
-        .sonar-hero-buttons {
-        flex-direction: column;
-        align-items: center;
-        }
-
-        .btn-sonar {
-        width: 80%;
-        text-align: center;
-        }
-
-        .site-cover {
-            height: 300px;
-        }
+  @media (max-width: 600px) {
+    .site-cover {
+      height: 300px;
+    }
     }
 </style>
 
-<div class="site-cover u-overlay">
+<div id="theremin-hero" class="site-cover u-overlay" data-site-cover="{{#if @site.cover_image}}{{img_url @site.cover_image size="xl"}}{{/if}}">
     <canvas id="sonar-bg"></canvas>
 
     <!-- AUDIO TOGGLE BUTTON -->
@@ -92,32 +93,92 @@
         <span id="audio-icon" class="muted">🔇</span>
     </button>
 
-    {{#if @site.cover_image}}
-    <img class="cover-image u-object-fit" src="{{img_url @site.cover_image}}" alt="{{@site.title}}">
-    {{/if}} 
+  <div class="cover-content hero-overlay"{{#if @custom.hero_text_color}} style="--hero-text-color: {{@custom.hero_text_color}};"{{/if}}>
+    {{#get "posts" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+      {{#if posts}}
+        {{#foreach posts}}
+            {{#if feature_image}}
+              <span class="hero-bg-source" data-hero-bg="{{img_url feature_image size="xl"}}" aria-hidden="true"></span>
+            {{/if}}
 
-    <div class="cover-content">
-        {{#if @site.logo}}
-            <img class="cover-logo" src="{{@site.logo}}" alt="{{@site.title}}">
-        {{/if}}
-        {{#if @site.description}}
-            <div class="cover-description">{{@site.description}}</div>
-        {{/if}}
-        <div class="sonar-hero-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-            <a href="/explore-experiences" class="btn-sonar">Explore Experiences</a>
-            <a href="/events" class="btn-sonar">Upcoming Events</a>
-            <a href="/contact-us" class="btn-sonar">Join the SONAR Circle</a>
-        </div>
-    </div>
+            {{#if @site.logo}}
+              <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+            {{/if}}
+
+            <h1 class="hero-title">{{title}}</h1>
+
+            {{#if custom_excerpt}}
+              <div class="cover-description hero-subtitle">{{custom_excerpt}}</div>
+            {{/if}}
+
+            {{#if html}}
+              <div class="hero-actions sonar-hero-buttons">
+                {{{html}}}
+              </div>
+            {{/if}}
+          {{/foreach}}
+      {{else}}
+        {{#get "pages" filter="slug:hero-title" limit="1" formats="html" include="tags"}}
+          {{#if pages}}
+            {{#foreach pages}}
+                {{#if feature_image}}
+                  <span class="hero-bg-source" data-hero-bg="{{img_url feature_image size="xl"}}" aria-hidden="true"></span>
+                {{/if}}
+
+                {{#if @site.logo}}
+                  <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+                {{/if}}
+
+                <h1 class="hero-title">{{title}}</h1>
+
+                {{#if custom_excerpt}}
+                  <div class="cover-description hero-subtitle">{{custom_excerpt}}</div>
+                {{/if}}
+
+                {{#if html}}
+                  <div class="hero-actions sonar-hero-buttons">
+                    {{{html}}}
+                  </div>
+                {{/if}}
+            {{/foreach}}
+          {{else}}
+            {{#if @site.logo}}
+              <img class="cover-logo hero-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+            {{/if}}
+            {{#if @site.description}}
+              <div class="cover-description hero-subtitle">{{@site.description}}</div>
+            {{/if}}
+            <div class="hero-actions sonar-hero-buttons">
+              <a href="/explore-experiences" class="btn-hero btn-sonar">Explore Experiences</a>
+              <a href="/events" class="btn-hero btn-sonar primary">Upcoming Events</a>
+              <a href="/contact-us" class="btn-hero btn-sonar">Join the SONAR Circle</a>
+            </div>
+          {{/if}}
+        {{/get}}
+      {{/if}}
+    {{/get}}
+  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('sonar-bg');
+  const container = document.getElementById('theremin-hero');
+  const canvas = container?.querySelector('#sonar-bg');
   const ctx = canvas?.getContext('2d');
-  const container = document.querySelector('.site-cover');
 
   if (!canvas || !ctx || !container) return; // Exit if canvas not found
+
+  container.classList.add('initialized');
+
+  const heroBgSource = container.querySelector('.hero-bg-source[data-hero-bg]');
+  const heroBgImage = heroBgSource?.dataset.heroBg || container.dataset.siteCover;
+  if (heroBgImage) {
+    container.classList.add('has-hero-background');
+    container.style.setProperty('--hero-background-image', `url('${heroBgImage}')`);
+  } else {
+    container.classList.remove('has-hero-background');
+    container.style.removeProperty('--hero-background-image');
+  }
 
   function resizeCanvas() {
     canvas.width = container.offsetWidth;
@@ -178,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startTheremin() {
+    ensureAudioContext();
     if (oscillator) return;
     oscillator = audioCtx.createOscillator();
     gainNode = audioCtx.createGain();
@@ -235,9 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    ensureAudioContext();
     addParticles(x, y);
 
     if (!isMuted) {
+        startTheremin();
         updateTheremin(x, y, rect.width, rect.height);
      }
   });
@@ -245,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
   container.addEventListener('mouseleave', stopTheremin);
 
   container.addEventListener('mouseenter', () => {
+        ensureAudioContext();
         if (!isMuted) {
             startTheremin();
             if (gainNode) {
@@ -258,6 +323,7 @@ let touchInside = false;
 container.addEventListener('touchmove', (e) => {
   const rect = canvas.getBoundingClientRect();
   touchInside = false;
+  ensureAudioContext();
 
   for (let touch of e.touches) {
     const x = touch.clientX - rect.left;
@@ -279,6 +345,13 @@ container.addEventListener('touchmove', (e) => {
     stopTheremin();
   }
 }, { passive: true });
+
+  container.addEventListener('touchstart', () => {
+    ensureAudioContext();
+    if (!isMuted) {
+      startTheremin();
+    }
+  }, { passive: true });
 
   container.addEventListener('touchend', stopTheremin);
 

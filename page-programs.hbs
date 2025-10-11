@@ -1,0 +1,407 @@
+{{!< default}}
+
+{{#post}}
+
+<main class="site-main page-programs">
+    <article class="{{post_class}} single">
+
+        {{#match @page.show_title_and_feature_image}}
+            <header class="post-header gh-canvas">
+                <h1 class="post-title">{{title}}</h1>
+                {{> "feature-image"}}
+            </header>
+        {{/match}}
+
+     
+       <!-- <section class="rla-section rla-theme rla-fullbleed" id="programs-catalog">
+ -->
+
+            <div class="post-content gh-content gh-canvas">
+              
+            
+
+
+     
+                <style>
+                    /* Page-specific width overrides
+                    body.page-programs .post-content.gh-content.gh-canvas,
+                    body.page-programs .gh-content > * {
+                        max-width: 1200px !important;
+                        min-width: auto !important;
+                    }
+                    
+                    body.page-programs .rla-grid {
+                        max-width: 1600px;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    
+                    body.page-programs .gh-outer .gh-inner {
+                        max-width: 1600px !important;
+                    }
+                     */
+                    /* Theme variables */
+
+                    body.page-programs .post-content.gh-content.gh-canvas {
+                        background: rgba(0, 0, 0, .04); 
+                        padding: 2rem;
+                        border-radius: 8px;
+                    }
+                    .rla-theme {
+                        --surface: color-mix(in oklab, var(--background-color) 92%, var(--text-color) 8%);
+                        --border: var(--background-color);
+                        --midtext: color-mix(in oklab, var(--text-color) 75%, var(--background-color) 25%);
+                        --sticky-offset: 96px;
+                    }
+                    
+                    /* Section & layout */
+                    .rla-section {
+                        margin: 2rem 0;
+                        color: var(--text-color);
+                        font-family: var(--theme-body-font, inherit);
+                    }
+                    
+                    .rla-fullbleed {
+                        width: 100vw;
+                        position: relative;
+                        left: 50%;
+                        right: 50%;
+                        margin-left: -50vw;
+                        margin-right: -50vw;
+                        padding-inline: clamp(16px, 3vw, 32px);
+                    }
+                    
+                    /* Headers & typography */
+                    .rla-header {
+                        margin-left: 1rem;
+                        padding: 1.5rem 4rem;
+                        background: var(--post-background-color, var(--surface));
+                        border: none;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);  /* Add subtle shadow */
+                        border-radius: 16px;
+                    }
+                    
+                    .rla-eyebrow {
+                        font-size: 0.9rem;
+                        letter-spacing: 0.08em;
+                        text-transform: uppercase;
+                        opacity: 0.8;
+                    }
+                    
+                    .rla-title {
+                        font-size: clamp(1.5rem, 2vw, 2rem);
+                        margin: 0.25rem 0;
+                        font-family: var(--theme-heading-font, inherit);
+                    }
+                    
+                    .rla-sub {
+                        color: var(--midtext);
+                        max-width: min(90vw, 1040px);
+                        margin: 0.35rem 0;
+                    }
+                    
+                    .rla-group-copy {
+                        color: var(--midtext);
+                        max-width: 80ch;
+                        margin: 0.5rem auto 2rem;
+                        
+                    }
+                    
+                    .rla-group-copy :where(p, ul, ol) {
+                        margin-bottom: 0.75rem;
+                    }
+                    
+                    /* Grid & cards */
+                    .rla-grid {
+                        display: grid;
+                        justify-content: center;
+                        grid-template-columns: repeat(12, 1fr);
+                        gap: 1rem;
+                        margin: 1.25rem 0 2rem;
+                    }
+                    
+                    .rla-card {
+                        grid-column: span 12;
+                        background: var(--post-background-color, var(--surface));
+                        border: 1px solid var(--border);
+                        border-radius: 16px;
+                        padding: 1rem;
+                        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+                            /* Add flexbox */
+                        display: flex;
+                        flex-direction: column;
+                        justify-self: center;
+                    }
+                    
+                    .rla-card:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 24px color-mix(in oklab, var(--background-color) 10%, black 90%);
+                        border-color: var(--accent-color);
+                    }
+                    
+                    .rla-card h3 {
+                        margin: 0 0 0.35rem;
+                        font-size: 1.15rem;
+                        font-family: var(--theme-heading-font, inherit);
+                    }
+                    /* Push CTA row to bottom */
+                    .rla-card .rla-cta-row {
+                        margin-top: auto;
+                    }
+                    
+                    /* Card content */
+                    .rla-meta {
+                        font-size: 0.95rem;
+                        margin-bottom: 0.5rem;
+                        color: var(--midtext);
+                        padding-left: 1rem;
+                    }
+                    .rla-meta strong,
+                    .rla-list strong {
+                        display: block;
+                        font-size: 1.15rem;  /* Match h3 title size */
+                        font-weight: 600;
+                        color: var(--text-color);
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .rla-meta strong + span,
+                    .rla-meta strong ~ text {
+                        display: block;
+                        padding-left: 1.5rem;
+                        font-size: 0.95rem;  /* Match list item size */
+                    }
+                    
+                    .rla-list {
+                        margin: 0.25rem 0 0.75rem;
+                        padding-left: 1rem;
+                        list-style: none;
+                    }
+                    .rla-list li {
+                        padding-left: 1.5rem;
+                        font-size: 0.95rem;  /* Explicit size for list items */
+                    }
+                    
+                    .rla-kicker {
+                        font-weight: 600;
+                        color: var(--text-color);
+                    }
+                    .rla-tag {
+                        display: inline-flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.25rem;
+                        align-self: flex-start;
+                        margin-bottom: 2.5rem;  /* Changed from 0.75rem to 1.5rem to make room for label */
+                        margin-left: 2rem;
+                        position: relative;
+                        width: 2.3rem;
+                        height: 2.3rem;
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        line-height: 2.5rem;
+                        text-align: center;
+                        text-transform: uppercase;
+                        color: var(--link-color);
+                    }
+
+                    .rla-tag::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 2.3rem;
+                        height: 2.3rem;
+                        border-radius: 50%;
+                        background: color-mix(in oklab, var(--link-color) 15%, transparent);
+                        border: 2px solid var(--link-color);
+                        z-index: 0;  /* Changed from -1 to 0 */
+                    }
+
+
+                    .rla-tag::after {
+                        content: attr(data-label);
+                        position: absolute;
+                        top: 1.8rem;
+                        left: 50%;
+                        transform: translateX(-50%);  /* Center it horizontally */
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: var(--midtext);
+                        text-transform: lowercase;
+                        white-space: nowrap;
+                        z-index: 1;
+                    }
+                    
+                    /* CTAs & links */
+                    .rla-cta-row {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 0.5rem;
+                        margin-top: auto;
+                    }
+
+                    .rla-btn {
+                        flex: 1 1 100%;  /* Full width by default (mobile) */
+                        padding: 0.6rem 0.9rem;
+                        border-radius: 10px;
+                        text-decoration: none;
+                        font-weight: 600;
+                        font-size: 1.2rem;
+                        text-align: center;
+                        background: var(--accent-color);
+                        color: var(--background-color) !important;
+                        border: 1px solid var(--accent-color);
+                        min-width: 0;  /* Allow buttons to shrink */
+                    }
+
+                    .rla-btn.secondary {
+                        background: transparent;
+                        color: var(--text-color) !important;
+                        border-color: rgba(0, 0, 0, 0.15);
+                    }
+
+                    .rla-link {
+                        flex-basis: 100%;  /* Always full width */
+                        order: -1;  /* Always on top */
+                        text-align: center;
+                        margin-bottom: 0.5rem;
+                        font-weight: 600;
+                        font-size: 1.2rem;
+                        text-decoration: none;
+                        border-bottom: 1px solid currentColor;
+                        color: var(--link-color, var(--accent-color));
+                        padding-bottom: 2px;
+                    }
+
+                    /* Buttons side-by-side when cards are 2+ columns wide */
+                    @media (min-width: 640px) {
+                        .rla-btn {
+                            flex: 1 1 calc(50% - 0.25rem);  /* Split 50/50 */
+                        }
+                    }
+
+                    .rla-btn:hover {
+                        filter: brightness(1.05);
+                    }
+
+                    .rla-btn.secondary:hover {
+                        border-color: var(--accent-color);
+                        color: var(--accent-color);
+                    }
+
+                    .rla-link:hover {
+                        opacity: 0.9;
+                    }
+                    
+                    /* Empty states & details */
+                    .rla-empty {
+                        grid-column: span 12;
+                        text-align: center;
+                        color: var(--midtext);
+                        font-style: italic;
+                    }
+                    
+                    .rla-details {
+                        margin: 3rem auto 4rem;
+                        max-width: min(90vw, 1040px);
+                        color: var(--midtext);
+                    }
+                    
+                    .rla-details h3 {
+                        font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+                        margin-bottom: 0.75rem;
+                        color: var(--text-color);
+                        font-family: var(--theme-heading-font, inherit);
+                    }
+                    
+                    .rla-details :where(p, ul, ol) {
+                        margin-bottom: 0.75rem;
+                    }
+                    
+                    /* Utilities */
+                    .anchor-target {
+                        scroll-margin-top: var(--sticky-offset);
+                        outline: none;
+                    }
+                    
+                    .rla-details .rla-card {
+                        margin-left: auto;
+                        margin-right: auto;
+                        max-width: 800px;  /* Control how wide the detail cards get */
+                        width: 100%;
+                    }
+                    /* Responsive grid */
+                    @media (min-width: 640px) {
+                        .rla-card {
+                            grid-column: span 6;
+                        }
+                    }
+                    
+                    @media (min-width: 980px) {
+                        .rla-card {
+                            grid-column: span 4;
+                        }
+                    }
+                    
+                    @media (min-width: 1240px) {
+                        .rla-card {
+                            grid-column: span 3;
+                        }
+                    }
+                </style>
+
+ 
+        <div class="rla-eyebrow">Classes</div>
+{{#get "posts" filter="tag:hash-program-group+visibility:public" include="tags" limit="all" order="published_at asc"}}
+    {{#foreach posts}}
+        <section class="rla-group anchor-target" id="{{slug}}">
+            <header class="rla-header" aria-labelledby="{{slug}}-title">
+                {{#if meta_title}}<div class="rla-eyebrow">{{meta_title}}</div>{{/if}}
+                <h2 class="rla-title" id="{{slug}}-title">{{title}}</h2>
+                {{#if custom_excerpt}}<p class="rla-sub">{{custom_excerpt}}</p>{{/if}}
+           
+
+            {{#if html}}
+                <div class="rla-group-copy">
+                    {{{html}}}
+                </div>
+            {{/if}}
+ </header>
+        </section>
+                <div class="rla-grid" aria-label="{{title}} offerings">
+                    {{#get "posts" filter=(concat "tag:hash-" slug "+tag:-hash-program-group+visibility:public") include="tags,authors" limit="all" order="published_at asc"}}
+                        {{#if posts}}
+                            {{#foreach posts}}
+                                {{{html}}}
+                            {{/foreach}}
+                        {{else}}
+                            <p class="rla-empty">No offerings published yet. Check back soon.</p>
+                        {{/if}}
+                    {{/get}}
+                </div>
+           
+    {{/foreach}}
+{{/get}}
+
+<!-- Program detailsv -->
+{{#get "posts" filter="tag:hash-program-details+visibility:public" include="tags" limit="all" order="published_at asc"}}
+    {{#if posts}}
+        {{#foreach posts}}
+            <section class="rla-details anchor-target" id="{{slug}}">
+                {{{html}}}
+            </section>
+        {{/foreach}}
+    {{else}}
+        <p class="rla-empty">No detail sections yet.</p>
+    {{/if}}
+{{/get}}
+ </div>
+
+
+        
+
+    </article>
+</main>
+
+{{/post}}

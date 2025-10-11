@@ -1,10 +1,10 @@
 {
-    "name": "wave",
+    "name": "nuvo-wave",
     "description": "A Ghost theme",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": true,
     "engines": {
-        "ghost": ">=5.0.0"
+        "ghost": ">=6.0.0"
     },
     "license": "MIT",
     "author": {
@@ -92,6 +92,12 @@
                 "label": "Text Color",
                 "default": "#f0f0f0"
             },
+            "hero_text_color": {
+                "type": "color",
+                "label": "Hero Text Color",
+                "description": "Text color used within hero overlays",
+                "default": "#ffffff"
+            },
             "accent_color": {
                 "type": "color",
                 "label": "Accent Color",
@@ -107,7 +113,7 @@
                 "label": "Post Background Color",
                 "default": "#2d2d2d"
             },
-             "proxy_api_url": {
+            "proxy_api_url": {
                 "type": "text",
                 "label": "Events API URL Suffix (no trailing slash)",
                 "default": "http://localhost:8180/proxy-api"
@@ -136,23 +142,23 @@
                 "type": "select",
                 "options": [
                     "RLC-contact",
-                    "RLA-contact", 
+                    "RLA-contact",
                     "SONAR-contact"
                 ],
                 "label": "Contact Sheet Key",
                 "default": "RLA-contact"
             },
-            "hero_light_logo": {
-                "type": "image",
-                "label": "Hero Light Logo",
-                "description": "Light version of logo for video hero overlay",
-                "group": "homepage"
-            },
-            "use_light_logo_hero": {
-                "type": "boolean",
-                "label": "Use Light Logo on Hero",
-                "description": "Use light logo on video hero instead of default site logo",
-                "default": false,
+
+            "hero_layout": {
+                "type": "select",
+                "label": "Hero Layout",
+                "description": "Choose which hero section to display on the home page.",
+                "default": "video",
+                "options": [
+                    "video",
+                    "theramin",
+                    "none"
+                ],
                 "group": "homepage"
             }
         }
@@ -160,6 +166,7 @@
     "scripts": {
         "dev": "gulp",
         "test": "gscan .",
+        "build": "gulp build || echo \"(no build step)\"",
         "zip": "gulp zip"
     },
     "devDependencies": {
@@ -167,7 +174,7 @@
         "autoprefixer": "10.4.21",
         "beeper": "^2.1.0",
         "cssnano": "7.0.7",
-        "gscan": "4.48.0",
+        "gscan": "^4.49.7",
         "gulp": "^5.0.1",
         "gulp-concat": "2.6.1",
         "gulp-livereload": "4.0.2",

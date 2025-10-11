@@ -1,0 +1,42 @@
+<!--
+  Hero Background Carousel Manifest Template
+  ------------------------------------------
+  1. Create (or edit) a Page in Ghost (e.g., slug "hero-background-manifest").
+  2. Add an HTML card and paste this entire snippet.
+  3. Replace the sample media entries with your own images/videos.
+  4. Reference the manifest via {{> "hero-background-carousel" manifest_slug="hero-background-manifest"}}.
+-->
+<script type="application/json" id="hero-carousel-manifest">
+{
+  "durationSeconds": 8,
+  "fadeSeconds": 1.2,
+  "media": [
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-01.jpg",
+      "alt": "Students collaborating in the studio",
+      "focalPoint": "center center",
+      "href": "https://example.com/programs/music"
+    },
+    {
+      "type": "video",
+      "poster": "https://example.com/content/videos/hero/video-01.jpg",
+      "sources": [
+        {
+          "src": "https://example.com/content/videos/hero/video-01.webm",
+          "type": "video/webm"
+        },
+        {
+          "src": "https://example.com/content/videos/hero/video-01.mp4",
+          "type": "video/mp4"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "src": "https://example.com/content/images/hero/frame-02.jpg",
+      "alt": "Performer on stage under purple lights"
+    }
+  ]
+}
+</script>
